@@ -182,7 +182,7 @@ class RepeatMasker:
 		##########################################################################################################################
 		# change sort to fit RM output instead of blast m8 output ! ##############################################################
 		##########################################################################################################################
-		bestHit = "sort -k 2,2 -k 12,12nr "+self.output_folder+"/Trinity.fasta.out | awk 'BEGIN {prev_query = \"\"} {if($2 != prev_query){print($0); prev_query = $2}}' > "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs"
+		bestHit = "sort -k 2,2 -k 12,12nr "+self.output_folder+"/Trinity.fasta.out | awk 'BEGIN {prev_query = ""} {if($5 != prev_query) {if(sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) >=0.8 && sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14) >=0.8) {print($5 "\t"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) "\t"$10 "\t" $11 "\t" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs"
 		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
 		bestHitProcess.wait()
 		print("Done")
