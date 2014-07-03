@@ -1,0 +1,13 @@
+#!/bin/bash
+
+################################
+#  This is configuration file  #
+################################
+
+# change the Paths to files or directories between the quotes "" according to your local installations 
+
+Trinity="/usr/remote/trinityrnaseq_r2013_08_14/Trinity.pl"  # Path to Trinity ex: /home/you/trinityrnaseq_r20140413p1/Trinity
+RepeatMasker="/panhome/goubert/RepeatMasker/RepeatMasker" # Path to RepeatMasker ex: /home/you/RepeatMasker/RepeatMasker
+TRF="/panhome/goubert/trf407b.linux64" # Path to Tandem Repeat Finder ex: /usr/local/trf407b.linux64
+Blast_folder="/usr/remote/ncbi-blast-2.2.29+/bin/" # Path to Blast+ suite binaries folder ex: /usr/local/bin/
+Parallel="/panhome/goubert/bin/parallel" # Path to GNU Parallel program

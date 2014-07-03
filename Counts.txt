@@ -1,0 +1,9 @@
+LTR	2800
+LINE	823
+SINE	96
+ClassII	2412
+Low_Complexity	1323
+Simple_repeats	4465
+Tandem_repeats	0
+NAs	19881
+Total	120927
