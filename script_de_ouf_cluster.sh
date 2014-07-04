@@ -113,9 +113,13 @@ $RepeatMasker -pa $3 -s -lib $4 $2/Trinity.fasta
 
 mkdir $2/Annotation
 
-
+#Parse le fichier Trinity.fasta.out et sort : query_name | perc_align_q | db_name | db_family | perc_align_db
 cat $2/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | \
-awk 'BEGIN {prev_query = ""} {if($5 != prev_query) {if(sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) >=0.8 && sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14) >=0.8) {print($5 "\t"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) "\t"$10 "\t" $11 "\t" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > $2/Annotation/one_RM_hit_per_Trinity_contigs
+awk 'BEGIN {prev_query = ""} {if($5 != prev_query) {{print($5 "\t"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) "\t"$10 "\t" $11 "\t" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > $2/Annotation/one_RM_hit_per_Trinity_contigs
+
+#Parse le fichier précédent en ne gardant que les match 80%/80% query/db et les match 80% query
+cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print$0}}' > $2/Annotation/Best_RM_annot_80-80
+cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print$0}}' > $2/Annotation/Best_RM_annot_partial
 
 #cat $2/Trinity.fasta.out | sort -k 5,5 -k 1,1nr | sort -u -k5,5 | awk '{print$5"\t"$10"\t"$11}'> $2/Annotation/#one_RM_hit_per_Trinity_contigs ## Parse le fichier .out de RM et garde le best hit par Trinity contig
 
@@ -132,15 +136,16 @@ cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'SINE' | awk '{print$1}'
 cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'ClassII' | awk '{print$1}' > $2/Annotation/ClassII.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour l'alignement ensuite.
 cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'Low_complexity' | awk '{print$1}' > $2/Annotation/LowComp.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour l'alignement ensuite.
 cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'Simple_repeat' | awk '{print$1}' > $2/Annotation/Simple.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour l'alignement ensuite.
-
+cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'Satellite' | awk '{print$1}' > $2/Annotation/Simple.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour
 # récupère et annote les contigs de Trinity.fasta selon les meilleurs hits RM
+
 perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/LTR.headers $2/Trinity.fasta | sed 's/>comp/>LTR_comp/g' > $2/Annotation/LTR_annoted.fasta
 perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/LINE.headers $2/Trinity.fasta | sed 's/>comp/>LINE_comp/g' > $2/Annotation/LINE_annoted.fasta
 perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/SINE.headers $2/Trinity.fasta | sed 's/>comp/>SINE_comp/g' > $2/Annotation/SINE_annoted.fasta
 perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/ClassII.headers $2/Trinity.fasta | sed 's/>comp/>ClassII_comp/g' > $2/Annotation/ClassII_annoted.fasta
 perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/LowComp.headers $2/Trinity.fasta | sed 's/>comp/>LowComp_comp/g' > $2/Annotation/LowComp_annoted.fasta
 perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/Simple.headers $2/Trinity.fasta | sed 's/>comp/>Simple_repeats_comp/g' > $2/Annotation/Simple_repeats_annoted.fasta
-
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/Satellite.headers $2/Trinity.fasta | sed 's/>comp/>Satellite_comp/g' > $2/Annotation/Satellite_annoted.fasta
 cat $2/Annotation/*.headers > $2/Annotation/all_annoted.head
 perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/all_annoted.head $2/Trinity.fasta | sed 's/>comp/>na_comp/g' > $2/Annotation/unannoted.fasta
 
@@ -163,8 +168,8 @@ trf $2/Annotation/unannoted.fasta 2 7 7 80 10 50 500 -f -d -h
 mv ./unannoted.fasta.*.dat $2/unannoted.fasta.*.dat
 
 cat $2/unannoted.fasta.*.dat |  sed '/^$/d' > $2/Annotation/dat_without_jumps
-cat $2/Annotation/dat_without_jumps | grep -B 2 '[ACTG]' | grep 'Sequence' | awk '{print $2}' | sed 's/na_//g' > $2/Annotation/found_tandem_repeats.header
-cat $2/Annotation/found_tandem_repeats.header | sed 's/>comp/>na_comp/g' > $2/Annotation/found_TR_fmtd
+cat $2/Annotation/dat_without_jumps | grep -B 2 '[ACTG]' | grep 'Sequence' | awk '{print $2}' | sed 's/na_//g' > $2/Annotation/found_tandem_repeats.header #sort les headers des tandem repeats détectés et enlève le na_ pour pouvoir les récupérer dans Trinity.fatas
+cat $2/Annotation/found_tandem_repeats.header | sed 's/comp/na_comp/g' > $2/Annotation/found_TR_fmtd # rajoute na_ pour les enlever de unanoted.fasta
 
 perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/found_tandem_repeats.header $2/Trinity.fasta | sed 's/>comp/>Tandem_Repeat_comp/g' > $2/Annotation/Tandem_Rep_annoted.fasta
 perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/found_TR_fmtd $2/Annotation/unannoted.fasta > $2/Annotation/unannoted_final.fasta
@@ -264,7 +269,7 @@ cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LowComp' >> $2/Cou
 echo "Simple_repeats" >> $2/Counts1.txt
 cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Simple_repeats' >> $2/Counts2.txt
 echo "Tandem_repeats" >> $2/Counts1.txt
-cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_' >> $2/Counts2.txt
+cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_\|Satellite' >> $2/Counts2.txt
 echo "NAs" >> $2/Counts1.txt
 cat $2/blast_out/sorted.reads_vs_unannoted.blast.out | wc -l >> $2/Counts2.txt
 echo "Total" >> $2/Counts1.txt

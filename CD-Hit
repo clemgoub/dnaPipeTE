@@ -4,3 +4,6 @@ cat sorted.reads_vs_unannoted.blast.out | awk '{print $1}' > reads_on_NAcontig.h
 cat sorted.reads_vs_annoted.blast.out | awk '{print $1}' > reads_on_annot_contig.header
 cat reads_on_* > all_matching_reads.header
 perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' all_matching_reads.header ../single.fa > unblasted_reads.fa
+
+'>Cluster' -B1 unblasted.clustering.clstr | grep -v '^-' | sed 's/Cluster /Cluster_/g' | awk '{print $1}' | more
+
