@@ -5,6 +5,7 @@
 #$3 = cpu
 #$4 = /path_to/RM_library.fasta
 #$5 = second sample (infile 2)
+#$6 = blast sample (2x sample 1 ou 2)
 
 
 
@@ -48,6 +49,9 @@ echo ''
 
 echo 'replacing reads header by integer...'
 awk '/^>/{print">"(++i)}!/>/' $1 > $2/renamed.input.fasta
+awk '/^>/{print">"(++i)}!/>/' $5 > $2/renamed.input2.fasta
+awk '/^>/{print">"(++i)}!/>/' $6 | sed 's/>/>blast_/g' > $2/renamed.blasting_reads.fasta
+grep -c '>' $2/renamed.blasting_reads.fasta > $2/blast_reads.counts
 echo 'done'
 
 
@@ -71,7 +75,7 @@ echo ''
 echo 'Selecting reads for second Trinity iteration...'
 
 cat $2/Trinity_run1/chrysalis/readsToComponents.out.sort | awk '{print $2; print $4}' | sed 's/>/>run1_/g' > $2/reads_run1.fasta
-cat $2/reads_run1.fasta $5 > $2/reads_run2.fasta
+cat $2/reads_run1.fasta $2/renamed.input2.fasta > $2/reads_run2.fasta
 
 echo 'Done'
 echo ''
@@ -187,7 +191,7 @@ date +"%T"
 echo 'blasting...'
 
 #### PARALELISATION DE BLAST : EN TRAVAUX #####
-cat $2/renamed.input.fasta | $Parallel -j $3 --block 100k --recstart '>' --pipe $Blast_folder/blastn -outfmt 6 -task dc-megablast -db $2/blast_out/blast1_db.fasta -query - > $2/blast_out/reads_vs_annoted.blast.out
+cat $2/renamed.blasting_reads.fasta | $Parallel -j $3 --block 100k --recstart '>' --pipe $Blast_folder/blastn -outfmt 6 -task dc-megablast -db $2/blast_out/blast1_db.fasta -query - > $2/blast_out/reads_vs_annoted.blast.out
 
 #### NORMAL BLAST #############################
 #$Blast_folder/blastn -query $1 -db $2/blast_out/blast1_db.fasta -task dc-megablast -out $2/blast_out/reads_vs_annoted.blast.out -outfmt 6 -perc_identity 80 -num_threads $3
@@ -207,7 +211,7 @@ echo ''
 echo 'Selecting non-matching reads for blast2'
 
 cat $2/blast_out/sorted.reads_vs_annoted.blast.out | awk '{print$1}' > $2/blast_out/matching_reads.headers
-perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/blast_out/matching_reads.headers $2/renamed.input.fasta > $2/blast_out/unmatching_reads1.fasta
+perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/blast_out/matching_reads.headers $2/renamed.blasting_reads.fasta > $2/blast_out/unmatching_reads1.fasta
 
 echo '#####################################################'
 echo '### Blast 2 : raw reads against unannoted repeats ###'
@@ -264,7 +268,7 @@ cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_' >> $2/Cou
 echo "NAs" >> $2/Counts1.txt
 cat $2/blast_out/sorted.reads_vs_unannoted.blast.out | wc -l >> $2/Counts2.txt
 echo "Total" >> $2/Counts1.txt
-cat $2/Trinity_run1/single.fa.read_count >> $2/Counts2.txt
+cat $2/blast_reads.counts >> $2/Counts2.txt
 
 paste $2/Counts1.txt  $2/Counts2.txt > $2/Counts.txt
 
@@ -293,7 +297,7 @@ echo ''
 date +"%T"
 echo 'Blasting...'
 
-cat $2/renamed.input.fasta | $Parallel -j $3 --block 100k --recstart '>' --pipe $Blast_folder/blastn -outfmt 6 -task dc-megablast -db $2/Trinity.fasta -query - > $2/blast_out/reads_vs_Trinity.fasta.blast.out
+cat $2/renamed.blasting_reads.fasta | $Parallel -j $3 --block 100k --recstart '>' --pipe $Blast_folder/blastn -outfmt 6 -task dc-megablast -db $2/Trinity.fasta -query - > $2/blast_out/reads_vs_Trinity.fasta.blast.out
 
 #$Blast_folder/blastn -query $1 -db $2/Trinity.fasta -task dc-megablast -out $2/blast_out/reads_vs_Trinity.fasta.blast.out -outfmt 6 -perc_identity 80 -num_threads $3
 
@@ -309,7 +313,7 @@ date +"%T"
 #Drawing graphs 
 
 echo 'Drawing graphs...'
-cp $2/Trinity_run1/single.fa.read_count .
+cp $2/blast_reads.counts .
 cp $2/Counts.txt .
 Rscript graph.R
 Rscript pieChart.R

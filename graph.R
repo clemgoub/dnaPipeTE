@@ -5,7 +5,7 @@
 
 read.table("Reads_to_components_Rtable.txt")->reads.to.comp
 names(reads.to.comp)=c("comp","contig","seq","identity")
-read.table("single.fa.read_count")->total
+read.table("blast_reads.counts")->total
 
 
 #reads per component
