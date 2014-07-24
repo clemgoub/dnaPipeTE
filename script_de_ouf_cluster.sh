@@ -260,7 +260,7 @@ cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LowComp' >> $2/Cou
 echo "Simple_repeats" >> $2/Counts1.txt
 cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Simple_repeats' >> $2/Counts2.txt
 echo "Tandem_repeats" >> $2/Counts1.txt
-cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_\|Satellite' >> $2/Counts2.txt
+cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_\|Satellite_\|MSAT' >> $2/Counts2.txt
 echo "NAs" >> $2/Counts1.txt
 cat $2/blast_out/sorted.reads_vs_unannoted.blast.out | wc -l >> $2/Counts2.txt
 echo "Total" >> $2/Counts1.txt
@@ -271,6 +271,29 @@ paste $2/Counts1.txt  $2/Counts2.txt > $2/Counts.txt
 echo 'Done'
 date +"%T"
 
+echo 'parsing blastout and adding RM annotations for each read...'
+
+cat $2/blast_out/sorted.reads_vs_annoted.blast.out |  awk '{print $1"\t"$2"\t"$3}' |grep -v 'comp' > blastout_RMonly
+cat $2/blast_out/sorted.reads_vs_annoted.blast.out | sed 's/_comp/\tcomp/g' | awk '{print $1"\t"$3"\t"$4}' | grep 'comp' > join.blastout
+cat join.blastout | sort -k2,2 > join.blastout.sorted
+cat $2/Annotation/one_RM_hit_per_Trinity_contigs | sort -k1,1 > contigsTrinityRM.sorted
+join -a1 -12 -21 join.blastout.sorted contigsTrinityRM.sorted > blast_matching_w_annot_1
+cat blast_matching_w_annot_1 | awk '{print $1 "\t" $2 "\t" $5 "\t" $3}' > blast_matching_w_annot_2
+cat blastout_RMonly | sed 's/#/\t/g' | awk '{print "Repbase-\$2t" $1 "\t" $2 "\t" $4}' > blastout_RMonly_wMSAT
+
+#cat blast_matching_w_annot_1 | awk '{print $1 "\t" $2 "\t" $15 "\t" $3 "\t" $16}' > blast_contigs_1_fmtd
+cat blast_matching_w_annot_2 blastout_RMonly_wMSAT > $2/blast_out/blastout_final_fmtd_annoted
+
+
+rm blastout_RMonly
+rm join.blastout
+rm join.blastout.sorted
+rm contigsTrinityRM.sorted
+rm blast_matching_w_annot_1
+rm blastout_RMonly_wMSAT
+rm blast_contigs_1_fmtd
+
+echo 'Done, results in: "blast_out/blastout_final_fmtd_annoted"'
 
 ###########Building graph of Repeats families###########
                                                        #
