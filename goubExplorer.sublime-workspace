@@ -523,7 +523,7 @@
 			"file": "script_de_ouf_cluster.sh",
 			"settings":
 			{
-				"buffer_size": 14063,
+				"buffer_size": 14065,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,8 +539,8 @@
 			"file": "graph.R",
 			"settings":
 			{
-				"buffer_size": 2609,
-				"line_ending": "Windows"
+				"buffer_size": 2655,
+				"line_ending": "Unix"
 			}
 		},
 		{
@@ -1078,7 +1078,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1086,15 +1086,15 @@
 					"file": "script_de_ouf_cluster.sh",
 					"settings":
 					{
-						"buffer_size": 14063,
+						"buffer_size": 14065,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								115,
-								115
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1139,6 +1139,8 @@
 								"vendor-prefix": true,
 								"zero-units": "warning"
 							},
+							"enable_checkbounce_grammar": false,
+							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
 								110.0
@@ -1193,7 +1195,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 440.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1210,8 +1212,8 @@
 						"selection":
 						[
 							[
-								8367,
-								8140
+								7002,
+								7012
 							]
 						],
 						"settings":
@@ -1256,6 +1258,8 @@
 								"vendor-prefix": true,
 								"zero-units": "warning"
 							},
+							"enable_checkbounce_grammar": false,
+							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
 								110.0
@@ -1310,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2003.0,
+						"translation.y": 2367.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1320,7 +1324,7 @@
 					"file": "graph.R",
 					"settings":
 					{
-						"buffer_size": 2609,
+						"buffer_size": 2655,
 						"regions":
 						{
 						},
@@ -1373,6 +1377,8 @@
 								"vendor-prefix": true,
 								"zero-units": "warning"
 							},
+							"enable_checkbounce_grammar": false,
+							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
 								110.0
@@ -1488,6 +1494,8 @@
 								"vendor-prefix": true,
 								"zero-units": "warning"
 							},
+							"enable_checkbounce_grammar": false,
+							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
 								110.0
@@ -1823,7 +1831,7 @@
 		[
 			[
 				"",
-				"/Users/laurent/Documents/unilateral multiple testing/unilateral_multiple_testing.sublime-project"
+				"/Users/laurent/Documents/piRNA/piRNA.sublime-project"
 			]
 		],
 		"width": 570.0
