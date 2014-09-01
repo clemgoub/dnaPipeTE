@@ -77,6 +77,7 @@ class FastqSamplerToFasta:
 		self.get_sampled_id()
 
 		self.files = list()
+		print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
 		for i in range(0, self.sample_number):
 			self.sampling(self.fastq_R1, i)
 			self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
