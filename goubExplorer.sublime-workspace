@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 12788,
+				"buffer_size": 21547,
 				"line_ending": "Unix"
 			}
 		},
@@ -1143,7 +1143,7 @@
 							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
-								110.0
+								110
 							],
 							"gjslint_options":
 							[
@@ -1169,7 +1169,7 @@
 							],
 							"pyflakes_ignore_import_*": true,
 							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
+							"sublimelinter_delay": 2,
 							"sublimelinter_disable":
 							[
 							],
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 12788,
+						"buffer_size": 21547,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								12785,
-								12785
+								1188,
+								1188
 							]
 						],
 						"settings":
@@ -1262,7 +1262,7 @@
 							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
-								110.0
+								110
 							],
 							"gjslint_options":
 							[
@@ -1289,7 +1289,7 @@
 							"pyflakes_ignore_import_*": true,
 							"spell_check": true,
 							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
+							"sublimelinter_delay": 2,
 							"sublimelinter_disable":
 							[
 							],
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 79.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1381,7 +1381,7 @@
 							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
-								110.0
+								110
 							],
 							"gjslint_options":
 							[
@@ -1407,7 +1407,7 @@
 							],
 							"pyflakes_ignore_import_*": true,
 							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
+							"sublimelinter_delay": 2,
 							"sublimelinter_disable":
 							[
 							],
@@ -1498,7 +1498,7 @@
 							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
-								110.0
+								110
 							],
 							"gjslint_options":
 							[
@@ -1524,7 +1524,7 @@
 							],
 							"pyflakes_ignore_import_*": true,
 							"sublimelinter": true,
-							"sublimelinter_delay": 2.0,
+							"sublimelinter_delay": 2,
 							"sublimelinter_disable":
 							[
 							],
@@ -1831,7 +1831,7 @@
 		[
 			[
 				"",
-				"/Users/laurent/Documents/piRNA/piRNA.sublime-project"
+				"/home/laurent/Doctora/piRNA/piRNA.sublime-project"
 			]
 		],
 		"width": 570.0
