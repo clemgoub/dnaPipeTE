@@ -155,7 +155,7 @@ class Trinity:
 			self.select_reads(i)
 			self.trinity_iteration(i)
 		self.new_version_correction()
-		self.rename_output()
+		self.renaming_output()
 
 	def trinity_iteration(self, iteration):
 		print("###################################")
