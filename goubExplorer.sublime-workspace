@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"sam",
+				"sample_files"
+			],
+			[
 				"Para",
 				"Parallel"
 			],
@@ -34,10 +38,6 @@
 			[
 				"Sa",
 				"Sample_number"
-			],
-			[
-				"sam",
-				"sample_number"
 			],
 			[
 				"Tri",
@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 21547,
+				"buffer_size": 21677,
 				"line_ending": "Unix"
 			}
 		},
@@ -805,6 +805,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"self, ",
 			"&&",
 			"echo",
 			"annoted",
@@ -931,8 +932,7 @@
 			"bowtie2",
 			".fix",
 			"-n \"+str(args.qfasta)+\".fix.db",
-			"ormatdb -p F -i ",
-			"comp20694_c0_seq2"
+			"ormatdb -p F -i "
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 21547,
+						"buffer_size": 21677,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1188,
-								1188
+								7421,
+								7421
 							]
 						],
 						"settings":
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1902.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1831,7 +1831,7 @@
 		[
 			[
 				"",
-				"/home/laurent/Doctora/piRNA/piRNA.sublime-project"
+				"/home/laurent/Doctora/unilateral multiple testing/unilateral_multiple_testing.sublime-project"
 			]
 		],
 		"width": 570.0
