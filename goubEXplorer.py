@@ -76,15 +76,17 @@ class FastqSamplerToFasta:
 		self.tirages = list()
 		self.get_sampled_id()
 
-		files = list()
+		self.files = list()
 		for i in range(0, self.sample_number):
 			self.sampling(self.fastq_R1, i)
-			files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
+			self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
 		if self.paired:
 			for i in range(0, self.sample_number):
 				self.sampling(self.fastq_R2, i)
-				files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
-		return(files)
+				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
+	
+	def result(self):
+		return(self.files)
 
 	def path_leaf(self, path) :
 		head, tail = ntpath.split(path)
@@ -368,7 +370,8 @@ class Graph:
 		print("#   see you soon !!!   #")
 		print("########################")
 
-sample_files = FastqSamplerToFasta(args.input_file, config['DEFAULT']['Sample_size'], config['DEFAULT']['Sample_number'], args.output_folder)
+Sampler = FastqSamplerToFasta(args.input_file, config['DEFAULT']['Sample_size'], config['DEFAULT']['Sample_number'], args.output_folder)
+sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, config['DEFAULT']['Sample_number'])
 RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder)
