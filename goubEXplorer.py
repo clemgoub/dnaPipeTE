@@ -73,10 +73,8 @@ class FastqSamplerToFasta:
 			self.paired = False
 		else:
 			self.fastq_R1 = fastq_files[1]
-		self.tirages = list()
-		self.get_sampled_id()
-
 		self.files = list()
+		self.get_sampled_id(self.fastq_R1)
 		print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
 		for i in range(0, self.sample_number):
 			self.sampling(self.fastq_R1, i)
@@ -93,11 +91,13 @@ class FastqSamplerToFasta:
 		head, tail = ntpath.split(path)
 		return tail or ntpath.basename(head)
 
-	def get_sampled_id(self):
-		print( "number of reads to sample : ", self.number, "\nfastq : ", self.fastq_R1 )
+	def get_sampled_id(self, file_name):
+		self.tirages = list()
+		tirages = list()
+		print( "number of reads to sample : ", self.number, "\nfastq : ", file_name )
 		sys.stdout.write("counting reads number ...")
 		sys.stdout.flush()
-		with open(self.fastq_R1, 'r') as file1 :
+		with open(file_name, 'r') as file1 :
 			np = sum(1 for line in file1)
 
 		np = int((np) / 4)
@@ -105,24 +105,27 @@ class FastqSamplerToFasta:
 		sys.stdout.flush()
 
 		population = range(1,np)
-		self.tirages = random.sample(population, self.number)
+		tirages = random.sample(population, self.number*self.sample_number)
 
-		self.tirages.sort()
-		i = 0
-		while i < len(self.tirages) :
-			self.tirages[i] = ((self.tirages[i]-1) * 4)
-			i += 1
+		for j in range(0, self.sample_number):
+			tirages_sample = tirages[self.number*j:self.number*(j+1)]
+			tirages_sample.sort()
+			i = 0
+			while i < len(self.tirage_sample) :
+				self.tirage_samples[i] = ((self.tirage_samples[i]-1) * 4)
+				i += 1
+			self.tirages.extend(tirages_sample)
 
 	def sampling(self, fastq_file, sample_number):
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
 		with open(fastq_file, 'r') as fastq_handle :
 			i = 0
-			j = 0
+			j = self.number*sample_number
 			tag = "/s"+str(sample_number)+"_"
 			with open(self.output_folder+tag+self.path_leaf(fastq_file)+".fasta", 'w') as output :
 				for line in fastq_handle :
-					if j < len(self.tirages) :
+					if j < self.number*(sample_number+1) :
 						if self.tirages[j] <= i and i <= (self.tirages[j]+3) :
 							if i  == 1:
 								output.write(">"+str(j+sample_number*self.number)+"\n")
