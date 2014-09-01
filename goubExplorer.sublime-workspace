@@ -4,6 +4,54 @@
 		"selected_items":
 		[
 			[
+				"Para",
+				"Parallel"
+			],
+			[
+				"bl",
+				"Blast_path"
+			],
+			[
+				"Blast",
+				"Blast_path"
+			],
+			[
+				"rena",
+				"rename_output"
+			],
+			[
+				"tri",
+				"trinity"
+			],
+			[
+				"se",
+				"select_reads"
+			],
+			[
+				"sample",
+				"sample_number"
+			],
+			[
+				"Sa",
+				"Sample_number"
+			],
+			[
+				"sam",
+				"sample_number"
+			],
+			[
+				"Tri",
+				"Trinity_memory"
+			],
+			[
+				"RepeatMasker_",
+				"RepeatMasker_library"
+			],
+			[
+				"Re",
+				"RepeatMasker"
+			],
+			[
 				"con",
 				"contig_annotation"
 			],
@@ -32,24 +80,12 @@
 				"RepeatMasker_path"
 			],
 			[
-				"Re",
-				"RepeatMasker_path"
-			],
-			[
 				"sampl",
 				"sample_number"
 			],
 			[
 				"Trinity",
 				"Trinity_path"
-			],
-			[
-				"sample",
-				"sample_files"
-			],
-			[
-				"sam",
-				"sample_files"
 			],
 			[
 				"fastq",
@@ -360,10 +396,6 @@
 				"clusterNumber"
 			],
 			[
-				"se",
-				"sequence_list"
-			],
-			[
 				"remov",
 				"removed"
 			],
@@ -482,38 +514,6 @@
 			[
 				"iter",
 				"iteration"
-			],
-			[
-				"m_lo",
-				"m_log_polyN"
-			],
-			[
-				"fill",
-				"fill_empty_reads"
-			],
-			[
-				"fi",
-				"fill_empty_reads"
-			],
-			[
-				"remove",
-				"remove_empty_reads"
-			],
-			[
-				"mThread",
-				"mThread_init"
-			],
-			[
-				"read",
-				"readbis"
-			],
-			[
-				"m_C",
-				"m_C_number"
-			],
-			[
-				"p_",
-				"p_T"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "script_de_ouf_cluster.sh",
 			"settings":
 			{
-				"buffer_size": 14065,
+				"buffer_size": 16319,
 				"line_ending": "Unix"
 			}
 		},
@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 10323,
+				"buffer_size": 12788,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "graph.R",
 			"settings":
 			{
-				"buffer_size": 2655,
+				"buffer_size": 2653,
 				"line_ending": "Unix"
 			}
 		},
@@ -802,9 +802,25 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
+			"&&",
+			"echo",
+			"annoted",
+			"Blast",
+			"blast",
+			"\"",
+			"echo",
+			"select_readsProcess",
+			"Trinity.fasta",
+			"result",
+			"string",
+			"number",
+			"sampling",
+			"enamed.input.fasta",
+			"10G",
+			"echo",
 			"cat",
 			"$2",
 			"echo",
@@ -916,23 +932,7 @@
 			".fix",
 			"-n \"+str(args.qfasta)+\".fix.db",
 			"ormatdb -p F -i ",
-			"comp20694_c0_seq2",
-			"comp7379_c0_seq3",
-			"formatdb2Process",
-			"formatdb1Process",
-			"qid",
-			"line",
-			"TE.id",
-			"v2",
-			"\"$9\"",
-			"dsim-all-chromosome-r1.4.fasta.gz",
-			"-A-u",
-			"mapping",
-			"\"+self.input_file+\"",
-			"canberra_size-A",
-			"sorted",
-			"TE/",
-			"folder"
+			"comp20694_c0_seq2"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1086,15 +1086,15 @@
 					"file": "script_de_ouf_cluster.sh",
 					"settings":
 					{
-						"buffer_size": 14065,
+						"buffer_size": 16319,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								9686,
+								9909
 							]
 						],
 						"settings":
@@ -1195,7 +1195,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 440.0,
+						"translation.y": 2573.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 10323,
+						"buffer_size": 12788,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7002,
-								7012
+								12785,
+								12785
 							]
 						],
 						"settings":
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2367.0,
+						"translation.y": 79.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1324,7 +1324,7 @@
 					"file": "graph.R",
 					"settings":
 					{
-						"buffer_size": 2655,
+						"buffer_size": 2653,
 						"regions":
 						{
 						},

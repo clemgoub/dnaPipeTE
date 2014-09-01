@@ -164,7 +164,8 @@ class Trinity:
 
 		def select_reads(self, iteration):
 			print("Selecting reads for Trinity iteration number "+str(iteration+1)+"...")
-			select_reads = "awk '{print $2; print $4}' "+self.output_folder+"/Trinity_run"+str(iteration)+"/chrysalis/readsToComponents.out.sort | sed 's/>/>run1_/g' > "+self.output_folder+"/reads_run"+str(iteration)+".fasta && cat "+self.output_folder+"/reads_run"+str(iteration)+".fasta >> "+self.output_folder+"/"+self.sample_files[iteration]
+			select_reads = "awk '{print $2; print $4}' "+self.output_folder+"/Trinity_run"+str(iteration)+"/chrysalis/readsToComponents.out.sort | sed 's/>/>run1_/g' > "+self.output_folder+"/reads_run"+str(iteration)+".fasta && "
+			select_reads += "cat "+self.output_folder+"/reads_run"+str(iteration)+".fasta >> "+self.output_folder+"/"+self.sample_files[iteration]
 			select_readsProcess = subprocess.Popen(str(select_reads), shell=True)
 			select_readsProcess.wait()
 			print("Done\n")
@@ -206,7 +207,9 @@ class RepeatMasker:
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
-		bestHit = "cat $2/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\t\"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) \"\t\"$10 \"\t\" $11 \"\t\" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > $2/Annotation/one_RM_hit_per_Trinity_contigs && cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print$0}}' > $2/Annotation/Best_RM_annot_80-80 && cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print$0}}' > $2/Annotation/Best_RM_annot_partial"
+		bestHit = "cat $2/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > $2/Annotation/one_RM_hit_per_Trinity_contigs && "
+		bestHit += "cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print$0}}' > $2/Annotation/Best_RM_annot_80-80 && "
+		bestHit += "cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print$0}}' > $2/Annotation/Best_RM_annot_partial"
 		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
 		bestHitProcess.wait()
 		print("Done")
@@ -224,19 +227,147 @@ class RepeatMasker:
 			annotation += "perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/"+super_familly+".headers "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>"+super_familly+"_comp/g' > "+self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta && "
 		annotation += "cat "+self.output_folder+"/Annotation/*.headers > "+self.output_folder+"/Annotation/all_annoted.head && "
 		annotation += "perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/all_annoted.head "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>na_comp/g' > "+self.output_folder+"/Annotation/unannoted.fasta && "
-		annotation += "cat "+self.output_folder+"/Annotation/*_annoted.fasta > "+self.output_folder+"/Annotation/annoted.fasta && "
+		annotation += "cat "+self.output_folder+"/Annotation/*_annoted.fasta > "+self.output_folder+"/Annotation/annoted.fasta"
 		annotationProcess = subprocess.Popen(str(annotation), shell=True)
 		annotationProcess.wait()
 		print("Done\n")
 
 class Blast:
-	def __init__(self, Blast_path):
+	def __init__(self, Blast_path, Parallel_path, cpu, output_folder):
 		self.Blast_path = str(Blast_path)
+		self.Parallel_path = str(Parallel_path)
+		self.cpu =  int(cpu)
+		self.output_folder = str(output_folder)
+		self.blast1_run()
+		self.blast2_run()
+		self.blast3_run()
+		self.count()
 
-	delf blast_run(self):
-		
+	def blast1_run(self):
+		print("#######################################################")
+		print("### Blast 1 : raw reads against all repeats contigs ###")
+		print("#######################################################")
+		print("blasting...")
+		blast = self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
+		blast += "cat $2/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
+		blastProcess = subprocess.Popen(str(blast), shell=True)
+		blastProcess.wait()
+		print("Paring blast1 output...")
+		blast = "cat "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out | sort -k1,1 -k12,12nr -k11,11n | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out && "
+		blast += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | awk '{print $2\"\\t\"$3}' | sed 's/_/\t/g' > "+self.output_folder+"/Reads_to_components_Rtable.txt"
+		blastProcess = subprocess.Popen(str(blast), shell=True)
+		blastProcess.wait()
+
+	def blast2_run(self):
+		if not os.path.exists(self.output_folder+"/blast_out"):
+			os.makedirs(self.output_folder+"/blast_out")
+		print("###################################################")
+		print("### Blast 2 : raw reads against annoted repeats ###")
+		print("###################################################")
+		print("blasting...")
+		blast = "ln -s "+self.output_folder+"/Annotation/annoted.fasta "+self.output_folder+"/blast_out/blast2_db.fasta && "
+		blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/blast_out/blast2_db.fasta -out "+self.output_folder+"/blast_out/blast2_db.fasta -dbtype 'nucl' && "
+		blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/blast_out/blast2_db.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out"
+		blastProcess = subprocess.Popen(str(blast), shell=True)
+		blastProcess.wait()
+		print("Paring blast2 output...")
+		blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out"
+		blastProcess = subprocess.Popen(str(blast), shell=True)
+		blastProcess.wait()
+		print("Selecting non-matching reads for blast3")
+		blast = "awk '{print$1}' "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/matching_reads.headers && "
+		blast += "perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/blast_out/matching_reads.headers "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_out/unmatching_reads1.fasta"
+		blastProcess = subprocess.Popen(str(blast), shell=True)
+		blastProcess.wait()
+
+	def blast3_run(self):
+		print("#####################################################")
+		print("### Blast 3 : raw reads against unannoted repeats ###")
+		print("#####################################################")
+		print("blasting...")
+		blast = self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Annotation/unannoted_final.fasta -out "+self.output_folder+"/blast_out/blast3_db.fasta -dbtype 'nucl' && "
+		blast += "cat "+self.output_folder+"/blast_out/unmatching_reads1.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/blast_out/blast3_db.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out"
+		blastProcess = subprocess.Popen(str(blast), shell=True)
+		blastProcess.wait()
+		print("Paring blast3 output...")
+		blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out"
+		blastProcess = subprocess.Popen(str(blast), shell=True)
+		blastProcess.wait()
+
+	def count(self):
+		print("#######################################################")
+		print("### Estimation of Repeat content from blast outputs ###")
+		print("#######################################################")
+		count = "rm "+self.output_folder+"/Count*.txt"
+		print("LTR >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LTR' >> "+self.output_folder+"/Counts2.txt && "
+		print("LINE >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LINE' >> "+self.output_folder+"/Counts2.txt && "
+		print("SINE >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'SINE' >> "+self.output_folder+"/Counts2.txt && "
+		print("ClassII >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'ClassII' >> "+self.output_folder+"/Counts2.txt && "
+		print("Low_Complexity >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LowComp' >> "+self.output_folder+"/Counts2.txt && "
+		print("Simple_repeats >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Simple_repeats' >> "+self.output_folder+"/Counts2.txt && "
+		print("Tandem_repeats >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_\|Satellite_\|MSAT' >> "+self.output_folder+"/Counts2.txt && "
+		print("NAs >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out | wc -l >> "+self.output_folder+"/Counts2.txt && "
+		print("Total >> "+self.output_folder+"/Counts1.tx")
+		count += "cat "+self.output_folder+"/blast_reads.counts >> "+self.output_folder+"/Counts2.txt && "
+		count += "paste "+self.output_folder+"/Counts1.txt  "+self.output_folder+"/Counts2.txt > "+self.output_folder+"/Counts.txt"
+		countProcess = subprocess.Popen(str(count), shell=True)
+		countProcess.wait()
+		print("parsing blastout and adding RM annotations for each read...")
+		count = "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out |  awk '{print $1\"\\t\"$2\"\\t\"$3}' |grep -v 'comp' > "+self.output_folder+"/blastout_RMonly && "
+		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | sed 's/_comp/\\tcomp/g' | awk '{print $1\"\\t\"$3\"\\t\"$4}' | grep 'comp' > "+self.output_folder+"/join.blastout && "
+		count += "cat "+self.output_folder+"/join.blastout | sort -k2,2 > "+self.output_folder+"/join.blastout.sorted && "
+		count += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | sort -k1,1 > "+self.output_folder+"/contigsTrinityRM.sorted && "
+		count += "join -a1 -12 -21 "+self.output_folder+"/join.blastout.sorted contigsTrinityRM.sorted > "+self.output_folder+"/blast_matching_w_annot_1 && "
+		count += "cat "+self.output_folder+"/blast_matching_w_annot_1 | awk '{print $1 \"\\t\" $2 \"\\t\" $5 \"\\t\" $3}' > "+self.output_folder+"/blast_matching_w_annot_2 && "
+		count += "cat "+self.output_folder+"/blastout_RMonly | sed 's/#/\t/g' | awk '{print \"Repbase-\\$2t\" $1 \"\\t\" $2 \"\\t\" $4}' > "+self.output_folder+"/blastout_RMonly_wMSAT && "
+		count += "cat "+self.output_folder+"/blast_matching_w_annot_2 "+self.output_folder+"/blastout_RMonly_wMSAT > "+self.output_folder+"/blast_out/blastout_final_fmtd_annoted && "
+		count += "rm "+self.output_folder+"/blastout_RMonly && "
+		count += "rm "+self.output_folder+"/join.blastout && "
+		count += "rm "+self.output_folder+"/join.blastout.sorted && "
+		count += "rm "+self.output_folder+"/contigsTrinityRM.sorted && "
+		count += "rm "+self.output_folder+"/blast_matching_w_annot_1 && "
+		count += "rm "+self.output_folder+"/blastout_RMonly_wMSAT && "
+		count += "rm "+self.output_folder+"/blast_contigs_1_fmtd"
+		countProcess = subprocess.Popen(str(count), shell=True)
+		countProcess.wait()
+		print("Done, results in: blast_out/blastout_final_fmtd_annoted")
+
+class Graph:
+	def __init__(self, output_folder):
+		self.output_folder = str(output_folder)
+		self.run()
+
+	def run(self):
+		print("#########################################")
+		print("### OK, lets build some pretty graphs ###")
+		print("#########################################")
+		print("Drawing graphs...")
+		graph = "cp "+self.output_folder+"/blast_reads.counts . && "
+		graph += "cp "+self.output_folder+"/Counts.txt . && "
+		graph += "Rscript graph.R && "
+		graph += "Rscript pieChart.R && "
+		print("Done")
+		graph += "rm single.fa.read_count && "
+		graph += "mv Reads_to_components_Rtable.txt "+self.output_folder+"/ && "
+		graph += "mv Reads_to_components.* "+self.output_folder+"/ && "
+		graph += "mv TEs_piechart.* "+self.output_folder+"/ && "
+		graph += "mv reads_per_component_sorted.txt "+self.output_folder+"/"
+		graphProcess = subprocess.Popen(str(graph), shell=True)
+		graphProcess.wait()
+		print("########################")
+		print("#   see you soon !!!   #")
+		print("########################")
 
 sample_files = FastqSamplerToFasta(args.input, config['DEFAULT']['Sample_size'], config['DEFAULT']['Sample_number'], args.output_folder)
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, config['DEFAULT']['Sample_number'])
 RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
-Blast(config['DEFAULT']['Blast_folder'])
+Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder)
+Graph(args.output_folder)
