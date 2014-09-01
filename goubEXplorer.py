@@ -153,43 +153,43 @@ class Trinity:
 		self.new_version_correction()
 		self.rename_output()
 
-		def trinity_iteration(self, iteration):
-			print("###################################")
-			print("### TRINITY to assemble repeats ###")
-			print("###################################\n")
+	def trinity_iteration(self, iteration):
+		print("###################################")
+		print("### TRINITY to assemble repeats ###")
+		print("###################################\n")
 
-			print("***** TRINITY iteration "+str(iteration+1)+" *****\n")
-			if not os.path.exists(self.output_folder+"/Trinity_run"+str(iteration+1)):
-				os.makedirs(self.output_folder+"/Trinity_run"+str(iteration+1))
-			trinity = self.Trinity_path+" --seqType fa --JM "+str(self.Trinity_memory)+" --single "+self.output_folder+"/"+self.sample_files[iteration]+" --CPU "+str(self.cpu)+" --min_glue 0 --output "+self.output_folder+"/Trinity_run"+str(iteration+1)
-			trinityProcess = subprocess.Popen(str(trinity), shell=True)
-			trinityProcess.wait()
-			print("Trinity iteration "+str(iteration+1)+" Done'")
+		print("***** TRINITY iteration "+str(iteration+1)+" *****\n")
+		if not os.path.exists(self.output_folder+"/Trinity_run"+str(iteration+1)):
+			os.makedirs(self.output_folder+"/Trinity_run"+str(iteration+1))
+		trinity = self.Trinity_path+" --seqType fa --JM "+str(self.Trinity_memory)+" --single "+self.output_folder+"/"+self.sample_files[iteration]+" --CPU "+str(self.cpu)+" --min_glue 0 --output "+self.output_folder+"/Trinity_run"+str(iteration+1)
+		trinityProcess = subprocess.Popen(str(trinity), shell=True)
+		trinityProcess.wait()
+		print("Trinity iteration "+str(iteration+1)+" Done'")
 
-		def select_reads(self, iteration):
-			print("Selecting reads for Trinity iteration number "+str(iteration+1)+"...")
-			select_reads = "awk '{print $2; print $4}' "+self.output_folder+"/Trinity_run"+str(iteration)+"/chrysalis/readsToComponents.out.sort | sed 's/>/>run1_/g' > "+self.output_folder+"/reads_run"+str(iteration)+".fasta && "
-			select_reads += "cat "+self.output_folder+"/reads_run"+str(iteration)+".fasta >> "+self.output_folder+"/"+self.sample_files[iteration]
-			select_readsProcess = subprocess.Popen(str(select_reads), shell=True)
-			select_readsProcess.wait()
-			print("Done\n")
+	def select_reads(self, iteration):
+		print("Selecting reads for Trinity iteration number "+str(iteration+1)+"...")
+		select_reads = "awk '{print $2; print $4}' "+self.output_folder+"/Trinity_run"+str(iteration)+"/chrysalis/readsToComponents.out.sort | sed 's/>/>run1_/g' > "+self.output_folder+"/reads_run"+str(iteration)+".fasta && "
+		select_reads += "cat "+self.output_folder+"/reads_run"+str(iteration)+".fasta >> "+self.output_folder+"/"+self.sample_files[iteration]
+		select_readsProcess = subprocess.Popen(str(select_reads), shell=True)
+		select_readsProcess.wait()
+		print("Done\n")
 
-		def new_version_correction(self):
-			trinity = self.Trinity_path+" -version"
-			proc = subprocess.Popen(str(trinity), stdout=subprocess.PIPE)
-			out = proc.communicate()[0]
-			year = re.search('\d{4}', out).group(0)
-			if int(year) >= 2014:
-				trinity_correction = "sed -i 's/>c/>comp/g' "+self.output_folder+"/Trinity_run"+str(self.sample_number+1)+"/Trinity.fasta"
-				trinity_correctionProcess = subprocess.Popen(str(trinity_correction), shell=True)
-				trinity_correctionProcess.wait()
+	def new_version_correction(self):
+		trinity = self.Trinity_path+" -version"
+		proc = subprocess.Popen(str(trinity), stdout=subprocess.PIPE)
+		out = proc.communicate()[0]
+		year = re.search('\d{4}', out).group(0)
+		if int(year) >= 2014:
+			trinity_correction = "sed -i 's/>c/>comp/g' "+self.output_folder+"/Trinity_run"+str(self.sample_number+1)+"/Trinity.fasta"
+			trinity_correctionProcess = subprocess.Popen(str(trinity_correction), shell=True)
+			trinity_correctionProcess.wait()
 
-		def renaming_output(self):
-			print("renaming Trinity output...")
-			rename_output = "awk '{print $1}' "+self.output_folder+"/Trinity_run"+str(self.sample_number+1)+"/Trinity.fasta > "+self.output_folder+"/Trinity.fasta"
-			rename_outputProcess = subprocess.Popen(str(rename_output), shell=True)
-			rename_outputProcess.wait()
-			print("done")
+	def renaming_output(self):
+		print("renaming Trinity output...")
+		rename_output = "awk '{print $1}' "+self.output_folder+"/Trinity_run"+str(self.sample_number+1)+"/Trinity.fasta > "+self.output_folder+"/Trinity.fasta"
+		rename_outputProcess = subprocess.Popen(str(rename_output), shell=True)
+		rename_outputProcess.wait()
+		print("done")
 
 
 
