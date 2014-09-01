@@ -112,7 +112,7 @@ class FastqSamplerToFasta:
 			tirages_sample.sort()
 			i = 0
 			while i < len(tirages_sample):
-				self.tirage_samples[i] = ((self.tirage_samples[i]-1) * 4)
+				tirages_sample[i] = ((tirages_sample[i]-1) * 4)
 				i += 1
 			self.tirages.extend(tirages_sample)
 
