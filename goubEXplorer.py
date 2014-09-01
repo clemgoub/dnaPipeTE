@@ -120,16 +120,16 @@ class FastqSamplerToFasta:
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
 		with open(fastq_file, 'r') as fastq_handle :
-			i = 0
+			i = self.number*sample_number
 			j = self.number*sample_number
 			tag = "/s"+str(sample_number)+"_"
 			with open(self.output_folder+tag+self.path_leaf(fastq_file)+".fasta", 'w') as output :
 				for line in fastq_handle :
 					if j < self.number*(sample_number+1) :
 						if self.tirages[j] <= i and i <= (self.tirages[j]+3) :
-							if i  == 1:
+							if i  == self.tirages[j]:
 								output.write(">"+str(j+sample_number*self.number)+"\n")
-							if i == 2:
+							if i == self.tirages[j]+1:
 								output.write(str(line))
 						if i >= (self.tirages[j]+3) :
 							j += 1
