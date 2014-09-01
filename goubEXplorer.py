@@ -368,7 +368,7 @@ class Graph:
 		print("#   see you soon !!!   #")
 		print("########################")
 
-sample_files = FastqSamplerToFasta(args.input, config['DEFAULT']['Sample_size'], config['DEFAULT']['Sample_number'], args.output_folder)
+sample_files = FastqSamplerToFasta(args.input_file, config['DEFAULT']['Sample_size'], config['DEFAULT']['Sample_number'], args.output_folder)
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, config['DEFAULT']['Sample_number'])
 RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder)
