@@ -105,12 +105,12 @@ $RepeatMasker -pa $3 -s -lib $4 $2/Trinity.fasta
 mkdir $2/Annotation
 
 #Parse le fichier Trinity.fasta.out et sort : query_name | perc_align_q | db_name | db_family | perc_align_db
-cat $2/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | \
-awk 'BEGIN {prev_query = ""} {if($5 != prev_query) {{print($5 "\t"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) "\t"$10 "\t" $11 "\t" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > $2/Annotation/one_RM_hit_per_Trinity_contigs
+cat $2/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk '{if ($9=="C") {print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$14"\t"$13"\t"$12"\t"$15} else {print $O}}' | \
+awk 'BEGIN {prev_query = ""} {if($5 != prev_query) {{print($5 "\t" ($7+$8) "\t" ($7-$6)/($7+$8) "\t"$10 "\t" $11 "\t" ($13+$14) "\t [" $12 "-" $13 "]\t"  ($13-$12)/($13+$14))}; prev_query = $5}}' > $2/Annotation/one_RM_hit_per_Trinity_contigs
 
 #Parse le fichier précédent en ne gardant que les match 80%/80% query/db et les match 80% query
-cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print$0}}' > $2/Annotation/Best_RM_annot_80-80
-cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print$0}}' > $2/Annotation/Best_RM_annot_partial
+cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($3>=0.8 && $8>=0.8){print$0}}' > $2/Annotation/Best_RM_annot_80-80
+cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($3>=0.8 && $8<0.8){print$0}}' > $2/Annotation/Best_RM_annot_partial
 
 #cat $2/Trinity.fasta.out | sort -k 5,5 -k 1,1nr | sort -u -k5,5 | awk '{print$5"\t"$10"\t"$11}'> $2/Annotation/#one_RM_hit_per_Trinity_contigs ## Parse le fichier .out de RM et garde le best hit par Trinity contig
 
@@ -127,7 +127,7 @@ cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'SINE' | awk '{print$1}'
 cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'ClassII' | awk '{print$1}' > $2/Annotation/ClassII.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour l'alignement ensuite.
 cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'Low_complexity' | awk '{print$1}' > $2/Annotation/LowComp.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour l'alignement ensuite.
 cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'Simple_repeat' | awk '{print$1}' > $2/Annotation/Simple.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour l'alignement ensuite.
-cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'Satellite' | awk '{print$1}' > $2/Annotation/Simple.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour
+cat $2/Annotation/one_RM_hit_per_Trinity_contigs | grep 'Satellite' | awk '{print$1}' > $2/Annotation/Satellite.headers ### Ã  utiliser pour trier et faire des fichier de grep par catÃ©gorie pour
 # récupère et annote les contigs de Trinity.fasta selon les meilleurs hits RM
 
 perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' $2/Annotation/LTR.headers $2/Trinity.fasta | sed 's/>comp/>LTR_comp/g' > $2/Annotation/LTR_annoted.fasta
@@ -196,7 +196,7 @@ echo 'blast1 done'
 date +"%T"
 echo ''
 
-echo 'Paring blast1 output...'
+echo 'Parsing blast1 output...'
 
 cat $2/blast_out/reads_vs_annoted.blast.out | sort -k1,1 -k12,12nr -k11,11n | sort -u -k1,1 > $2/blast_out/sorted.reads_vs_annoted.blast.out
 
@@ -260,7 +260,7 @@ cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LowComp' >> $2/Cou
 echo "Simple_repeats" >> $2/Counts1.txt
 cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Simple_repeats' >> $2/Counts2.txt
 echo "Tandem_repeats" >> $2/Counts1.txt
-cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_\|Satellite_\|MSAT' >> $2/Counts2.txt
+cat $2/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_\|Satellite_\|MSAT\|\-SAT' >> $2/Counts2.txt
 echo "NAs" >> $2/Counts1.txt
 cat $2/blast_out/sorted.reads_vs_unannoted.blast.out | wc -l >> $2/Counts2.txt
 echo "Total" >> $2/Counts1.txt
@@ -271,29 +271,8 @@ paste $2/Counts1.txt  $2/Counts2.txt > $2/Counts.txt
 echo 'Done'
 date +"%T"
 
-echo 'parsing blastout and adding RM annotations for each read...'
-
-cat $2/blast_out/sorted.reads_vs_annoted.blast.out |  awk '{print $1"\t"$2"\t"$3}' |grep -v 'comp' > blastout_RMonly
-cat $2/blast_out/sorted.reads_vs_annoted.blast.out | sed 's/_comp/\tcomp/g' | awk '{print $1"\t"$3"\t"$4}' | grep 'comp' > join.blastout
-cat join.blastout | sort -k2,2 > join.blastout.sorted
-cat $2/Annotation/one_RM_hit_per_Trinity_contigs | sort -k1,1 > contigsTrinityRM.sorted
-join -a1 -12 -21 join.blastout.sorted contigsTrinityRM.sorted > blast_matching_w_annot_1
-cat blast_matching_w_annot_1 | awk '{print $1 "\t" $2 "\t" $5 "\t" $3}' > blast_matching_w_annot_2
-cat blastout_RMonly | sed 's/#/\t/g' | awk '{print "Repbase-\$2t" $1 "\t" $2 "\t" $4}' > blastout_RMonly_wMSAT
-
-#cat blast_matching_w_annot_1 | awk '{print $1 "\t" $2 "\t" $15 "\t" $3 "\t" $16}' > blast_contigs_1_fmtd
-cat blast_matching_w_annot_2 blastout_RMonly_wMSAT > $2/blast_out/blastout_final_fmtd_annoted
 
 
-rm blastout_RMonly
-rm join.blastout
-rm join.blastout.sorted
-rm contigsTrinityRM.sorted
-rm blast_matching_w_annot_1
-rm blastout_RMonly_wMSAT
-rm blast_contigs_1_fmtd
-
-echo 'Done, results in: "blast_out/blastout_final_fmtd_annoted"'
 
 ###########Building graph of Repeats families###########
                                                        #
@@ -329,6 +308,26 @@ cat $2/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | awk '{print $2"\t"$3}
 
 echo 'Parsing done'
 date +"%T"
+
+echo "Computing reads to contigs (not components) with their annotations"
+
+#extrait les reads qui hit sur les components (blast3) et garde read | comp_c_seq | %id
+cat $2/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | awk '{print $1 "\t"$2"\t"$3}' > $2/reads_to_component
+#les ordonne par component
+cat $2/reads_to_component | sort -k2,2 > $2/reads_to_component.sorted
+cat $2/Annotation/one_RM_hit_per_Trinity_contigs | sort -k1,1 | awk '{ print $1 "\t" $3 "\t" $4 "\t" $5}' | awk '/LINE/ { print $0 "\tLINE"; next} /LTR/ {print $0 "\tLTR"; next} /SINE/ {print $0 "\tSINE"; next} /ClassII/ {print $0 "\tClassII"; next} {print $0 "\tOther"}' | awk '{print $1 "\t" $2 "\t" $3 "\t" $5}' > $2/annotations
+
+join -12 -21 $2/reads_to_component.sorted $2/annotations > rtc_annoted
+
+
+# R #
+Rscript annotation.R
+
+
+mv reads.per.component_annoted $2/blast_out/
+mv rtc_annoted $2/blast_out/
+
+echo 'Done, results in: "blast_out/reads.per.component_annoted"'
 #Drawing graphs 
 
 echo 'Drawing graphs...'

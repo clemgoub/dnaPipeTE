@@ -23,6 +23,8 @@ names(r_id_pc)=c("component","reads","mean_id")
 
 r_id_pc[order(r_id_pc$reads, decreasing=T),]->r_id_pc
 
+write.table(r_id_pc, file="reads_per_component_sorted.txt")
+
 
 #compute components threshold >= 0.01%
 seuil=sum(subset(r_id_pc, r_id_pc$reads>=0.0001*total[1,1])$reads)/total[1,1]

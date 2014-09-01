@@ -11,3 +11,4 @@ RepeatMasker="/panhome/goubert/RepeatMasker/RepeatMasker" # Path to RepeatMasker
 TRF="/panhome/goubert/trf407b.linux64" # Path to Tandem Repeat Finder ex: /usr/local/trf407b.linux64
 Blast_folder="/usr/remote/ncbi-blast-2.2.29+/bin/" # Path to Blast+ suite binaries folder ex: /usr/local/bin/
 Parallel="/panhome/goubert/bin/parallel" # Path to GNU Parallel program
+CD_HIT="/usr/remote/cd-hit-v4.6.1/cd-hit-est" # Path to cd-hit-est program
