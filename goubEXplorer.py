@@ -78,11 +78,11 @@ class FastqSamplerToFasta:
 
 		files = list()
 		for i in range(0, self.sample_number):
-			self.sampling(self, self.fastq_R1, i)
+			self.sampling(self.fastq_R1, i)
 			files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
 		if self.paired:
 			for i in range(0, self.sample_number):
-				self.sampling(self, self.fastq_R2, i)
+				self.sampling(self.fastq_R2, i)
 				files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
 		return(files)
 
