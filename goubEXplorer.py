@@ -188,7 +188,7 @@ class Trinity:
 
 	def renaming_output(self):
 		print("renaming Trinity output...")
-		rename_output = "awk '{print $1}' "+self.output_folder+"/Trinity_run"+str(self.sample_number+1)+"/Trinity.fasta > "+self.output_folder+"/Trinity.fasta"
+		rename_output = "awk '{print $1}' "+self.output_folder+"/Trinity_run"+str(self.sample_number)+"/Trinity.fasta > "+self.output_folder+"/Trinity.fasta"
 		rename_outputProcess = subprocess.Popen(str(rename_output), shell=True)
 		rename_outputProcess.wait()
 		print("done")
