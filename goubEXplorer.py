@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 # -*-coding:Utf-8 -*
 
 #Copyright (C) 2014 Clement Goubert and Laurent Modolo
@@ -66,6 +66,8 @@ class FastqSamplerToFasta:
 		self.number = int(number)
 		self.sample_number = int(sample_number)
 		self.output_folder = output_folder
+		if not os.path.exists(self.output_folder):
+			os.makedirs(self.output_folder)
 		self.fastq_R1 = fastq_files[0]
 		if len(fastq_files) == 1:
 			self.paired = False
