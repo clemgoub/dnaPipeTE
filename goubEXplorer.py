@@ -62,7 +62,7 @@ args = parser.parse_args()
 
 
 class FastqSamplerToFasta:
-	def __init__(self, fastq_files, number, number_of_sample, output_folder):
+	def __init__(self, fastq_files, number, sample_number, output_folder):
 		self.number = int(number)
 		self.sample_number = int(sample_number)
 		self.output_folder = output_folder
