@@ -176,7 +176,7 @@ class Trinity:
 
 	def new_version_correction(self):
 		trinity = self.Trinity_path+" -version"
-		proc = subprocess.Popen(str(trinity), stdout=subprocess.PIPE)
+		proc = subprocess.Popen(str(trinity), shell=True, stdout=subprocess.PIPE)
 		out = proc.communicate()[0]
 		year = re.search('\d{4}', out).group(0)
 		if int(year) >= 2014:
