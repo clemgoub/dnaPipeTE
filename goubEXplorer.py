@@ -25,7 +25,6 @@ import subprocess
 import time
 import sys
 import random
-import argparse
 import ntpath
 
 config = configparser.ConfigParser()
@@ -152,7 +151,6 @@ class Trinity:
 		print("\nGenomic repeats assembly/annotation/quantification pipeline using TRINITY - version 0.1\n")
 		self.trinity_iteration(0)
 		for i in range(1, self.sample_number):
-			self.select_reads(i)
 			self.trinity_iteration(i)
 		self.new_version_correction()
 		self.renaming_output()
@@ -161,10 +159,10 @@ class Trinity:
 		print("###################################")
 		print("### TRINITY to assemble repeats ###")
 		print("###################################\n")
-
 		print("***** TRINITY iteration "+str(iteration+1)+" *****\n")
 		if not os.path.exists(self.output_folder+"/Trinity_run"+str(iteration+1)):
 			os.makedirs(self.output_folder+"/Trinity_run"+str(iteration+1))
+		self.select_reads(iteration)
 		trinity = self.Trinity_path+" --seqType fa --JM "+str(self.Trinity_memory)+" --single "+self.output_folder+"/"+self.sample_files[iteration]+" --CPU "+str(self.cpu)+" --min_glue 0 --output "+self.output_folder+"/Trinity_run"+str(iteration+1)
 		trinityProcess = subprocess.Popen(str(trinity), shell=True)
 		trinityProcess.wait()
