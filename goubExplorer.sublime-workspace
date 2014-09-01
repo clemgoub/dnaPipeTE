@@ -4,8 +4,24 @@
 		"selected_items":
 		[
 			[
-				"sam",
-				"sample_files"
+				"tir",
+				"tirage_sample"
+			],
+			[
+				"Fas",
+				"fastq_R1"
+			],
+			[
+				"file",
+				"file_name"
+			],
+			[
+				"nu",
+				"sample_number"
+			],
+			[
+				"blast1",
+				"blast1_run"
 			],
 			[
 				"Para",
@@ -38,6 +54,10 @@
 			[
 				"Sa",
 				"Sample_number"
+			],
+			[
+				"sam",
+				"sample_number"
 			],
 			[
 				"Tri",
@@ -226,10 +246,6 @@
 			[
 				"fac",
 				"factor"
-			],
-			[
-				"file",
-				"filename"
 			],
 			[
 				"varib",
@@ -498,22 +514,6 @@
 			[
 				"thread",
 				"thread_number"
-			],
-			[
-				"thre",
-				"thread_number"
-			],
-			[
-				"m_log",
-				"m_log_polyN"
-			],
-			[
-				"m_phr",
-				"m_phred"
-			],
-			[
-				"iter",
-				"iteration"
 			]
 		]
 	},
@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 21677,
+				"buffer_size": 22040,
 				"line_ending": "Unix"
 			}
 		},
@@ -805,7 +805,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"self, ",
+			"tirages",
+			"fastq_file",
+			"fastq_files",
+			"get_sampled_id",
+			"self.fastq_R1",
+			"file_name",
+			"count",
+			"$2",
+			"echo",
+			"blast",
+			"$2",
+			"echo",
+			"$Blast_folder",
+			"echo",
 			"&&",
 			"echo",
 			"annoted",
@@ -919,20 +932,7 @@
 			"classes",
 			"KeyError",
 			"0",
-			"\\_align",
-			"_best",
-			"simulation_FDR",
-			"args",
-			"start",
-			"self",
-			"Repetitive-sequence",
-			",",
-			"QC",
-			"8",
-			"bowtie2",
-			".fix",
-			"-n \"+str(args.qfasta)+\".fix.db",
-			"ormatdb -p F -i "
+			"\\_align"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1093,8 +1093,8 @@
 						"selection":
 						[
 							[
-								9686,
-								9909
+								15895,
+								16312
 							]
 						],
 						"settings":
@@ -1143,7 +1143,7 @@
 							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
-								110
+								110.0
 							],
 							"gjslint_options":
 							[
@@ -1169,7 +1169,7 @@
 							],
 							"pyflakes_ignore_import_*": true,
 							"sublimelinter": true,
-							"sublimelinter_delay": 2,
+							"sublimelinter_delay": 2.0,
 							"sublimelinter_disable":
 							[
 							],
@@ -1195,7 +1195,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2573.0,
+						"translation.y": 4482.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 21677,
+						"buffer_size": 22040,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7421,
-								7421
+								6446,
+								6446
 							]
 						],
 						"settings":
@@ -1262,7 +1262,7 @@
 							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
-								110
+								110.0
 							],
 							"gjslint_options":
 							[
@@ -1289,7 +1289,7 @@
 							"pyflakes_ignore_import_*": true,
 							"spell_check": true,
 							"sublimelinter": true,
-							"sublimelinter_delay": 2,
+							"sublimelinter_delay": 2.0,
 							"sublimelinter_disable":
 							[
 							],
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1902.0,
+						"translation.y": 1991.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1381,7 +1381,7 @@
 							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
-								110
+								110.0
 							],
 							"gjslint_options":
 							[
@@ -1407,7 +1407,7 @@
 							],
 							"pyflakes_ignore_import_*": true,
 							"sublimelinter": true,
-							"sublimelinter_delay": 2,
+							"sublimelinter_delay": 2.0,
 							"sublimelinter_disable":
 							[
 							],
@@ -1498,7 +1498,7 @@
 							"enable_checkbounce_spelling": true,
 							"gjslint_ignore":
 							[
-								110
+								110.0
 							],
 							"gjslint_options":
 							[
@@ -1524,7 +1524,7 @@
 							],
 							"pyflakes_ignore_import_*": true,
 							"sublimelinter": true,
-							"sublimelinter_delay": 2,
+							"sublimelinter_delay": 2.0,
 							"sublimelinter_disable":
 							[
 							],
@@ -1831,7 +1831,7 @@
 		[
 			[
 				"",
-				"/home/laurent/Doctora/unilateral multiple testing/unilateral_multiple_testing.sublime-project"
+				"/Users/laurent/Documents/piRNA/piRNA.sublime-project"
 			]
 		],
 		"width": 570.0
