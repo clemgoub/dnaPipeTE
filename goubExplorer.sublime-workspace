@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"Tand",
+				"Tandem_repeats"
+			],
+			[
+				"count",
+				"counts"
+			],
+			[
 				"sampl",
 				"sample_files"
 			],
@@ -308,10 +316,6 @@
 				"end_plus"
 			],
 			[
-				"count",
-				"count_RepBase"
-			],
-			[
 				"gz",
 				"gzip"
 			],
@@ -510,10 +514,6 @@
 			[
 				"outpu",
 				"output_handle"
-			],
-			[
-				"ping",
-				"pingPong"
 			]
 		]
 	},
@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 25841,
+				"buffer_size": 25938,
 				"line_ending": "Unix"
 			}
 		},
@@ -1195,7 +1195,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3592.0,
+						"translation.y": 3630.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 25841,
+						"buffer_size": 25938,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1759,
-								1759
+								13700,
+								13700
 							]
 						],
 						"settings":
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3491.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
