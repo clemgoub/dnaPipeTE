@@ -250,6 +250,8 @@ class Blast:
 		self.count()
 
 	def blast1_run(self):
+		if not os.path.exists(self.output_folder+"/blast_out"):
+			os.makedirs(self.output_folder+"/blast_out")
 		print("#######################################################")
 		print("### Blast 1 : raw reads against all repeats contigs ###")
 		print("#######################################################")
@@ -287,6 +289,8 @@ class Blast:
 		blastProcess.wait()
 
 	def blast3_run(self):
+		if not os.path.exists(self.output_folder+"/blast_out"):
+			os.makedirs(self.output_folder+"/blast_out")
 		print("#####################################################")
 		print("### Blast 3 : raw reads against unannoted repeats ###")
 		print("#####################################################")
