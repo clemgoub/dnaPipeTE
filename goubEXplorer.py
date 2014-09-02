@@ -240,6 +240,7 @@ class RepeatMasker:
 		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
 		bestHit = "cat "+self.output_folder+"/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk '{if ($9==\"C\") {print $1\"\\t\"$2\"\\t\"$3\"\\t\"$4\"\\t\"$5\"\\t\"$6\"\\t\"$7\"\\t\"$8\"\\t\"$9\"\\t\"$10\"\\t\"$11\"\\t\"$14\"\\t\"$13\"\\t\"$12\"\\t\"$15} else {print $O}}' | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\" ($7+$8) \"\\t\" ($7-$6)/($7+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" ($13+$14) \"\\t [\" $12 \"-\" $13 \"]\\t\" ($13-$12)/($13+$14))}; prev_query = $5}}' > "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs"
+		print(bestHit)
 		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print $0}}' > "+self.output_folder+"/Annotation/Best_RM_annot_80-80 && "
 		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print $0}}' > "+self.output_folder+"/Annotation/Best_RM_annot_partial"
 		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
