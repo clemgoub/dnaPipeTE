@@ -370,9 +370,8 @@ class Blast:
 		print("#######################################################")
 		print("### Estimation of Repeat content from blast outputs ###")
 		print("#######################################################")
-		count = "rm "+self.output_folder+"/Count*.txt"
 		print("LTR >> "+self.output_folder+"/Counts1.tx")
-		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LTR' >> "+self.output_folder+"/Counts2.txt && "
+		count = "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LTR' >> "+self.output_folder+"/Counts2.txt && "
 		print("LINE >> "+self.output_folder+"/Counts1.tx")
 		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LINE' >> "+self.output_folder+"/Counts2.txt && "
 		print("SINE >> "+self.output_folder+"/Counts1.tx")
