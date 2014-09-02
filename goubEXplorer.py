@@ -239,9 +239,9 @@ class RepeatMasker:
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
-		bestHit = "cat "+self.output_folder+"/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs && "
-		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print$0}}' > "+self.output_folder+"/Annotation/Best_RM_annot_80-80 && "
-		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print$0}}' > "+self.output_folder+"/Annotation/Best_RM_annot_partial"
+		bestHit = "cat "+self.output_folder+"/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk '{if ($9==\"C\") {print $1\"\\t\"$2\"\\t\"$3\"\\t\"$4\"\\t\"$5\"\\t\"$6\"\\t\"$7\"\\t\"$8\"\\t\"$9\"\\t\"$10\"\\t\"$11\"\\t\"$14\"\\t\"$13\"\\t\"$12\"\\t\"$15} else {print $O}}' | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\" ($7+$8) \"\\t\" ($7-$6)/($7+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" ($13+$14) \"\\t [\" $12 \"-\" $13 \"]\\t\" ($13-$12)/($13+$14))}; prev_query = $5}}' > "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs"
+		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print $0}}' > "+self.output_folder+"/Annotation/Best_RM_annot_80-80 && "
+		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print $0}}' > "+self.output_folder+"/Annotation/Best_RM_annot_partial"
 		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
 		bestHitProcess.wait()
 		print("Done")
@@ -265,7 +265,7 @@ class RepeatMasker:
 		print("Done\n")
 
 	def test_RepeatMasker(self):
-		files = [self.output_folder+"/Trinity.fasta.out", 
+		files = [self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 
 			self.output_folder+"/Annotation/Best_RM_annot_80-80", 
 			self.output_folder+"/Annotation/Best_RM_annot_partial",
 			self.output_folder+"/Annotation/unannoted.fasta",
@@ -276,7 +276,6 @@ class RepeatMasker:
 		repeatmasker_done = True
 		for output in files:
 			if not os.path.isfile(output):
-				print("file not found "+output)
 				repeatmasker_done = False
 		if repeatmasker_done:
 			print("RepeatMasker files found, skipping Repeatmasker...")
@@ -323,7 +322,7 @@ class Blast:
 		print("### Blast 2 : raw reads against annoted repeats ###")
 		print("###################################################")
 		print("blasting...")
-		blast = "ln -s "+self.output_folder+"/Annotation/annoted.fasta "+self.output_folder+"/blast_out/blast2_db.fasta && "
+		blast = "ln -sf "+self.output_folder+"/Annotation/annoted.fasta "+self.output_folder+"/blast_out/blast2_db.fasta && "
 		blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/blast_out/blast2_db.fasta -out "+self.output_folder+"/blast_out/blast2_db.fasta -dbtype 'nucl' && "
 		blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/blast_out/blast2_db.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out"
 		blastProcess = subprocess.Popen(str(blast), shell=True)
