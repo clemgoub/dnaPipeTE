@@ -276,6 +276,7 @@ class RepeatMasker:
 		repeatmasker_done = True
 		for output in files:
 			if not os.path.isfile(output):
+				print(output)
 				repeatmasker_done = False
 		if repeatmasker_done:
 			print("RepeatMasker files found, skipping Repeatmasker...")
