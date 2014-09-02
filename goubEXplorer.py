@@ -295,63 +295,72 @@ class Blast:
 		self.count()
 
 	def blast1_run(self):
-		if not os.path.exists(self.output_folder+"/blast_out"):
-			os.makedirs(self.output_folder+"/blast_out")
 		print("#######################################################")
 		print("### Blast 1 : raw reads against all repeats contigs ###")
 		print("#######################################################")
-		print("blasting...")
-		blast = "cat "
-		for i in range(0,self.sample_number):
-			blast += self.output_folder+"/"+self.sample_files[i]+" "
-		blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
-		blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
-		blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
-		blastProcess = subprocess.Popen(str(blast), shell=True)
-		blastProcess.wait()
-		print("Paring blast1 output...")
-		blast = "cat "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out | sort -k1,1 -k12,12nr -k11,11n | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out && "
-		blast += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | awk '{print $2\"\\t\"$3}' | sed 's/_/\t/g' > "+self.output_folder+"/Reads_to_components_Rtable.txt"
-		blastProcess = subprocess.Popen(str(blast), shell=True)
-		blastProcess.wait()
+		if not os.path.isfile(self.output_folder+"/Reads_to_components_Rtable.txt") or not os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out"):
+			if not os.path.exists(self.output_folder+"/blast_out"):
+				os.makedirs(self.output_folder+"/blast_out")
+			print("blasting...")
+			blast = "cat "
+			for i in range(0,self.sample_number):
+				blast += self.output_folder+"/"+self.sample_files[i]+" "
+			blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
+			blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
+			blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
+			blastProcess = subprocess.Popen(str(blast), shell=True)
+			blastProcess.wait()
+			print("Paring blast1 output...")
+			blast = "cat "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out | sort -k1,1 -k12,12nr -k11,11n | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out && "
+			blast += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | awk '{print $2\"\\t\"$3}' | sed 's/_/\t/g' > "+self.output_folder+"/Reads_to_components_Rtable.txt"
+			blastProcess = subprocess.Popen(str(blast), shell=True)
+			blastProcess.wait()
+		else:
+			print("Blast 1 files found, skipping Blast 1 ...")
 
 	def blast2_run(self):
-		if not os.path.exists(self.output_folder+"/blast_out"):
-			os.makedirs(self.output_folder+"/blast_out")
 		print("###################################################")
 		print("### Blast 2 : raw reads against annoted repeats ###")
 		print("###################################################")
-		print("blasting...")
-		blast = "ln -sf "+self.output_folder+"/Annotation/annoted.fasta "+self.output_folder+"/blast_out/blast2_db.fasta && "
-		blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/blast_out/blast2_db.fasta -out "+self.output_folder+"/blast_out/blast2_db.fasta -dbtype 'nucl' && "
-		blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/blast_out/blast2_db.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out"
-		blastProcess = subprocess.Popen(str(blast), shell=True)
-		blastProcess.wait()
-		print("Paring blast2 output...")
-		blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out"
-		blastProcess = subprocess.Popen(str(blast), shell=True)
-		blastProcess.wait()
-		print("Selecting non-matching reads for blast3")
-		blast = "awk '{print$1}' "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/matching_reads.headers && "
-		blast += "perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/blast_out/matching_reads.headers "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_out/unmatching_reads1.fasta"
-		blastProcess = subprocess.Popen(str(blast), shell=True)
-		blastProcess.wait()
+		if not os.path.isfile(self.output_folder+"/matching_reads.headers") or not os.path.isfile(self.output_folder+"/blast_out/unmatching_reads1.fasta"):
+			if not os.path.exists(self.output_folder+"/blast_out"):
+				os.makedirs(self.output_folder+"/blast_out")
+			print("blasting...")
+			blast = "cp -f "+self.output_folder+"/Annotation/annoted.fasta "+self.output_folder+"/blast_out/blast2_db.fasta && "
+			blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/blast_out/blast2_db.fasta -out "+self.output_folder+"/blast_out/blast2_db.fasta -dbtype 'nucl' && "
+			blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/blast_out/blast2_db.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out"
+			blastProcess = subprocess.Popen(str(blast), shell=True)
+			blastProcess.wait()
+			print("Paring blast2 output...")
+			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out"
+			blastProcess = subprocess.Popen(str(blast), shell=True)
+			blastProcess.wait()
+			print("Selecting non-matching reads for blast3")
+			blast = "awk '{print$1}' "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/matching_reads.headers && "
+			blast += "perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/blast_out/matching_reads.headers "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_out/unmatching_reads1.fasta"
+			blastProcess = subprocess.Popen(str(blast), shell=True)
+			blastProcess.wait()
+		else:
+			print("Blast 2 files found, skipping Blast 2 ...")
 
 	def blast3_run(self):
-		if not os.path.exists(self.output_folder+"/blast_out"):
-			os.makedirs(self.output_folder+"/blast_out")
 		print("#####################################################")
 		print("### Blast 3 : raw reads against unannoted repeats ###")
 		print("#####################################################")
-		print("blasting...")
-		blast = self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Annotation/unannoted_final.fasta -out "+self.output_folder+"/blast_out/blast3_db.fasta -dbtype 'nucl' && "
-		blast += "cat "+self.output_folder+"/blast_out/unmatching_reads1.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/blast_out/blast3_db.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out"
-		blastProcess = subprocess.Popen(str(blast), shell=True)
-		blastProcess.wait()
-		print("Paring blast3 output...")
-		blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out"
-		blastProcess = subprocess.Popen(str(blast), shell=True)
-		blastProcess.wait()
+		if not os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out"):
+			if not os.path.exists(self.output_folder+"/blast_out"):
+				os.makedirs(self.output_folder+"/blast_out")
+			print("blasting...")
+			blast = self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Annotation/unannoted_final.fasta -out "+self.output_folder+"/blast_out/blast3_db.fasta -dbtype 'nucl' && "
+			blast += "cat "+self.output_folder+"/blast_out/unmatching_reads1.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/blast_out/blast3_db.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out"
+			blastProcess = subprocess.Popen(str(blast), shell=True)
+			blastProcess.wait()
+			print("Paring blast3 output...")
+			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out"
+			blastProcess = subprocess.Popen(str(blast), shell=True)
+			blastProcess.wait()
+		else:
+			print("Blast 3 files found, skipping Blast 3 ...")
 
 	def count(self):
 		print("#######################################################")
