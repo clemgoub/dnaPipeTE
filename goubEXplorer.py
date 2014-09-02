@@ -226,8 +226,9 @@ class RepeatMasker:
 		self.RM_library = str(RM_library)
 		self.cpu =  int(cpu)
 		self.output_folder = str(output_folder)
-		self.repeatmasker_run()
-		self.contig_annotation()
+		if not self.test_RepeatMasker():
+			self.repeatmasker_run()
+			self.contig_annotation()
 
 	def repeatmasker_run(self):
 		print("#######################################")
@@ -262,6 +263,23 @@ class RepeatMasker:
 		annotationProcess = subprocess.Popen(str(annotation), shell=True)
 		annotationProcess.wait()
 		print("Done\n")
+
+	def test_RepeatMasker(self):
+		files = [self.output_folder+"/Trinity.fasta.out", 
+			self.output_folder+"/Annotation/Best_RM_annot_80-80", 
+			self.output_folder+"/Annotation/Best_RM_annot_partial",
+			self.output_folder+"/Annotation/all_annoted.head",
+			self.output_folder+"/Annotation/annoted.fasta"]
+		for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_complexity", "Simple_repeat"]:
+			files.append(self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta")
+			files.append(self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta")
+		repeatmasker_done = True
+		for output in files:
+			if not os.path.isfile(output):
+				repeatmasker_done = False
+		if repeatmasker_done:
+			print("RepeatMasker files found, skipping Repeatmasker...")
+		return repeatmasker_done
 
 class Blast:
 	def __init__(self, Blast_path, Parallel_path, cpu, output_folder, sample_number):
