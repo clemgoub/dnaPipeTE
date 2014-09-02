@@ -73,15 +73,16 @@ class FastqSamplerToFasta:
 		else:
 			self.fastq_R1 = fastq_files[1]
 		self.files = list()
-		self.get_sampled_id(self.fastq_R1)
-		print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
-		for i in range(0, self.sample_number):
-			self.sampling(self.fastq_R1, i)
-			self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
-		if self.paired:
+		if not self.test_sampling():
+			self.get_sampled_id(self.fastq_R1)
+			print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
 			for i in range(0, self.sample_number):
-				self.sampling(self.fastq_R2, i)
-				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
+				self.sampling(self.fastq_R1, i)
+				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
+			if self.paired:
+				for i in range(0, self.sample_number):
+					self.sampling(self.fastq_R2, i)
+					self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
 	
 	def result(self):
 		return(self.files)
@@ -98,14 +99,11 @@ class FastqSamplerToFasta:
 		sys.stdout.flush()
 		with open(file_name, 'r') as file1 :
 			np = sum(1 for line in file1)
-
 		np = int((np) / 4)
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
-
 		population = range(1,np)
 		tirages = random.sample(population, self.number*self.sample_number)
-
 		for j in range(0, self.sample_number):
 			tirages_sample = tirages[self.number*j:self.number*(j+1)]
 			tirages_sample.sort()
@@ -140,6 +138,26 @@ class FastqSamplerToFasta:
 						break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+" done.\n")
 
+	def test_sampling(self):
+		sampling_done = True
+		for sample_number in range(0, self.sample_number):
+			tag = "/s"+str(sample_number)+"_"
+			if not os.path.isfile(self.output_folder+tag+self.path_leaf(self.fastq_R1)+".fasta"):
+				sampling_done = False
+			if self.paired:
+				if not os.path.isfile(self.output_folder+tag+self.path_leaf(self.fastq_R2)+".fasta"):
+					sampling_done = False
+		for i in range(0, self.sample_number):
+			self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
+		if self.paired:
+			for i in range(0, self.sample_number):
+				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
+		if sampling_done:
+			print("sampling file found, skipping sampling...")
+		else:
+			self.files = list()
+		return sampling_done
+
 class Trinity:
 	def __init__(self, Trinity_path, Trinity_memory, cpu, output_folder, sample_files, sample_number):
 		self.Trinity_path = str(Trinity_path)
@@ -149,11 +167,12 @@ class Trinity:
 		self.sample_files = sample_files
 		self.sample_number = int(sample_number)
 		print("\nGenomic repeats assembly/annotation/quantification pipeline using TRINITY - version 0.1\n")
-		self.trinity_iteration(0)
-		for i in range(1, self.sample_number):
-			self.trinity_iteration(i)
-		self.new_version_correction()
-		self.renaming_output()
+		if not self.test_trinnity():
+			self.trinity_iteration(0)
+			for i in range(1, self.sample_number):
+				self.trinity_iteration(i)
+			self.new_version_correction()
+			self.renaming_output()
 
 	def trinity_iteration(self, iteration):
 		print("###################################")
@@ -193,7 +212,13 @@ class Trinity:
 		rename_outputProcess.wait()
 		print("done")
 
-
+	def test_trinnity(self):
+		trinnity_done = True
+		if not os.path.isfile(self.output_folder+"/Trinity.fasta"):
+			trinnity_done = False
+		if trinnity_done:
+			print("Trinity files found, skipping assembly...")
+		return trinnity_done
 
 class RepeatMasker:
 	def __init__(self, RepeatMasker_path, RM_library, cpu, output_folder):
