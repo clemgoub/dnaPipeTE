@@ -268,7 +268,7 @@ class RepeatMasker:
 		files = [self.output_folder+"/Trinity.fasta.out", 
 			self.output_folder+"/Annotation/Best_RM_annot_80-80", 
 			self.output_folder+"/Annotation/Best_RM_annot_partial",
-			self.output_folder+"/Annotation/all_annoted.head",
+			self.output_folder+"/Annotation/unannoted.fasta",
 			self.output_folder+"/Annotation/annoted.fasta"]
 		for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_complexity", "Simple_repeat"]:
 			files.append(self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta")
@@ -303,7 +303,7 @@ class Blast:
 		print("blasting...")
 		blast = "cat "
 		for i in range(0,self.sample_number):
-			blast = self.output_folder+"/"+self.sample_files[i]+" "
+			blast += self.output_folder+"/"+self.sample_files[i]+" "
 		blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
 		blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
 		blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
