@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 25766,
+				"buffer_size": 25841,
 				"line_ending": "Unix"
 			}
 		},
@@ -805,6 +805,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"\\",
+			"print",
+			"tx\"",
+			"Counts.txt",
 			"blast_reads.counts",
 			"Count*.txtca",
 			"join.blastout",
@@ -928,11 +932,7 @@
 			"DNAREP1",
 			"DMR",
 			"DMRP1",
-			"CR1",
-			"CR1_1",
-			"Copia",
-			"Copia_1",
-			"Chimpo"
+			"CR1"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -940,6 +940,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"\\\\",
 			"\"+self.output_folder+\"",
 			"unknown",
 			"\\t",
@@ -1066,8 +1067,7 @@
 			"\\1\\tHET-A\\tJockey\\tnon-LTR-Retrotransposon",
 			"\\1\\tHELENA\\tJockey\\tnon-LTR-Retrotransposon",
 			"\\1\\tGYPSY9\\tGypsy\\tLTR-Retrotransposon",
-			"\\1\\tGYPSY8\\tGypsy\\tLTR-Retrotransposon",
-			"\\1\\tGYPSY7\\tGypsy\\tLTR-Retrotransposon"
+			"\\1\\tGYPSY8\\tGypsy\\tLTR-Retrotransposon"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -1093,8 +1093,8 @@
 						"selection":
 						[
 							[
-								1465,
-								1533
+								12124,
+								12153
 							]
 						],
 						"settings":
@@ -1195,7 +1195,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 218.0,
+						"translation.y": 3592.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 25766,
+						"buffer_size": 25841,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								17397,
-								17430
+								1759,
+								1759
 							]
 						],
 						"settings":
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4516.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
