@@ -282,12 +282,13 @@ class RepeatMasker:
 		return repeatmasker_done
 
 class Blast:
-	def __init__(self, Blast_path, Parallel_path, cpu, output_folder, sample_number):
+	def __init__(self, Blast_path, Parallel_path, cpu, output_folder, sample_number, sample_files):
 		self.Blast_path = str(Blast_path)
 		self.Parallel_path = str(Parallel_path)
 		self.cpu =  int(cpu)
 		self.output_folder = str(output_folder)
 		self.sample_number = int(sample_number)
+		self.sample_files = sample_files
 		self.blast1_run()
 		self.blast2_run()
 		self.blast3_run()
@@ -302,7 +303,7 @@ class Blast:
 		print("blasting...")
 		blast = "cat "
 		for i in range(0,self.sample_number):
-			blast = self.output_folder+"/reads_run"+str(i)+".fasta "
+			blast = self.output_folder+"/"+self.sample_files[i]+" "
 		blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
 		blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
 		blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
@@ -428,5 +429,5 @@ Sampler = FastqSamplerToFasta(args.input_file, config['DEFAULT']['Sample_size'],
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, config['DEFAULT']['Sample_number'])
 RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
-Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, config['DEFAULT']['Sample_number'])
+Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, config['DEFAULT']['Sample_number'], sample_files)
 Graph(args.output_folder)
