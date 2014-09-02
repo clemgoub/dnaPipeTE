@@ -264,11 +264,12 @@ class RepeatMasker:
 		print("Done\n")
 
 class Blast:
-	def __init__(self, Blast_path, Parallel_path, cpu, output_folder):
+	def __init__(self, Blast_path, Parallel_path, cpu, output_folder, sample_number):
 		self.Blast_path = str(Blast_path)
 		self.Parallel_path = str(Parallel_path)
 		self.cpu =  int(cpu)
 		self.output_folder = str(output_folder)
+		self.sample_number = int(sample_number)
 		self.blast1_run()
 		self.blast2_run()
 		self.blast3_run()
@@ -281,7 +282,11 @@ class Blast:
 		print("### Blast 1 : raw reads against all repeats contigs ###")
 		print("#######################################################")
 		print("blasting...")
-		blast = self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
+		blast = "cat "
+		for i in range(0,self.sample_number):
+			blast = self.output_folder+"/reads_run"+str(i)+".fasta "
+		blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
+		blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
 		blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
 		blastProcess = subprocess.Popen(str(blast), shell=True)
 		blastProcess.wait()
