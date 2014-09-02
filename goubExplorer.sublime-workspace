@@ -4,6 +4,46 @@
 		"selected_items":
 		[
 			[
+				"sampl",
+				"sample_files"
+			],
+			[
+				"sample",
+				"sample_files"
+			],
+			[
+				"test",
+				"test_RepeatMasker"
+			],
+			[
+				"repeat",
+				"repeatmasker"
+			],
+			[
+				"Repea",
+				"RepeatMasker"
+			],
+			[
+				"samp",
+				"sample_number"
+			],
+			[
+				"assem",
+				"assembly"
+			],
+			[
+				"saml",
+				"sample_number"
+			],
+			[
+				"pa",
+				"paired"
+			],
+			[
+				"fast",
+				"fastq_R1"
+			],
+			[
 				"tir",
 				"tirage_sample"
 			],
@@ -46,10 +86,6 @@
 			[
 				"se",
 				"select_reads"
-			],
-			[
-				"sample",
-				"sample_number"
 			],
 			[
 				"Sa",
@@ -100,19 +136,11 @@
 				"RepeatMasker_path"
 			],
 			[
-				"sampl",
-				"sample_number"
-			],
-			[
 				"Trinity",
 				"Trinity_path"
 			],
 			[
 				"fastq",
-				"fastq_files"
-			],
-			[
-				"fast",
 				"fastq_files"
 			],
 			[
@@ -486,34 +514,6 @@
 			[
 				"ping",
 				"pingPong"
-			],
-			[
-				"Pir",
-				"piRNAs"
-			],
-			[
-				"reads",
-				"reads_complement"
-			],
-			[
-				"rea",
-				"reads_complement"
-			],
-			[
-				"pi",
-				"piRNA"
-			],
-			[
-				"output",
-				"output_folder"
-			],
-			[
-				"m_st",
-				"m_start"
-			],
-			[
-				"thread",
-				"thread_number"
 			]
 		]
 	},
@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 22446,
+				"buffer_size": 25766,
 				"line_ending": "Unix"
 			}
 		},
@@ -805,6 +805,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"blast_reads.counts",
+			"Count*.txtca",
+			"join.blastout",
+			"blastout_RMonly",
+			"unannoted_final.fasta",
+			"matching_reads.headers",
+			"renamed.blasting_reads.fasta",
+			"blast2_db",
+			"one_RM_hit_per_Trinity_contigs",
+			"blast2_db",
+			"trinnity_done",
+			"renamed.blasting_reads.fasta",
+			"sampling_done",
+			"sample_number",
 			"tag",
 			"$2",
 			"\")\n",
@@ -918,21 +932,7 @@
 			"CR1_1",
 			"Copia",
 			"Copia_1",
-			"Chimpo",
-			"BURDOCK",
-			"BLOOD",
-			"\"w\"",
-			"\"unknown\"",
-			"\", ",
-			" \"unknown\",",
-			"\"unknown\"",
-			"RossetteCorrection",
-			"correction",
-			"current_query",
-			"previous",
-			"previous_pos",
-			"TEname",
-			"rosette_handle"
+			"Chimpo"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1093,8 +1093,8 @@
 						"selection":
 						[
 							[
-								15895,
-								16312
+								1465,
+								1533
 							]
 						],
 						"settings":
@@ -1195,7 +1195,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 4482.0,
+						"translation.y": 218.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 22446,
+						"buffer_size": 25766,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5653,
-								5653
+								17397,
+								17430
 							]
 						],
 						"settings":
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1339.0,
+						"translation.y": 4516.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
