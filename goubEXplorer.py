@@ -322,7 +322,7 @@ class Blast:
 		print("###################################################")
 		print("### Blast 2 : raw reads against annoted repeats ###")
 		print("###################################################")
-		if not os.path.isfile(self.output_folder+"/matching_reads.headers") or not os.path.isfile(self.output_folder+"/blast_out/unmatching_reads1.fasta"):
+		if not os.path.isfile(self.output_folder+"/blast_out/unmatching_reads1.fasta"):
 			if not os.path.exists(self.output_folder+"/blast_out"):
 				os.makedirs(self.output_folder+"/blast_out")
 			print("blasting...")
@@ -351,7 +351,11 @@ class Blast:
 			if not os.path.exists(self.output_folder+"/blast_out"):
 				os.makedirs(self.output_folder+"/blast_out")
 			print("blasting...")
-			blast = self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Annotation/unannoted_final.fasta -out "+self.output_folder+"/blast_out/blast3_db.fasta -dbtype 'nucl' && "
+			blast = ""
+			if os.path.isfile(self.output_folder+"/Annotation/unannoted_final.fasta"):
+				blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Annotation/unannoted_final.fasta -out "+self.output_folder+"/blast_out/blast3_db.fasta -dbtype 'nucl' && "
+			else:
+				blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Annotation/unannoted.fasta -out "+self.output_folder+"/blast_out/blast3_db.fasta -dbtype 'nucl' && "
 			blast += "cat "+self.output_folder+"/blast_out/unmatching_reads1.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/blast_out/blast3_db.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out"
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
