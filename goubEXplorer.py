@@ -213,9 +213,9 @@ class RepeatMasker:
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
-		bestHit = "cat $2/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > $2/Annotation/one_RM_hit_per_Trinity_contigs && "
-		bestHit += "cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print$0}}' > $2/Annotation/Best_RM_annot_80-80 && "
-		bestHit += "cat $2/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print$0}}' > $2/Annotation/Best_RM_annot_partial"
+		bestHit = "cat "+self.output_folder+"/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\"  sqrt(($7-$6)*($7-$6))/(sqrt(($7-$6)*($7-$6))+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" sqrt(($13-$12)*($13-$12))/(sqrt(($13-$12)*($13-$12))+$14))}; prev_query = $5}}' > "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs && "
+		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5>=0.8){print$0}}' > "+self.output_folder+"/Annotation/Best_RM_annot_80-80 && "
+		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{if($2>=0.8 && $5<0.8){print$0}}' > "+self.output_folder+"/Annotation/Best_RM_annot_partial"
 		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
 		bestHitProcess.wait()
 		print("Done")
@@ -255,7 +255,7 @@ class Blast:
 		print("#######################################################")
 		print("blasting...")
 		blast = self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
-		blast += "cat $2/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
+		blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
 		blastProcess = subprocess.Popen(str(blast), shell=True)
 		blastProcess.wait()
 		print("Paring blast1 output...")
