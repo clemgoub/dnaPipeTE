@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 22036,
+				"buffer_size": 22446,
 				"line_ending": "Unix"
 			}
 		},
@@ -795,7 +795,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 		]
@@ -805,6 +805,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"tag",
+			"$2",
+			"\")\n",
+			"$2",
 			"tirages",
 			"fastq_file",
 			"fastq_files",
@@ -928,11 +932,7 @@
 			"previous",
 			"previous_pos",
 			"TEname",
-			"rosette_handle",
-			"classes",
-			"KeyError",
-			"0",
-			"\\_align"
+			"rosette_handle"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -940,6 +940,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"\"+self.output_folder+\"",
 			"unknown",
 			"\\t",
 			"\"+args.TEdirectory+\"/",
@@ -1066,8 +1067,7 @@
 			"\\1\\tHELENA\\tJockey\\tnon-LTR-Retrotransposon",
 			"\\1\\tGYPSY9\\tGypsy\\tLTR-Retrotransposon",
 			"\\1\\tGYPSY8\\tGypsy\\tLTR-Retrotransposon",
-			"\\1\\tGYPSY7\\tGypsy\\tLTR-Retrotransposon",
-			"\\1\\tGYPSY6\\tGypsy\\tLTR-Retrotransposon"
+			"\\1\\tGYPSY7\\tGypsy\\tLTR-Retrotransposon"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 22036,
+						"buffer_size": 22446,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7957,
-								7957
+								5653,
+								5653
 							]
 						],
 						"settings":
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2493.0,
+						"translation.y": 1339.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1597,7 +1597,7 @@
 	},
 	"replace":
 	{
-		"height": 130.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
