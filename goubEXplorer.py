@@ -309,6 +309,7 @@ class Blast:
 			for i in range(0,self.sample_number):
 				blast += self.output_folder+"/"+self.sample_files[i]+" "
 			blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
+			blast += "grep -c '>' "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_reads.counts && "
 			blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
 			blast += "cat "+self.output_folder+"/renamed.blasting_reads.fasta | "+self.Parallel_path+" -j "+str(self.cpu)+" --block 100k --recstart '>' --pipe "+self.Blast_path+"/blastn -outfmt 6 -task dc-megablast -db "+self.output_folder+"/Trinity.fasta -query - > "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out"
 			blastProcess = subprocess.Popen(str(blast), shell=True)
