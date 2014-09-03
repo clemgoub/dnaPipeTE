@@ -395,7 +395,7 @@ class Blast:
 			else:
 				counts1_file.write("Others\t0\n")
 			with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
-				line = counts2_file
+				line = counts2_file.readline()
 				counts1_file.write("Total\t"+str(line)+"\n")
 		print("parsing blastout and adding RM annotations for each read...")
 		count = "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out |  awk '{print $1\"\\t\"$2\"\\t\"$3}' |grep -v 'comp' > "+self.output_folder+"/blastout_RMonly && "
