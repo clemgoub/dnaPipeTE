@@ -394,7 +394,7 @@ class Blast:
 				counts1_file.write("Others\t"+str(count["comp"])+"\n")
 			else:
 				counts1_file.write("Others\t0\n")
-			with open(self.output_folder+"/blast_reads.counts", "w") as counts2_file:
+			with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
 				line = counts2_file
 				counts1_file.write("Total\t"+str(line)+"\n")
 		print("parsing blastout and adding RM annotations for each read...")
@@ -427,8 +427,7 @@ class Graph:
 		print("### OK, lets build some pretty graphs ###")
 		print("#########################################")
 		print("Drawing graphs...")
-		graph = "grep -c '>' "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_reads.counts && "
-		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Counts.txt&& "
+		graph = os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Counts.txt && "
 		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts && "
 		graph += "rm single.fa.read_count && "
 		graphProcess = subprocess.Popen(str(graph), shell=True)
