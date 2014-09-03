@@ -1,3 +1,4 @@
+#!/usr/bin/Rscript
 #############################
 # Plot TE classes pie chart #
 #############################

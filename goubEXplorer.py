@@ -436,8 +436,8 @@ class Graph:
 		print("#########################################")
 		print("Drawing graphs...")
 		graph = "grep -c '>' "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_reads.counts && "
-		graph += "Rscript graph.R "+self.output_folder+" Counts.txt&& "
-		graph += "Rscript pieChart.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts && "
+		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Counts.txt&& "
+		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts && "
 		graph += "rm single.fa.read_count && "
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
