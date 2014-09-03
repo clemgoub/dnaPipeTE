@@ -3,10 +3,13 @@
 ###############################################
 
 
-read.table("Reads_to_components_Rtable.txt")->reads.to.comp
+Args = commandArgs()
+folder = read.table(Args[6])
+file1 = read.table(Args[7])
+file2 = read.table(Args[8])
+reads.to.comp = read.table(paste(folder,file1,sep="/"))
 names(reads.to.comp)=c("comp","contig","seq","identity")
-read.table("blast_reads.counts")->total
-
+total = read.table(paste(folder,file2,sep="/"))
 
 #reads per component
 tapply(reads.to.comp$comp,reads.to.comp$comp,length)->rpc
@@ -23,7 +26,7 @@ names(r_id_pc)=c("component","reads","mean_id")
 
 r_id_pc[order(r_id_pc$reads, decreasing=T),]->r_id_pc
 
-write.table(r_id_pc, file="reads_per_component_sorted.txt")
+write.table(r_id_pc, file=paste(folder,"reads_per_component_sorted.txt",sep="/"))
 
 
 #compute components threshold >= 0.01%
@@ -31,7 +34,7 @@ seuil=sum(subset(r_id_pc, r_id_pc$reads>=0.0001*total[1,1])$reads)/total[1,1]
 
 #graphs 
 
-pdf(file="Reads_to_components.pdf")
+pdf(file=paste(folder,"Reads_to_components.pdf",sep="/"))
 barplot(r_id_pc$reads, r_id_pc$reads/total[1,1], xlim=c(0,1), ylim=c(0,max(r_id_pc$reads)+1000),xaxt='n', ylab="reads per component", xlab="genome proportion")
 segments(0,0,1,0)
 axis(1,c(0,0.25,0.5,0.75,1))
@@ -42,7 +45,7 @@ axis(1,signif(sum(r_id_pc$reads/total[1,1]),3))
 legend(0.75,max(r_id_pc$reads)*2/3, legend=c("repeats","rep < 0.01 %","single"),fill=c("#FF000024","#FF000014","#00FF0020"), bg="white")
 dev.off()
 
-png(file="Reads_to_components.png", width=800, height=600)
+png(file=paste(folder,"Reads_to_components.png",sep="/), width=800, height=600)
 barplot(r_id_pc$reads, r_id_pc$reads/total[1,1], xlim=c(0,1), ylim=c(0,max(r_id_pc$reads)+1000),xaxt='n', ylab="reads per component", xlab="genome proportion")
 segments(0,0,1,0)
 axis(1,c(0,0.25,0.5,0.75,1))
