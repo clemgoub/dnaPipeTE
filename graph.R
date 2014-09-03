@@ -1,3 +1,4 @@
+#!/usr/bin/Rscript
 ###############################################
 # This script draws the reads/component graph #
 ###############################################

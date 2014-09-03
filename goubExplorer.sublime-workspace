@@ -1086,7 +1086,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -1556,7 +1556,7 @@
 							"syntax": "Packages/R/R.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 2.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
