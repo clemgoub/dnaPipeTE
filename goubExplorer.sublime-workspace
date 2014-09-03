@@ -531,7 +531,15 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 25932,
+				"buffer_size": 25918,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "pieChart.R",
+			"settings":
+			{
+				"buffer_size": 1299,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +547,7 @@
 			"file": "graph.R",
 			"settings":
 			{
-				"buffer_size": 2653,
+				"buffer_size": 2827,
 				"line_ending": "Unix"
 			}
 		},
@@ -805,6 +813,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"file",
+			"Reads_to_components_Rtable",
 			"Reads_to_components_Rtable.txt",
 			"\\",
 			"print",
@@ -930,9 +940,7 @@
 			"GTWiN",
 			"GTWN",
 			"FB4",
-			"DNAREP1",
-			"DMR",
-			"DMRP1"
+			"DNAREP1"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1205,15 +1213,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 25932,
+						"buffer_size": 25918,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								25104,
-								25104
+								25045,
+								25045
 							]
 						],
 						"settings":
@@ -1314,25 +1322,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5966.0,
+						"translation.y": 5938.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "graph.R",
+					"file": "pieChart.R",
 					"settings":
 					{
-						"buffer_size": 2653,
+						"buffer_size": 1299,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1091,
+								1091
 							]
 						],
 						"settings":
@@ -1438,6 +1446,123 @@
 				},
 				{
 					"buffer": 3,
+					"file": "graph.R",
+					"settings":
+					{
+						"buffer_size": 2827,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1978,
+								1978
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"enable_checkbounce_grammar": false,
+							"enable_checkbounce_spelling": true,
+							"gjslint_ignore":
+							[
+								110.0
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"evil": true,
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2.0,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": true,
+							"sublimelinter_gutter_marks_theme": "simple",
+							"sublimelinter_mark_style": "none",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/R/R.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
 					"file": "conf",
 					"settings":
 					{
