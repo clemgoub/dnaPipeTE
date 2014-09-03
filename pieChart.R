@@ -21,7 +21,7 @@ legend(1,0.5,paste(c(as.character(counts$class[-9]),"Single or low copy DNA")),f
 
 dev.off()
 
-pdf(file=paste(folder,"TEs_piechart.pdf",sep"/"), width=16, height=10)
+pdf(file=paste(folder,"TEs_piechart.pdf",sep="/"), width=16, height=10)
 
 pie(c(counts$reads[1:8],Single_or_low_copy),paste(perc, "%"), clockwise=T, col=pal)
 legend(1,0.5,paste(c(as.character(counts$class[-9]),"Single or low copy DNA")),fill=pal)
