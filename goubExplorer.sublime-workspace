@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 25938,
+				"buffer_size": 25932,
 				"line_ending": "Unix"
 			}
 		},
@@ -805,6 +805,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Reads_to_components_Rtable.txt",
 			"\\",
 			"print",
 			"tx\"",
@@ -931,8 +932,7 @@
 			"FB4",
 			"DNAREP1",
 			"DMR",
-			"DMRP1",
-			"CR1"
+			"DMRP1"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1205,15 +1205,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 25938,
+						"buffer_size": 25932,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								13700,
-								13700
+								25104,
+								25104
 							]
 						],
 						"settings":
@@ -1314,7 +1314,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3491.0,
+						"translation.y": 5966.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
