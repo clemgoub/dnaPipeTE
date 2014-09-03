@@ -5,9 +5,9 @@
 
 
 Args = commandArgs()
-folder = read.table(Args[6])
-file1 = read.table(Args[7])
-file2 = read.table(Args[8])
+folder = Args[6]
+file1 = Args[7]
+file2 = Args[8]
 reads.to.comp = read.table(paste(folder,file1,sep="/"))
 names(reads.to.comp)=c("comp","contig","seq","identity")
 total = read.table(paste(folder,file2,sep="/"))

@@ -4,8 +4,8 @@
 #############################
 
 Args = commandArgs()
-folder = read.table(Args[6])
-file = read.table(Args[7])
+folder = Args[6]
+file = Args[7]
 counts = read.table(paste(folder,file, sep="/"))
 names(counts)=c("class","reads")
 Single_or_low_copy=counts$reads[9]-sum(counts$reads[1:8])
