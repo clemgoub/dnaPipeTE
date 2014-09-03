@@ -385,7 +385,10 @@ class Blast:
 					count[line] = 0
 		with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
 			for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_Complexity", "Tandem_repeats", "NAs", "Total"]:
-				counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
+				if super_familly.split("_")[0] in count:
+					counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
+				else:
+					counts1_file.write(super_familly+"\t0\n")
 			counts1_file.write("Others\t"+str(count["comp"])+"\n")
 		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LTR' >> "+self.output_folder+"/Counts2.txt && "
 		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LINE' >> "+self.output_folder+"/Counts2.txt && "
