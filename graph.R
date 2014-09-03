@@ -5,9 +5,9 @@
 
 
 Args = commandArgs()
-folder = read.table(Args[6])
-file1 = read.table(Args[7])
-file2 = read.table(Args[8])
+folder = Args[6]
+file1 = Args[7]
+file2 = Args[8]
 reads.to.comp = read.table(paste(folder,file1,sep="/"))
 names(reads.to.comp)=c("comp","contig","seq","identity")
 total = read.table(paste(folder,file2,sep="/"))
@@ -46,7 +46,7 @@ axis(1,signif(sum(r_id_pc$reads/total[1,1]),3))
 legend(0.75,max(r_id_pc$reads)*2/3, legend=c("repeats","rep < 0.01 %","single"),fill=c("#FF000024","#FF000014","#00FF0020"), bg="white")
 dev.off()
 
-png(file=paste(folder,"Reads_to_components.png",sep="/), width=800, height=600)
+png(file=paste(folder,"Reads_to_components.png",sep="/"), width=800, height=600)
 barplot(r_id_pc$reads, r_id_pc$reads/total[1,1], xlim=c(0,1), ylim=c(0,max(r_id_pc$reads)+1000),xaxt='n', ylab="reads per component", xlab="genome proportion")
 segments(0,0,1,0)
 axis(1,c(0,0.25,0.5,0.75,1))
