@@ -429,7 +429,7 @@ class Graph:
 		print("Drawing graphs...")
 		graph = os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Counts.txt && "
 		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts && "
-		graph += "rm single.fa.read_count && "
+		graph += "rm single.fa.read_count"
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
