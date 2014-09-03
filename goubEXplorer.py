@@ -436,15 +436,9 @@ class Graph:
 		print("#########################################")
 		print("Drawing graphs...")
 		graph = "grep -c '>' "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_reads.counts && "
-		graph += "cp "+self.output_folder+"/blast_reads.counts . && "
-		graph += "cp "+self.output_folder+"/Counts.txt . && "
-		graph += "Rscript graph.R && "
-		graph += "Rscript pieChart.R && "
+		graph += "Rscript graph.R "+self.output_folder+" Counts.txt&& "
+		graph += "Rscript pieChart.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts && "
 		graph += "rm single.fa.read_count && "
-		graph += "mv Reads_to_components_Rtable.txt "+self.output_folder+"/ && "
-		graph += "mv Reads_to_components.* "+self.output_folder+"/ && "
-		graph += "mv TEs_piechart.* "+self.output_folder+"/ && "
-		graph += "mv reads_per_component_sorted.txt "+self.output_folder+"/"
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
