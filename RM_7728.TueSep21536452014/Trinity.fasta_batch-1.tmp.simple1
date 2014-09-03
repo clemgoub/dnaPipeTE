@@ -1,0 +1,24 @@
+34 2.86 0.00 0.00 comp133_g1_i1 1 36 (337) (TGCTGCC)n#Simple_repeat 1 36 (0) c_b1s251i0
+
+  comp133_g1_i1          1 TGCTGCCTGCTGCCTGCTGTCTGCTGCCTGCTGCCT 36
+                                              i                
+  (TGCTGCC)n#Si          1 TGCTGCCTGCTGCCTGCTGCCTGCTGCCTGCTGCCT 36
+
+Matrix = Unknown
+Transitions / transversions = 1.00 (1/0)
+Gap_init rate = 0.00 (0 / 35), avg. gap size = 0.0 (0 / 0)
+
+39 7.81 0.00 0.00 comp131_g1_i3 421 474 (242) (TAT)n#Simple_repeat 1 54 (0) c_b1s251i1
+
+  comp131_g1_i3        421 TATTATAATTATTATTAATATTATTATTATTATTGTTATTATTATTGTTA 470
+                                 v          v                i           i   
+  (TAT)n#Simple          1 TATTATTATTATTATTATTATTATTATTATTATTATTATTATTATTATTA 50
+
+  comp131_g1_i3        471 TTAT 474
+                               
+  (TAT)n#Simple         51 TTAT 54
+
+Matrix = Unknown
+Transitions / transversions = 1.00 (2/2)
+Gap_init rate = 0.00 (0 / 53), avg. gap size = 0.0 (0 / 0)
+
