@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 25918,
+				"buffer_size": 24636,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "pieChart.R",
 			"settings":
 			{
-				"buffer_size": 1299,
+				"buffer_size": 1294,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,7 +547,7 @@
 			"file": "graph.R",
 			"settings":
 			{
-				"buffer_size": 2827,
+				"buffer_size": 2810,
 				"line_ending": "Unix"
 			}
 		},
@@ -813,6 +813,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"read.table(",
+			"read.table",
 			"file",
 			"Reads_to_components_Rtable",
 			"Reads_to_components_Rtable.txt",
@@ -938,9 +940,7 @@
 			"GYPSY10",
 			"Gypsy",
 			"GTWiN",
-			"GTWN",
-			"FB4",
-			"DNAREP1"
+			"GTWN"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1086,7 +1086,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1101,8 +1101,8 @@
 						"selection":
 						[
 							[
-								12124,
-								12153
+								13150,
+								13168
 							]
 						],
 						"settings":
@@ -1203,7 +1203,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3630.0,
+						"translation.y": 3511.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1213,15 +1213,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 25918,
+						"buffer_size": 24636,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								25045,
-								25045
+								20446,
+								20446
 							]
 						],
 						"settings":
@@ -1322,7 +1322,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5938.0,
+						"translation.y": 5432.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1332,15 +1332,19 @@
 					"file": "pieChart.R",
 					"settings":
 					{
-						"buffer_size": 1299,
+						"buffer_size": 1294,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1091,
-								1091
+								147,
+								147
+							],
+							[
+								162,
+								162
 							]
 						],
 						"settings":
@@ -1449,15 +1453,23 @@
 					"file": "graph.R",
 					"settings":
 					{
-						"buffer_size": 2827,
+						"buffer_size": 2810,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1978,
-								1978
+								202,
+								202
+							],
+							[
+								218,
+								218
+							],
+							[
+								234,
+								234
 							]
 						],
 						"settings":
