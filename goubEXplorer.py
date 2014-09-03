@@ -374,6 +374,7 @@ class Blast:
 		print("### Estimation of Repeat content from blast outputs ###")
 		print("#######################################################")
 		count = dict()
+		count_total = 0
 		with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
 			for line in counts2_file:
 				line = line.split()[1].split("_")[0]
@@ -383,8 +384,9 @@ class Blast:
 					count[line] += 1
 				else:
 					count[line] = 0
+				count_total += 1
 		with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
-			for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_Complexity", "Tandem_repeats", "NAs", "Total"]:
+			for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_Complexity", "Tandem_repeats", "NAs"]:
 				if super_familly.split("_")[0] in count:
 					counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
 				else:
@@ -393,18 +395,7 @@ class Blast:
 				counts1_file.write("Others\t"+str(count["comp"])+"\n")
 			else:
 				counts1_file.write("Others\t0\n")
-		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LTR' >> "+self.output_folder+"/Counts2.txt && "
-		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LINE' >> "+self.output_folder+"/Counts2.txt && "
-		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'SINE' >> "+self.output_folder+"/Counts2.txt && "
-		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'ClassII' >> "+self.output_folder+"/Counts2.txt && "
-		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'LowComp' >> "+self.output_folder+"/Counts2.txt && "
-		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Simple_repeats' >> "+self.output_folder+"/Counts2.txt && "
-		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | grep -c 'Tandem_\|Satellite_\|MSAT' >> "+self.output_folder+"/Counts2.txt && "
-		# count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out | wc -l >> "+self.output_folder+"/Counts2.txt && "
-		# count += "cat "+self.output_folder+"/blast_reads.counts >> "+self.output_folder+"/Counts2.txt && "
-		# count += "paste "+self.output_folder+"/Counts1.txt "+self.output_folder+"/Counts2.txt > "+self.output_folder+"/Counts.txt"
-		# countProcess = subprocess.Popen(str(count), shell=True)
-		# countProcess.wait()
+			counts1_file.write("Total\t"+str(count_total)+"\n")
 		print("parsing blastout and adding RM annotations for each read...")
 		count = "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out |  awk '{print $1\"\\t\"$2\"\\t\"$3}' |grep -v 'comp' > "+self.output_folder+"/blastout_RMonly && "
 		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | sed 's/_comp/\\tcomp/g' | awk '{print $1\"\\t\"$3\"\\t\"$4}' | grep 'comp' > "+self.output_folder+"/join.blastout && "
