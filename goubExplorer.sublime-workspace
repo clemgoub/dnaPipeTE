@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 24762,
+				"buffer_size": 24638,
 				"line_ending": "Unix"
 			}
 		},
@@ -1213,15 +1213,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 24762,
+						"buffer_size": 24638,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								15181,
-								15181
+								23616,
+								23616
 							]
 						],
 						"settings":
@@ -1322,7 +1322,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4179.0,
+						"translation.y": 5223.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
