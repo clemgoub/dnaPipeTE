@@ -385,7 +385,7 @@ class Blast:
 				else:
 					count[line] = 0
 		with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
-			for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_Complexity", "Tandem_repeats", "NAs"]:
+			for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_Complexity", "Tandem_repeats", "na"]:
 				if super_familly.split("_")[0] in count:
 					counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
 				else:
@@ -428,8 +428,13 @@ class Graph:
 		print("#########################################")
 		print("Drawing graphs...")
 		graph = os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts && "
-		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Counts.txt "
-		#graph += "rm single.fa.read_count"
+		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Counts.txt && "
+		graph += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | sort -k2,2 > "+self.output_folder+"/Annotation/sorted_blast3 && "
+		graph += "join -12 -21 "+self.output_folder+"/Annotation/sorted_blast3 "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,2.4,2.5 | awk '/LINE/ { print $0 \"\\t\" $3; next} /LTR/ {print $0 \"\\t\" $3; next} /SINE/ {print $0 \"\\tSINE\"; next} /ClassII/ {print $0 \"\\tClassII\"; next} {print $0 \"\\tOther\"}' | grep 'LINE\|SINE\|LTR\|ClassII' | sed 's/Unknow\//DNA\//g'> "+self.output_folder+"/reads_landscape && "
+		graph += "cat "+self.output_folder+"/reads_landscape | awk '{print $3}' | sed 's/Unknow\//DNA\//g' | sort -u -k1,1 > "+self.output_folder+"/sorted_families && "
+		graph += "join -11 -22 "+self.output_folder+"/sorted_families list_of_RM_superclass_colors_sorted | awk '{print $1 \"\\t\" $2 \"\\t\\\"\"$3\"\\\"\"}' | sort -k2,2 > "+self.output_folder+"/factors_and_colors && "
+		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscapes.R "+self.output_folder+"/reads_landscape "+self.output_folder+"/factors_and_colors"
+		print(graph)
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
