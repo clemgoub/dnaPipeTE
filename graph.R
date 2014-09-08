@@ -10,6 +10,7 @@ file1 = Args[7]
 file2 = Args[8]
 reads.to.comp = read.table(paste(folder,file1,sep="/"))
 names(reads.to.comp)=c("comp","contig","seq","identity")
+reads.to.comp$comp = paste(reads.to.comp$comp, reads.to.comp$contig, reads.to.comp$seq, sep="_")
 total = read.table(paste(folder,file2,sep="/"))
 
 #reads per component
@@ -27,7 +28,7 @@ names(r_id_pc)=c("component","reads","mean_id")
 
 r_id_pc[order(r_id_pc$reads, decreasing=T),]->r_id_pc
 
-write.table(r_id_pc, file=paste(folder,"reads_per_component_sorted.txt",sep="/"))
+write.table(r_id_pc, file=paste(folder,"reads_per_component_sorted.txt",sep="/"), quote=F)
 
 
 #compute components threshold >= 0.01%
