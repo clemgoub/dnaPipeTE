@@ -383,7 +383,11 @@ class Blast:
 				if line in count:
 					count[line] += 1
 				else:
-					count[line] = 0
+					count[line] = 1
+		count["na"] = 0
+		with open(self.output_folder+"/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
+			for line in counts2_file:
+				count["na"] += 1
 		with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
 			for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_Complexity", "Tandem_repeats", "na"]:
 				if super_familly.split("_")[0] in count:
