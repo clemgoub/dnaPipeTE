@@ -385,7 +385,7 @@ class Blast:
 				else:
 					count[line] = 1
 		count["na"] = 0
-		with open(self.output_folder+"/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
+		with open(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
 			for line in counts2_file:
 				count["na"] += 1
 		with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
@@ -432,16 +432,21 @@ class Graph:
 		print("#########################################")
 		print("Drawing graphs...")
 		graph = os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts && "
+		graph += "cat "+self.output_folder+"/reads_per_component_sorted.txt | sort -k1,1 > "+self.output_folder+"/sorted_reads_per_component && "
+		graph += "join -a1 -12 -21 "+self.output_folder+"/sorted_reads_per_component "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,1.1,2.2,2.4,2.5,2.3 | sort -k1,1nr > "+self.output_folder+"/reads_per_component_and_annotation && "
+		graph += "rm "+self.output_folder+"/reads_per_component_sorted.txt "+self.output_folder+"/sorted_reads_per_component && "
 		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Counts.txt && "
 		graph += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | sort -k2,2 > "+self.output_folder+"/Annotation/sorted_blast3 && "
 		graph += "join -12 -21 "+self.output_folder+"/Annotation/sorted_blast3 "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,2.4,2.5 | awk '/LINE/ { print $0 \"\\t\" $3; next} /LTR/ {print $0 \"\\t\" $3; next} /SINE/ {print $0 \"\\tSINE\"; next} /ClassII/ {print $0 \"\\tClassII\"; next} {print $0 \"\\tOther\"}' | grep 'LINE\|SINE\|LTR\|ClassII' | sed 's/Unknow\//DNA\//g'> "+self.output_folder+"/reads_landscape && "
 		graph += "cat "+self.output_folder+"/reads_landscape | awk '{print $3}' | sed 's/Unknow\//DNA\//g' | sort -u -k1,1 > "+self.output_folder+"/sorted_families && "
-		graph += "join -11 -22 "+self.output_folder+"/sorted_families list_of_RM_superclass_colors_sorted | awk '{print $1 \"\\t\" $2 \"\\t\\\"\"$3\"\\\"\"}' | sort -k2,2 > "+self.output_folder+"/factors_and_colors && "
-		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscapes.R "+self.output_folder+"/reads_landscape "+self.output_folder+"/factors_and_colors"
-		print(graph)
+		graph += "join -11 -22 "+self.output_folder+"/sorted_families "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/list_of_RM_superclass_colors_sorted | awk '{print $1 \"\\t\" $2 \"\\t\\\"\"$3\"\\\"\"}' | sort -k2,2 > "+self.output_folder+"/factors_and_colors && "
+		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscapes.R "+self.output_folder+"/reads_landscape "+self.output_folder+"/factors_and_colors && "
+		graph += "mv "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscape.pdf "+self.output_folder+"/"
+		#print(graph)
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
+		print("Finishin time: "+time.strftime("%c"))
 		print("########################")
 		print("#   see you soon !!!   #")
 		print("########################")
