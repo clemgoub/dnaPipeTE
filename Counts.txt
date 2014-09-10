@@ -1,9 +1,0 @@
-LTR	116021
-LINE	337639
-SINE	18845
-ClassII	442067
-Low_Complexity	0
-Simple_repeats	547
-Tandem_repeats	75492
-NAs	626635
-Total	3354999
