@@ -47,7 +47,7 @@ print("   _____________________________________________________")
 print("  /    _               _____ _         _______ ______   \\ ")
 print(" /    | |             |  __ (_)       |__   __|  ____|   \\ ")
 print("|   __| |_ __   __ _  | |__) | _ __   ___| |  | |__       \\____________________________________________________________________")
-print("|  / _\\` | '_ \\ / _\\` | |  ___/ | '_ \\ / _ \\ |  |  __|        De Novo Anssembly and Annotation PIPEline for Transposable Elements\\ ")
+print("|  / _ \\` | '_ \\ / _\\` | |  ___/ | '_ \\ / _ \\ |  |  __|        De Novo Anssembly and Annotation PIPEline for Transposable Elements\\ ")
 print("| | (_| | | | | (_| | | |   | | |_) |  __/ |  | |____      ____________________________________________________________________/ ")
 print("|  \\__,_|_| |_|\\__,_| |_|   |_| .__/ \\___|_|  |______|    / ")
 print(" \\                            | |                        / ")
@@ -142,10 +142,10 @@ class FastqSamplerToFasta:
 		sampling_done = True
 		for sample_number in range(0, self.sample_number):
 			tag = "/s"+str(sample_number)+"_"
-			if not os.path.isfile(self.output_folder+tag+self.path_leaf(self.fastq_R1)+".fasta"):
+			if not os.path.isfile(self.output_folder+tag+self.path_leaf(self.fastq_R1)+".fasta") or not os.path.getsize(self.output_folder+tag+self.path_leaf(self.fastq_R1)+".fasta") > 0:
 				sampling_done = False
 			if self.paired:
-				if not os.path.isfile(self.output_folder+tag+self.path_leaf(self.fastq_R2)+".fasta"):
+				if not os.path.isfile(self.output_folder+tag+self.path_leaf(self.fastq_R2)+".fasta") or not os.path.getsize(self.output_folder+tag+self.path_leaf(self.fastq_R2)+".fasta") > 0:
 					sampling_done = False
 		for i in range(0, self.sample_number):
 			self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
@@ -214,7 +214,7 @@ class Trinity:
 
 	def test_trinnity(self):
 		trinnity_done = True
-		if not os.path.isfile(self.output_folder+"/Trinity.fasta"):
+		if not os.path.isfile(self.output_folder+"/Trinity.fasta") or (os.path.isfile(self.output_folder+"/Trinity.fasta") and not os.path.getsize(self.output_folder+"/Trinity.fasta") > 0):
 			trinnity_done = False
 		if trinnity_done:
 			print("Trinity files found, skipping assembly...")
@@ -277,7 +277,7 @@ class RepeatMasker:
 			files.append(self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta")
 		repeatmasker_done = True
 		for output in files:
-			if not os.path.isfile(output):
+			if not os.path.isfile(output) or (os.path.isfile(output) and not os.path.getsize(output) > 0):
 				print(output)
 				repeatmasker_done = False
 		if repeatmasker_done:
@@ -301,7 +301,7 @@ class Blast:
 		print("#######################################################")
 		print("### Blast 1 : raw reads against all repeats contigs ###")
 		print("#######################################################")
-		if not os.path.isfile(self.output_folder+"/Reads_to_components_Rtable.txt") or not os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out"):
+		if not os.path.isfile(self.output_folder+"/Reads_to_components_Rtable.txt") or not os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out") or (os.path.isfile(self.output_folder+"/Reads_to_components_Rtable.txt") and not os.path.getsize(self.output_folder+"/Reads_to_components_Rtable.txt") > 0) or (os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out") and not os.path.getsize(self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out") > 0):
 			if not os.path.exists(self.output_folder+"/blast_out"):
 				os.makedirs(self.output_folder+"/blast_out")
 			print("blasting...")
@@ -326,7 +326,7 @@ class Blast:
 		print("###################################################")
 		print("### Blast 2 : raw reads against annoted repeats ###")
 		print("###################################################")
-		if not os.path.isfile(self.output_folder+"/blast_out/unmatching_reads1.fasta"):
+		if not os.path.isfile(self.output_folder+"/blast_out/unmatching_reads1.fasta") or (os.path.isfile(self.output_folder+"/blast_out/unmatching_reads1.fasta") and not os.path.getsize(self.output_folder+"/blast_out/unmatching_reads1.fasta") > 0):
 			if not os.path.exists(self.output_folder+"/blast_out"):
 				os.makedirs(self.output_folder+"/blast_out")
 			print("blasting...")
@@ -351,12 +351,12 @@ class Blast:
 		print("#####################################################")
 		print("### Blast 3 : raw reads against unannoted repeats ###")
 		print("#####################################################")
-		if not os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out"):
+		if not os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out") or (os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out") and not os.path.getsize(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out") > 0):
 			if not os.path.exists(self.output_folder+"/blast_out"):
 				os.makedirs(self.output_folder+"/blast_out")
 			print("blasting...")
 			blast = ""
-			if os.path.isfile(self.output_folder+"/Annotation/unannoted_final.fasta"):
+			if os.path.isfile(self.output_folder+"/Annotation/unannoted_final.fasta") and os.path.getsize(self.output_folder+"/Annotation/unannoted_final.fasta") > 0:
 				blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Annotation/unannoted_final.fasta -out "+self.output_folder+"/blast_out/blast3_db.fasta -dbtype 'nucl' && "
 			else:
 				blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Annotation/unannoted.fasta -out "+self.output_folder+"/blast_out/blast3_db.fasta -dbtype 'nucl' && "

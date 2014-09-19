@@ -523,7 +523,7 @@
 			"file": "script_de_ouf_cluster.sh",
 			"settings":
 			{
-				"buffer_size": 16319,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		},
@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 24645,
+				"buffer_size": 25911,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "pieChart.R",
 			"settings":
 			{
-				"buffer_size": 1294,
+				"buffer_size": 1295,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,7 +547,7 @@
 			"file": "graph.R",
 			"settings":
 			{
-				"buffer_size": 2810,
+				"buffer_size": 2917,
 				"line_ending": "Unix"
 			}
 		},
@@ -555,7 +555,7 @@
 			"file": "conf",
 			"settings":
 			{
-				"buffer_size": 748,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		}
@@ -1086,7 +1086,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -1094,15 +1094,15 @@
 					"file": "script_de_ouf_cluster.sh",
 					"settings":
 					{
-						"buffer_size": 16319,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1465,
-								1533
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1213,15 +1213,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 24645,
+						"buffer_size": 25911,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								21456,
-								21471
+								851,
+								851
 							]
 						],
 						"settings":
@@ -1322,7 +1322,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 5531.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1332,19 +1332,15 @@
 					"file": "pieChart.R",
 					"settings":
 					{
-						"buffer_size": 1294,
+						"buffer_size": 1295,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								147,
-								147
-							],
-							[
-								162,
-								162
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1453,23 +1449,15 @@
 					"file": "graph.R",
 					"settings":
 					{
-						"buffer_size": 2810,
+						"buffer_size": 2917,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								202,
-								202
-							],
-							[
-								218,
-								218
-							],
-							[
-								234,
-								234
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1578,15 +1566,15 @@
 					"file": "conf",
 					"settings":
 					{
-						"buffer_size": 748,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								11,
-								11
+								0,
+								0
 							]
 						],
 						"settings":
