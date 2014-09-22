@@ -57,6 +57,9 @@ parser = argparse.ArgumentParser(prog='goubEXplorer.py')
 parser.add_argument('-input', action='store', dest='input_file', help='input fastq files (two files for paired data)', nargs='*')
 parser.add_argument('-output', action='store', dest='output_folder', help='output folder')
 parser.add_argument('-cpu', action='store', default="1", dest='cpu', help='maximum number of cpu to use')
+parser.add_argument('-sample_size', action='store', default=config['DEFAULT']['Sample_size'], dest='sample_size', help='number of reads to sample')
+parser.add_argument('-sample_number', action='store', default=config['DEFAULT']['Sample_number'], dest='sample_number', help='number of sample to run')
+
 args = parser.parse_args()
 
 
@@ -451,9 +454,9 @@ class Graph:
 		print("#   see you soon !!!   #")
 		print("########################")
 
-Sampler = FastqSamplerToFasta(args.input_file, config['DEFAULT']['Sample_size'], config['DEFAULT']['Sample_number'], args.output_folder)
+Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.sample_number, args.output_folder)
 sample_files = Sampler.result()
-Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, config['DEFAULT']['Sample_number'])
+Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
 RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
-Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, config['DEFAULT']['Sample_number'], sample_files)
+Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, args.sample_number, sample_files)
 Graph(args.output_folder)
