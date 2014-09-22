@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 25911,
+				"buffer_size": 27789,
 				"line_ending": "Unix"
 			}
 		},
@@ -803,7 +803,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 		]
@@ -813,6 +813,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"isfile",
+			"is.file",
 			"blast_reads.counts",
 			"read.table(",
 			"read.table",
@@ -938,9 +940,7 @@
 			"hAT",
 			"hAT_2",
 			"Harbinger",
-			"GYPSY10",
-			"Gypsy",
-			"GTWiN"
+			"GYPSY10"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1086,7 +1086,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1213,15 +1213,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 25911,
+						"buffer_size": 27789,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								851,
-								851
+								2327,
+								2327
 							]
 						],
 						"settings":
@@ -1322,7 +1322,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 22.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
