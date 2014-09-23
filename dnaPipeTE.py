@@ -56,7 +56,7 @@ print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements
 print( "                              v.b0.1_20140918                            ")
                                                                          
 
-parser = argparse.ArgumentParser(prog='goubEXplorer.py')
+parser = argparse.ArgumentParser(prog='dnaPipeTE.py')
 parser.add_argument('-input', action='store', dest='input_file', help='input fastq files (two files for paired data)', nargs='*')
 parser.add_argument('-output', action='store', dest='output_folder', help='output folder')
 parser.add_argument('-cpu', action='store', default="1", dest='cpu', help='maximum number of cpu to use')
@@ -274,12 +274,7 @@ class RepeatMasker:
 	def test_RepeatMasker(self):
 		files = [self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 
 			self.output_folder+"/Annotation/Best_RM_annot_80-80", 
-			self.output_folder+"/Annotation/Best_RM_annot_partial",
-			self.output_folder+"/Annotation/unannoted.fasta",
-			self.output_folder+"/Annotation/annoted.fasta"]
-		for super_familly in ["LTR", "LINE", "SINE", "ClassII", "Low_complexity", "Simple_repeat"]:
-			files.append(self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta")
-			files.append(self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta")
+			self.output_folder+"/Annotation/Best_RM_annot_partial",]
 		repeatmasker_done = True
 		for output in files:
 			if not os.path.isfile(output) or (os.path.isfile(output) and not os.path.getsize(output) > 0):
