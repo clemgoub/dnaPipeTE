@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"sample",
+				"sample_number"
+			],
+			[
 				"Tand",
 				"Tandem_repeats"
 			],
@@ -13,10 +17,6 @@
 			],
 			[
 				"sampl",
-				"sample_files"
-			],
-			[
-				"sample",
 				"sample_files"
 			],
 			[
@@ -531,7 +531,7 @@
 			"file": "goubEXplorer.py",
 			"settings":
 			{
-				"buffer_size": 27789,
+				"buffer_size": 28026,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "pieChart.R",
 			"settings":
 			{
-				"buffer_size": 1295,
+				"buffer_size": 1316,
 				"line_ending": "Unix"
 			}
 		},
@@ -813,6 +813,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Sample_size",
+			"Sample_number",
 			"isfile",
 			"is.file",
 			"blast_reads.counts",
@@ -938,9 +940,7 @@
 			"HET",
 			"Helitron",
 			"hAT",
-			"hAT_2",
-			"Harbinger",
-			"GYPSY10"
+			"hAT_2"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1213,15 +1213,15 @@
 					"file": "goubEXplorer.py",
 					"settings":
 					{
-						"buffer_size": 27789,
+						"buffer_size": 28026,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2327,
-								2327
+								4140,
+								4145
 							]
 						],
 						"settings":
@@ -1322,7 +1322,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 22.0,
+						"translation.y": 2417.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1332,7 +1332,7 @@
 					"file": "pieChart.R",
 					"settings":
 					{
-						"buffer_size": 1295,
+						"buffer_size": 1316,
 						"regions":
 						{
 						},
