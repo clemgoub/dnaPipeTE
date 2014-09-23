@@ -274,7 +274,7 @@ class RepeatMasker:
 	def test_RepeatMasker(self):
 		files = [self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 
 			self.output_folder+"/Annotation/Best_RM_annot_80-80", 
-			self.output_folder+"/Annotation/Best_RM_annot_partial",]
+			self.output_folder+"/Annotation/Best_RM_annot_partial"]
 		repeatmasker_done = True
 		for output in files:
 			if not os.path.isfile(output) or (os.path.isfile(output) and not os.path.getsize(output) > 0):
