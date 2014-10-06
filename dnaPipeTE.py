@@ -189,6 +189,7 @@ class Trinity:
 		self.select_reads(iteration)
 		trinity = self.Trinity_path+" --seqType fa --JM "+str(self.Trinity_memory)+" --single "+self.output_folder+"/"+self.sample_files[iteration]+" --CPU "+str(self.cpu)+" --min_glue 0 --output "+self.output_folder+"/Trinity_run"+str(iteration+1)
 		trinityProcess = subprocess.Popen(str(trinity), shell=True)
+		print(str(trinity))
 		trinityProcess.wait()
 		print("Trinity iteration "+str(iteration+1)+" Done'")
 
@@ -196,6 +197,7 @@ class Trinity:
 		print("Selecting reads for Trinity iteration number "+str(iteration+1)+"...")
 		select_reads = "awk '{print $2; print $4}' "+self.output_folder+"/Trinity_run"+str(iteration)+"/chrysalis/readsToComponents.out.sort | sed 's/>/>run1_/g' > "+self.output_folder+"/reads_run"+str(iteration)+".fasta && "
 		select_reads += "cat "+self.output_folder+"/reads_run"+str(iteration)+".fasta >> "+self.output_folder+"/"+self.sample_files[iteration]
+		print(select_reads)
 		select_readsProcess = subprocess.Popen(str(select_reads), shell=True)
 		select_readsProcess.wait()
 		print("Done\n")
