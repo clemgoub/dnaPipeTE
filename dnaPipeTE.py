@@ -115,7 +115,7 @@ class FastqSamplerToFasta:
 		for j in range(0, self.sample_number):
 			tirages_sample = tirages[self.number*j:self.number*(j+1)]
 			tirages_sample.sort()
-			print("size of sample "+str(j)+" "+len(tirages_sample))
+			print("size of sample "+str(j)+" "+str(len(tirages_sample)))
 			i = 0
 			while i < len(tirages_sample):
 				tirages_sample[i] = ((tirages_sample[i]-1) * 4)
