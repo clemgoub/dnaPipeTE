@@ -140,6 +140,7 @@ class FastqSamplerToFasta:
 								sys.stdout.flush()
 						i += 1
 					else :
+						print(str(i))
 						break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+" done.\n")
 
