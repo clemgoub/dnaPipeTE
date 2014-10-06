@@ -71,6 +71,7 @@ class FastqSamplerToFasta:
 		self.number = int(number)
 		self.sample_number = int(sample_number)
 		self.output_folder = output_folder
+		self.tirages = list()
 		if not os.path.exists(self.output_folder):
 			os.makedirs(self.output_folder)
 		self.fastq_R1 = fastq_files[0]
@@ -110,16 +111,11 @@ class FastqSamplerToFasta:
 		sys.stdout.flush()
 		population = range(1,np)
 		tirages = random.sample(population, self.number*self.sample_number)
-		sys.stdout.write("\rtotal number of reads to sample: "+str(len(tirages))+"\n")
-		sys.stdout.flush()
 		for j in range(0, self.sample_number):
 			tirages_sample = tirages[self.number*j:self.number*(j+1)]
 			tirages_sample.sort()
-			print("size of sample "+str(j)+" "+str(len(tirages_sample)))
-			i = 0
-			while i < len(tirages_sample):
+			for i in range(0,len(tirages_sample)):
 				tirages_sample[i] = ((tirages_sample[i]-1) * 4)
-				i += 1
 			self.tirages.extend(tirages_sample)
 
 	def sampling(self, fastq_file, sample_number):
@@ -131,7 +127,7 @@ class FastqSamplerToFasta:
 			tag = "/s"+str(sample_number)+"_"
 			with open(self.output_folder+tag+self.path_leaf(fastq_file)+".fasta", 'w') as output :
 				for line in fastq_handle :
-					if j < self.number*(sample_number+1) :
+					if j <= self.number*(sample_number+1) :
 						if self.tirages[j] <= i and i <= (self.tirages[j]+3) :
 							if i  == self.tirages[j]:
 								output.write(">"+str(j+sample_number*self.number)+"\n")
