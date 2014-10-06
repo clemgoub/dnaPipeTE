@@ -105,11 +105,13 @@ class FastqSamplerToFasta:
 		sys.stdout.flush()
 		with open(file_name, 'r') as file1 :
 			np = sum(1 for line in file1)
-		np = np / 4
+		np = int(np / 4)
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
 		population = range(1,np)
 		tirages = random.sample(population, self.number*self.sample_number)
+		sys.stdout.write("\rtotal number of reads to sample: "+str(len(tirages))+"\n")
+		sys.stdout.flush()
 		for j in range(0, self.sample_number):
 			tirages_sample = tirages[self.number*j:self.number*(j+1)]
 			tirages_sample.sort()
