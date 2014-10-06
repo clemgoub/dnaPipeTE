@@ -105,7 +105,7 @@ class FastqSamplerToFasta:
 		sys.stdout.flush()
 		with open(file_name, 'r') as file1 :
 			np = sum(1 for line in file1)
-		np = int((np) / 4)
+		np = np / 4
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
 		population = range(1,np)
