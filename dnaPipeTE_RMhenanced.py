@@ -163,7 +163,19 @@ class FastqSamplerToFasta:
 		else:
 			self.files = list()
 		return sampling_done
-		
+		print ("creating blast sample...")
+		#blastsampling = "cat "+self.output_folder+"/s0_*.fastq "+self.output_folder+"/s1_*.fastq > "+self.output_folder+"/blast_sample.fasta "
+		#subprocess.Popen(str(blastsampling), shell=True)
+		#blastsamplingProcess.wait()
+		print("blast sample created with samples 1 and 2")
+
+class TEST:
+	def __init__(self, output_folder):
+		self.output_folder = str(output_folder)
+		self.run()
+	def essai(self):	
+		print("TEST")
+
 class Trinity:
 	def __init__(self, Trinity_path, Trinity_memory, cpu, output_folder, sample_files, sample_number):
 		self.Trinity_path = str(Trinity_path)
@@ -194,11 +206,11 @@ class Trinity:
 
 	def select_reads(self, iteration):
 		print("Selecting reads for Trinity iteration number "+str(iteration+1)+"...")
-		select_reads = "awk '{print $2; print $4}' "+self.output_folder+"/Trinity_run"+str(iteration)+"/chrysalis/readsToComponents.out.sort | sed 's/>/>run1_/g' > "+self.output_folder+"/reads_run"+str(iteration)+".fasta && "
+		select_reads = "awk '{print $2; print $4}' "+self.output_folder+"/Trinity_run"+str(iteration)+"/chrysalis/readsToComponents.out.sort | sed 's/>/>run"+str(iteration)+"_/g' > "+self.output_folder+"/reads_run"+str(iteration)+".fasta && "
 		select_reads += "cat "+self.output_folder+"/reads_run"+str(iteration)+".fasta >> "+self.output_folder+"/"+self.sample_files[iteration]
 		select_readsProcess = subprocess.Popen(str(select_reads), shell=True)
 		select_readsProcess.wait()
-		print("Done\n")
+		print("Done\n")	
 
 	def new_version_correction(self):
 		trinity = self.Trinity_path+" -version"
@@ -261,13 +273,13 @@ class RepeatMasker:
 		annotation = ""
 		for super_familly in ["LTR", "LINE", "SINE", "DNA", "Low_complexity","Satellite","Helitron", "Simple_repeat", "rRNA"] :
 			# fais une liste de fichier headers pour aller récupérer les contigs
-			annotation += "awk '{print $1 \"\\t\" $4}' "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | grep '"+super_familly+"' | awk '{print$1}' > "+self.output_folder+"/Annotation/"+super_familly+".headers && "
+			annotation += "awk '{print $1 \"\\t\" $5}' "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | grep '"+super_familly+"' | awk '{print$1}' > "+self.output_folder+"/Annotation/"+super_familly+".headers && "
 			# récupère et annote les contigs de Trinity.fasta selon les meilleurs hits RM
 			annotation += "perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/"+super_familly+".headers "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>"+super_familly+"_comp/g' > "+self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta && "
 		annotation += "grep -v 'LTR\|LINE\|SINE\|DNA\|Low_complexity\|Satellite\|Helitron\|Simple_repeat\|rRNA' "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{print$1}' > "+self.output_folder+"/Annotation/others.headers && "
 		annotation += "perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/others.headers "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>others_comp/g' >"+self.output_folder+"/Annotation/others_annoted.fasta && "
 		annotation += "cat "+self.output_folder+"/Annotation/*.headers > "+self.output_folder+"/Annotation/all_annoted.head && "
-		annotation += "perl -ne 'if(/^>(\S+)/){$c!=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/all_annoted.head "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>na_comp/g' > "+self.output_folder+"/Annotation/unannoted.fasta && "
+		annotation += "perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/all_annoted.head "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>na_comp/g' > "+self.output_folder+"/Annotation/unannoted.fasta && "
 		annotation += "cat "+self.output_folder+"/Annotation/*_annoted.fasta > "+self.output_folder+"/Annotation/annoted.fasta"
 		annotationProcess = subprocess.Popen(str(annotation), shell=True)
 		annotationProcess.wait()
@@ -374,7 +386,7 @@ class Blast:
 
 	def count(self):
 		print("#######################################################")
-		print("### Estimation of Repeat content from blast outputs ###")
+		print("### Estimation of Repeat content from blast outputs ###")
 		print("#######################################################")
 		count = dict()
 		with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
@@ -391,7 +403,7 @@ class Blast:
 			for line in counts2_file:
 				count["na"] += 1
 		with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
-			for super_familly in ["LTR", "LINE", "SINE", "DNA", "Low_Complexity", "Satellite", "Helitron", "rRNA", "Simple_repeat", "Tandem_repeats", "na"]:
+			for super_familly in ["LTR", "LINE", "SINE", "DNA", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
 				if super_familly.split("_")[0] in count:
 					counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
 				else:
@@ -437,7 +449,7 @@ class Graph:
 		graph += "cat "+self.output_folder+"/reads_per_component_sorted.txt | sort -k1,1 > "+self.output_folder+"/sorted_reads_per_component && "
 		graph += "join -a1 -12 -21 "+self.output_folder+"/sorted_reads_per_component "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,1.1,2.2,2.4,2.5,2.3 | sort -k1,1nr > "+self.output_folder+"/reads_per_component_and_annotation && "
 		graph += "rm "+self.output_folder+"/reads_per_component_sorted.txt "+self.output_folder+"/sorted_reads_per_component && "
-		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Counts.txt && "
+		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Counts.txt "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieColors && "
 		graph += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | sort -k2,2 > "+self.output_folder+"/Annotation/sorted_blast3 && "
 		graph += "join -12 -21 "+self.output_folder+"/Annotation/sorted_blast3 "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,2.4,2.5 | awk '/LINE/ { print $0 \"\\t\" $3; next} /LTR/ {print $0 \"\\t\" $3; next} /SINE/ {print $0 \"\\tSINE\"; next} /ClassII/ {print $0 \"\\tClassII\"; next} {print $0 \"\\tOther\"}' | grep 'LINE\|SINE\|LTR\|ClassII' | sed 's/Unknow\//DNA\//g'> "+self.output_folder+"/reads_landscape && "
 		graph += "cat "+self.output_folder+"/reads_landscape | awk '{print $3}' | sed 's/Unknow\//DNA\//g' | sort -u -k1,1 > "+self.output_folder+"/sorted_families && "
@@ -445,7 +457,7 @@ class Graph:
 		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscapes.R "+self.output_folder+"/reads_landscape "+self.output_folder+"/factors_and_colors && "
 		graph += "mv "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscape.pdf "+self.output_folder+"/ && "
 		graph += "rm "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/Rplots.pdf "
-		#print(graph)
+		print(graph)
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
