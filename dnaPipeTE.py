@@ -67,14 +67,16 @@ args = parser.parse_args()
 
 
 class FastqSamplerToFasta:
-	def __init__(self, fastq_files, number, sample_number, output_folder):
+	def __init__(self, fastq_files, number, sample_number, output_folder, blast):
 		self.number = int(number)
 		self.sample_number = int(sample_number)
 		self.output_folder = output_folder
-		self.tirages = list()
 		if not os.path.exists(self.output_folder):
 			os.makedirs(self.output_folder)
 		self.fastq_R1 = fastq_files[0]
+		self.blast_sufix = ""
+		if blast:
+			self.blast_sufix = "_blast"
 		if len(fastq_files) == 1:
 			self.paired = False
 		else:
@@ -83,13 +85,13 @@ class FastqSamplerToFasta:
 		if not self.test_sampling():
 			self.get_sampled_id(self.fastq_R1)
 			print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
-			for i in range(0, self.sample_number+1):
+			for i in range(0, self.sample_number):
 				self.sampling(self.fastq_R1, i)
-				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
+				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+str(self.blast_sufix)+".fasta")
 			if self.paired:
-				for i in range(0, self.sample_number+1):
+				for i in range(0, self.sample_number):
 					self.sampling(self.fastq_R2, i)
-					self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
+					self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+str(self.blast_sufix)+".fasta")
 	
 	def result(self):
 		return(self.files)
@@ -106,16 +108,18 @@ class FastqSamplerToFasta:
 		sys.stdout.flush()
 		with open(file_name, 'r') as file1 :
 			np = sum(1 for line in file1)
-		np = int(np / 4)
+		np = int((np) / 4)
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
 		population = range(1,np)
 		tirages = random.sample(population, self.number*self.sample_number)
-		for j in range(0, self.sample_number+1):
+		for j in range(0, self.sample_number):
 			tirages_sample = tirages[self.number*j:self.number*(j+1)]
 			tirages_sample.sort()
-			for i in range(0,len(tirages_sample)):
+			i = 0
+			while i < len(tirages_sample):
 				tirages_sample[i] = ((tirages_sample[i]-1) * 4)
+				i += 1
 			self.tirages.extend(tirages_sample)
 
 	def sampling(self, fastq_file, sample_number):
@@ -125,13 +129,14 @@ class FastqSamplerToFasta:
 			i = self.number*sample_number
 			j = self.number*sample_number
 			tag = "/s"+str(sample_number)+"_"
-			with open(self.output_folder+tag+self.path_leaf(fastq_file)+".fasta", 'w') as output :
+			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
 				for line in fastq_handle :
 					if j < self.number*(sample_number+1) :
-						if i == self.tirages[j]:
-							output.write(">"+str(j+sample_number*self.number)+"\n")
-						if i == self.tirages[j]+1:
-							output.write(str(line))
+						if self.tirages[j] <= i and i <= (self.tirages[j]+3) :
+							if i  == self.tirages[j]:
+								output.write(">"+str(j+sample_number*self.number)+"\n")
+							if i == self.tirages[j]+1:
+								output.write(str(line))
 						if i >= (self.tirages[j]+3) :
 							j += 1
 							if j % 100 == 0:
@@ -139,9 +144,8 @@ class FastqSamplerToFasta:
 								sys.stdout.flush()
 						i += 1
 					else :
-						print(str(j))
 						break
-		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+" done.\n")
+		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
 	def test_sampling(self):
 		sampling_done = True
@@ -188,7 +192,6 @@ class Trinity:
 		self.select_reads(iteration)
 		trinity = self.Trinity_path+" --seqType fa --JM "+str(self.Trinity_memory)+" --single "+self.output_folder+"/"+self.sample_files[iteration]+" --CPU "+str(self.cpu)+" --min_glue 0 --output "+self.output_folder+"/Trinity_run"+str(iteration+1)
 		trinityProcess = subprocess.Popen(str(trinity), shell=True)
-		print(str(trinity))
 		trinityProcess.wait()
 		print("Trinity iteration "+str(iteration+1)+" Done'")
 
@@ -196,7 +199,6 @@ class Trinity:
 		print("Selecting reads for Trinity iteration number "+str(iteration+1)+"...")
 		select_reads = "awk '{print $2; print $4}' "+self.output_folder+"/Trinity_run"+str(iteration)+"/chrysalis/readsToComponents.out.sort | sed 's/>/>run1_/g' > "+self.output_folder+"/reads_run"+str(iteration)+".fasta && "
 		select_reads += "cat "+self.output_folder+"/reads_run"+str(iteration)+".fasta >> "+self.output_folder+"/"+self.sample_files[iteration]
-		print(select_reads)
 		select_readsProcess = subprocess.Popen(str(select_reads), shell=True)
 		select_readsProcess.wait()
 		print("Done\n")
@@ -309,7 +311,7 @@ class Blast:
 			blast = "cat "
 			# for i in range(0,self.sample_number):
 			# 	blast += self.output_folder+"/"+self.sample_files[i]+" "
-			blast += self.output_folder+"/"+self.sample_files[self.sample_number]+" "
+			blast += self.output_folder+"/"+self.sample_files[0]
 			blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
 			blast += "grep -c '>' "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_reads.counts && "
 			blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
@@ -454,9 +456,11 @@ class Graph:
 		print("#   see you soon !!!   #")
 		print("########################")
 
-Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.sample_number, args.output_folder)
+Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.sample_number, args.output_folder, False)
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
 RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
+Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, 1, args.output_folder, True)
+sample_files = Sampler.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, args.sample_number, sample_files)
 Graph(args.output_folder)
