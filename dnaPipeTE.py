@@ -82,7 +82,7 @@ class FastqSamplerToFasta:
 		else:
 			self.fastq_R1 = fastq_files[1]
 		self.files = list()
-		if not self.test_sampling():
+		if not self.test_sampling() or blast:
 			self.get_sampled_id(self.fastq_R1)
 			print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
 			for i in range(0, self.sample_number):
@@ -460,7 +460,7 @@ Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.sample_num
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
 RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
-Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, 1, args.output_folder, True)
-sample_files = Sampler.result()
-Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, args.sample_number, sample_files)
+Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, 1, args.output_folder, True)
+sample_files_blast = Sampler_blast.result()
+Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
 Graph(args.output_folder)
