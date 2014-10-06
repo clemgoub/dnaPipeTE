@@ -82,7 +82,7 @@ class FastqSamplerToFasta:
 		else:
 			self.fastq_R1 = fastq_files[1]
 		self.files = list()
-		if not self.test_sampling() or blast:
+		if not self.test_sampling(blast):
 			self.get_sampled_id(self.fastq_R1)
 			print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
 			for i in range(0, self.sample_number):
@@ -112,6 +112,7 @@ class FastqSamplerToFasta:
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
 		population = range(1,np)
+
 		tirages = random.sample(population, self.number*self.sample_number)
 		for j in range(0, self.sample_number):
 			tirages_sample = tirages[self.number*j:self.number*(j+1)]
@@ -132,12 +133,10 @@ class FastqSamplerToFasta:
 			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
 				for line in fastq_handle :
 					if j < self.number*(sample_number+1) :
-						if self.tirages[j] <= i and i <= (self.tirages[j]+3) :
-							if i  == self.tirages[j]:
-								output.write(">"+str(j+sample_number*self.number)+"\n")
-							if i == self.tirages[j]+1:
-								output.write(str(line))
-						if i >= (self.tirages[j]+3) :
+						if i == self.tirages[j]:
+							output.write(">"+str(j+sample_number*self.number)+"\n")
+						if i == self.tirages[j]+1:
+							output.write(str(line))
 							j += 1
 							if j % 100 == 0:
 								sys.stdout.write("\r"+str(j)+"/"+str(self.number))
@@ -147,7 +146,7 @@ class FastqSamplerToFasta:
 						break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
-	def test_sampling(self):
+	def test_sampling(self, blast):
 		sampling_done = True
 		for sample_number in range(0, self.sample_number):
 			tag = "/s"+str(sample_number)+"_"
@@ -165,6 +164,8 @@ class FastqSamplerToFasta:
 			print("sampling file found, skipping sampling...")
 		else:
 			self.files = list()
+		if blast:
+			return True
 		return sampling_done
 
 class Trinity:
