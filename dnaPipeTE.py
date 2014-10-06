@@ -83,11 +83,11 @@ class FastqSamplerToFasta:
 		if not self.test_sampling():
 			self.get_sampled_id(self.fastq_R1)
 			print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
-			for i in range(0, self.sample_number):
+			for i in range(0, self.sample_number+1):
 				self.sampling(self.fastq_R1, i)
 				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
 			if self.paired:
-				for i in range(0, self.sample_number):
+				for i in range(0, self.sample_number+1):
 					self.sampling(self.fastq_R2, i)
 					self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
 	
@@ -111,7 +111,7 @@ class FastqSamplerToFasta:
 		sys.stdout.flush()
 		population = range(1,np)
 		tirages = random.sample(population, self.number*self.sample_number)
-		for j in range(0, self.sample_number):
+		for j in range(0, self.sample_number+1):
 			tirages_sample = tirages[self.number*j:self.number*(j+1)]
 			tirages_sample.sort()
 			for i in range(0,len(tirages_sample)):
@@ -127,7 +127,7 @@ class FastqSamplerToFasta:
 			tag = "/s"+str(sample_number)+"_"
 			with open(self.output_folder+tag+self.path_leaf(fastq_file)+".fasta", 'w') as output :
 				for line in fastq_handle :
-					if j <= self.number*(sample_number+1) :
+					if j < self.number*(sample_number+1) :
 						if i == self.tirages[j]:
 							output.write(">"+str(j+sample_number*self.number)+"\n")
 						if i == self.tirages[j]+1:
@@ -307,8 +307,9 @@ class Blast:
 				os.makedirs(self.output_folder+"/blast_out")
 			print("blasting...")
 			blast = "cat "
-			for i in range(0,self.sample_number):
-				blast += self.output_folder+"/"+self.sample_files[i]+" "
+			# for i in range(0,self.sample_number):
+			# 	blast += self.output_folder+"/"+self.sample_files[i]+" "
+			blast += self.output_folder+"/"+self.sample_files[self.sample_number]+" "
 			blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
 			blast += "grep -c '>' "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_reads.counts && "
 			blast += self.Blast_path+"/makeblastdb -in "+self.output_folder+"/Trinity.fasta -out "+self.output_folder+"/Trinity.fasta -dbtype 'nucl' && "
