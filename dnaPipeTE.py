@@ -116,21 +116,19 @@ class FastqSamplerToFasta:
 			tirages_sample = tirages[(self.number*i):(self.number*(i+1))]
 			tirages_sample.sort()
 			self.tirages.extend(tirages_sample)
-		for i in range(len(self.tirages)):
-			self.tirages[i] = (self.tirages[i] * 4) + 1 # we dont want the number of the read but the line number of the sequence in the read
 
 	def sampling(self, fastq_file, sample_number):
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
 		with open(fastq_file, 'r') as fastq_handle :
-			i = self.number*sample_number
+			i = 0
 			j = self.number*sample_number
 			tag = "/s"+str(sample_number)+"_"
 			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
 				for line in fastq_handle :
-					if i == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
+					if (i-1) % 4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
 						output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
-					if i >= self.tirages[j]:
+					if (i-1) % 4 >= self.tirages[j]:
 						j += 1 # we get the number of the next line
 						if j % 100 == 0:
 							sys.stdout.write("\r"+str(j)+"/"+str(self.number))
