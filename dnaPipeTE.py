@@ -85,11 +85,11 @@ class FastqSamplerToFasta:
 		if not self.test_sampling(blast):
 			self.get_sampled_id(self.fastq_R1)
 			print("sampling "+str(self.sample_number)+" sample of "+str(self.number)+" reads...")
-			for i in range(0, self.sample_number):
+			for i in range(self.sample_number):
 				self.sampling(self.fastq_R1, i)
 				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+str(self.blast_sufix)+".fasta")
 			if self.paired:
-				for i in range(0, self.sample_number):
+				for i in range(self.sample_number):
 					self.sampling(self.fastq_R2, i)
 					self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+str(self.blast_sufix)+".fasta")
 	
@@ -111,14 +111,12 @@ class FastqSamplerToFasta:
 		np = int((np) / 4)
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
-		population = range(0,np)
-
-		tirages = random.sample(population, self.number*self.sample_number)
-		for j in range(0, self.sample_number):
-			tirages_sample = tirages[self.number*j:self.number*(j+1)]
+		tirages = random.sample(range(np), self.number*self.sample_number)
+		for i in range(self.sample_number):
+			tirages_sample = tirages[(self.number*i):(self.number*(i+1))]
 			tirages_sample.sort()
 			self.tirages.extend(tirages_sample)
-		for i in range(0, len(self.tirages)):
+		for i in range(len(self.tirages)):
 			self.tirages[i] = (self.tirages[i] * 4) + 1 # we dont want the number of the read but the line number of the sequence in the read
 
 	def sampling(self, fastq_file, sample_number):
@@ -138,21 +136,23 @@ class FastqSamplerToFasta:
 							sys.stdout.write("\r"+str(j)+"/"+str(self.number))
 							sys.stdout.flush()
 					i += 1
+					if j > len(self.tirages):
+						break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
 	def test_sampling(self, blast):
 		sampling_done = True
-		for sample_number in range(0, self.sample_number):
+		for sample_number in range(self.sample_number):
 			tag = "/s"+str(sample_number)+"_"
 			if not os.path.isfile(self.output_folder+tag+self.path_leaf(self.fastq_R1)+".fasta") or not os.path.getsize(self.output_folder+tag+self.path_leaf(self.fastq_R1)+".fasta") > 0:
 				sampling_done = False
 			if self.paired:
 				if not os.path.isfile(self.output_folder+tag+self.path_leaf(self.fastq_R2)+".fasta") or not os.path.getsize(self.output_folder+tag+self.path_leaf(self.fastq_R2)+".fasta") > 0:
 					sampling_done = False
-		for i in range(0, self.sample_number):
+		for i in range(self.sample_number):
 			self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+".fasta")
 		if self.paired:
-			for i in range(0, self.sample_number):
+			for i in range(self.sample_number):
 				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+".fasta")
 		if sampling_done:
 			print("sampling file found, skipping sampling...")
