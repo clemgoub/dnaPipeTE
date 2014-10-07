@@ -132,13 +132,12 @@ class FastqSamplerToFasta:
 				for line in fastq_handle :
 					if i == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
 						output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
+					if i >= self.tirages[j]:
 						j += 1 # we get the number of the next line
 						if j % 100 == 0:
 							sys.stdout.write("\r"+str(j)+"/"+str(self.number))
 							sys.stdout.flush()
 					i += 1
-					if j >= self.number*(sample_number+1):
-						break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
 	def test_sampling(self, blast):
