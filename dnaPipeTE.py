@@ -157,7 +157,7 @@ class FastqSamplerToFasta:
 		else:
 			self.files = list()
 		if blast:
-			return True
+			return False
 		return sampling_done
 
 class Trinity:
