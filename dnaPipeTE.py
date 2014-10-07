@@ -127,7 +127,7 @@ class FastqSamplerToFasta:
 			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
 				for line in fastq_handle :
 					if (i-1) % 4 == 0 and (i-1)/4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
-						output.write(">"+str(i)+"\n"+str(line)) # we write the fasta sequence corresponding
+						output.write(">"+str(i/4)+"\n"+str(line)) # we write the fasta sequence corresponding
 					if (i-1)/4 == self.tirages[j]:
 						j += 1 # we get the number of the next line
 						if j % 100 == 0:
