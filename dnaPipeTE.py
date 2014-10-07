@@ -136,7 +136,7 @@ class FastqSamplerToFasta:
 							sys.stdout.write("\r"+str(j)+"/"+str(self.number))
 							sys.stdout.flush()
 					i += 1
-					if j > len(self.tirages):
+					if j >= len(self.tirages):
 						break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
