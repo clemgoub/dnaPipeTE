@@ -53,7 +53,7 @@ print( "                           | |                                          
 print( "                           |_|                                                   ")
                                                                                                  
 print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements ")
-print( "                              v.b0.3_20141029                            ")
+print( "                              v.b0.4_2015                            ")
 print( "" )
 print( "                               Let's go !!!                              ")
 print( "" )
@@ -451,7 +451,10 @@ class Graph:
 		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscapes.R "+self.output_folder+"/reads_landscape "+self.output_folder+"/factors_and_colors && "
 		graph += "mv "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscape.pdf "+self.output_folder+"/ && "
 		graph += "rm "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/Rplots.pdf &&"
-		graph += "rm "+self.output_folder+"/colors"
+		graph += "rm "+self.output_folder+"/colors &&"
+		print("Removing Trinity runs files...")
+		graph += "find "+self.output_folder+"/Trinity_run* -delete"
+		print("done")
 		# print(graph)
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
