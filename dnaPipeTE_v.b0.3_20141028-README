@@ -1,0 +1,136 @@
+dnaPipeTE - README
+
+v.b0.3_20141028
+
+Description:
+
+	dnaPipeTE (for De-Novo Assembly & Annotation Pipeline for Transposable Elements), is a pipeline tool designed to find, quantify and get annotation of Transposable Elements in small samples of NGS datasets.
+It is very usefull to quantify the proportion of TEs in newly sequenced genomes since it do not requier genome assembly and works on small datasets.
+
+
+1 - INSTALLATION
+
+a) System requirement
+
+To date, dnaPipeTE only runs on Linux x64 environments (tested on ubuntu 14.04 PC and Debian 3.2.57-3 x86_64 cluster). 
+Since it has not been tested in Mac OSX, it should work if the folling dependancies does...
+However, Trinity (used for assembly) uses a lot of RAM ! Here are some examples of RAM usages :
+
+	100 000 reads ~10 Go (two Trinity iterations)
+	3 000 000 reads ~40 Go (two Trinity iterations)
+
+Thus we recomand to use it on assembly-dedicated servers but it could work (if RAM is sufficient) on a PC.
+
+b) Dependancies
+
+To run, dnaPipeTE needs the following programs to be installed:
+
+- Python 3, including configparser package ### à compléter  
+- Trinity (RNAseq assembly) vers. >= or later 
+- RepeatMasker, including TRF (Tandem Repeat Finder) and RMblastn *
+- blastn (from blast+ suite)
+- R version 3.0.2 or later (not tested below) including ggplot2 package.
+- GNU Parallel version 3 or later. Available at http://www.gnu.org/software/parallel
+
+* tips for RM installation are provided in a dedicated part of this README.
+
+c) Installation
+
+Juste move the dnaPipeTE_vXXXXXXX.tar.gz to the file you want then :
+
+	tar zxvf dnaPipeTE_vXXXXXXX.tar.gz -c dnaPipeTE
+
+It will create a new directory called dnaPipeTE with all the necessary files. Do not move or modify any of those files, exept "config.ini" that must be set up. 
+
+d) Configuring dnaPipeTE ("config.ini")
+
+Since dnaPipeTE is a python script, it didn't recquier a specific installation, however you must complete the config.ini file according to your local installation (lines with a # in the example) of the dnaPipeTE dependancies.
+Here is a example of config.ini file (provided alongside dnaPipeTE.py), considering you run it from your home folder:
+
+move to the dnaPipeTE folder and edit "config.ini"
+
+	cd dnaPipeTE/
+	nano config.ini
+
+[DEFAULT]
+sample_size = 500000 *
+repeatmasker = /home/crazyname/RepeatMasker-version/RepeatMasker # Path to the RepeatMasker PROGRAM (executable)
+trinity = /home/crazyname/trinityrnaseq_r2013_08_14/Trinity.pl # Path to the Trinity PROGRAM (executable)
+blast_folder = /usr/bin/ncbi-blast-2.2.29+/bin/ # Path to the Blast FOLDER (including terminal "/")
+repeatmasker_library = /home/crazyname/RepeatMasker-version/Libraries/20XXXXXX/root/specieslib # Path to the RM library, located in the RM forlder (for custom RM library, see below)
+parallel = /usr/bin/parallel # Path to the parallel PROGRAM (executable)
+sample_number = 2 *
+trinity_memory = 10G *
+
+	save and close (Ctrl-X, Return in nano)
+
+2 - RUNNING dnaPipeTE
+
+a) Set dnaPipeTE default parameters [not compulsory]
+
+First, you would need to set the default parameters for dnaPipeTE in the config.ini file (lines with a * in the above example)
+
+	sample_size = number of reads to pick per sample (works fine with 0.25X, 0.1X is sufficient for highly repeateted genomes (~50% of repeats))
+	sample_number = number of Trinity iteration (min 2 are recomanded, more will increase N50 but also RAM and time !!!)
+	trinity_memory = amount of memory allowed for k-mer counting in Trinity (Jellyfish program). It is not the maximum RAM usage of dnaPipeTE !!
+
+b) Run dnaPipeTE
+
+Once you have set the config.ini file according to your needs and local instalation, you are ready !!
+
+Move into dnaPipeTE folder and type:
+	
+	python3 ./dnaPipeTE.py -input ~/path/to/your/input.fastq -output ~/path/to/the/output -cpu N [-sample_size N] [-sample_number N]
+
+dnaPipeTE arguments:
+
+  -h, --help            show help message and exit
+  -input                input fastq files (two files for paired data)
+  -output               output folder (if new will create it, if existing, will continue at the last dnaPipeTE step)
+  -cpu CPU              maximum number of cpu to use
+  -sample_size		number of reads per sample (works fine with 0.25X, 0.1X is sufficient for highly repeateted genomes (~50% of repeats))
+  -sample_number	number of Trinity iteration (min 2 are recomanded, more will increase N50 but also RAM and time !!!)
+
+3 - dnaPipeTE OUTPUTS
+
+dnaPipeTE produces a lot of outputs, some of them are very interesting.
+
+The outfolder is divided into the following parts:
+
+-main folder (output name):
+
+	important files:
+		"Trinity.fasta" : this file contains the dnaPipeTE contigs, this is the last assembly performed with Trinity
+		"reads_per_component_and_annotation" : table with the count of reads per dnaPipeTE contigs (from blastn 1), as well as its best RepeatMasker annotation
+		"pieChart.pdf/png" : graph with the relative proportion of the main repeat classes, informs about the estimated proportion of repeats in the genome (from blastn 2 and 3)
+		"Reads_to_contig.pdf/png" : graph with the amount of reads per dnaPipeTE contig, ordered by genome proportion. Thus contigs on the left should represent the most repeated families
+		"landscapes.pdf" : TEs landscape graphs. Plot the blastn divergence distribution between reads and the contigs on which they map. 
+
+	less important files you may like:
+		"Trinity.fasta.out" : raw RepeatMasker output (not sorted) of Trinity.fasta on repbase libraries.
+		"Counts.txt": count of reads for each TE class (used for the pieChart)
+		"Reads_to_components_Rtable.txt": reads on contigs used for Reads_to_contig.pdf/png graph (one line per reads)
+		"reads_landscape": reads used for the landscape graph, including the blastn divergence from one reads to the contig on which it maps.
+
+|- Annotation folder:
+
+	important files:
+		"one_RM_hit_per_Trinity_contigs": sorted RepeatMasker output containing the best hit on repbase from the dnaPipeTE contigs (Trinity.fasta)
+		"Best_RM_annot_80_80": subset of the previous table, including contigs for which at least 80% of the sequence is mapping to at least 80% percent of the target sequence.
+		"Best_RM_annot_partial": same but for contigs for which at least 80% of the sequence is mapping to less than 80% percent of the target sequence
+		"[repeat-class].fasta": subsets of the Trinity.fasta file for each repeat type detected by RepeatMasker
+		"unannoted.fasta": subsets of the Trinity.fasta for contigs that didn't find any match...
+
+|- blast_out folder:
+
+	important files:
+		"sorted.reads_vs_Trinity.fasta.blast.out": best hit per reads from blastn 1
+		"sorted.reads_vs_annoted.blast.out": best hit per reads from blastn 2
+		"sorted.reads_vs_unannoted.blast.out": best hit per reads from blastn 3
+
+	less important files you may like:
+		"reads_vs_[anything]": raw blast out from previous files
+
+|- Trinity_runX
+	Those files contains the raw Trinity outputs and intermediates files produced during assembly steps. For futher detail see the Trinity documentation (http://trinityrnaseq.sourceforge.net/)
+
