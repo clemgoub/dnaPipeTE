@@ -67,6 +67,8 @@ parser.add_argument('-sample_size', action='store', default=config['DEFAULT']['S
 parser.add_argument('-sample_number', action='store', default=config['DEFAULT']['Sample_number'], dest='sample_number', help='number of sample to run')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
 
+print("Start time: "+time.strftime("%c"))
+
 args = parser.parse_args()
 
 
@@ -131,11 +133,11 @@ class FastqSamplerToFasta:
 			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
 				for line in fastq_handle :
 					if (i-1) % 4 == 0 and (i-1)/4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
-						output.write(">"+str(i/4)+"\n"+str(line)) # we write the fasta sequence corresponding
+						output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
 					if (i-1)/4 == self.tirages[j]:
 						j += 1 # we get the number of the next line
 						if j % 100 == 0:
-							sys.stdout.write("\r"+str(j)+"/"+str(self.number))
+							sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
 							sys.stdout.flush()
 					i += 1
 					if j >= len(self.tirages):
@@ -244,7 +246,7 @@ class RepeatMasker:
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
-		bestHit = "cat "+self.output_folder+"/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk '{if ($9==\"C\") {print $1\"\\t\"$2\"\\t\"$3\"\\t\"$4\"\\t\"$5\"\\t\"$6\"\\t\"$7\"\\t\"$8\"\\t\"$9\"\\t\"$10\"\\t\"$11\"\\t\"$14\"\\t\"$13\"\\t\"$12\"\\t\"$15} else {print $O}}' | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\" ($7+$8) \"\\t\" ($7-$6)/($7+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" ($13+$14) \"\\t [\" $12 \"-\" $13 \"]\\t\" ($13-$12)/($13+$14))}; prev_query = $5}}' > "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs"
+		bestHit = "cat "+self.output_folder+"/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk '{if ($9==\"C\") {print $1\"\\t\"$2\"\\t\"$3\"\\t\"$4\"\\t\"$5\"\\t\"$6\"\\t\"$7\"\\t\"$8\"\\t\"$9\"\\t\"$10\"\\t\"$11\"\\t\"$14\"\\t\"$13\"\\t\"$12\"\\t\"$15} else {print $O}}' | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\" ($7+$8) \"\\t\" ($7-$6)/($7+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" ($13+$14) \"\\t [\" $12 \"-\" $13 \"]\\t\" ($13-$12)/($13+$14))}; prev_query = $5}}' >  "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs"
 		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
 		bestHitProcess.wait()
 		bestHit = "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{ if ($3>=0.8 && $8>=0.8) print $0}' > "+self.output_folder+"/Annotation/Best_RM_annot_80-80 && "
@@ -442,7 +444,7 @@ class Graph:
 		graph += "rm "+self.output_folder+"/reads_per_component_sorted.txt "+self.output_folder+"/sorted_reads_per_component && "
 		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Counts.txt "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieColors && "
 		graph += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | sort -k2,2 > "+self.output_folder+"/Annotation/sorted_blast3 && "
-		graph += "join -12 -21 "+self.output_folder+"/Annotation/sorted_blast3 "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,2.4,2.5 | awk '/LINE/ { print $0 \"\\t\" $3; next} /LTR/ {print $0 \"\\t\" $3; next} /SINE/ {print $0 \"\\tSINE\"; next} /DNA/ {print $0 \"\\tDNA\"; next} /MITE/ {print $0 \"\\tMITE\";next} {print $0 \"\\tOther\"}' | grep 'LINE\|SINE\|LTR\|DNA\|MITE' | sed 's/Unknow\//DNA\//g' > "+self.output_folder+"/reads_landscape && "
+		graph += "join -12 -21 "+self.output_folder+"/Annotation/sorted_blast3 "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,2.4,2.5 | awk '/LINE/ { print $0 \"\\t\" $3; next} /LTR/ {print $0 \"\\t\" $3; next} /SINE/ {print $0 \"\\tSINE\"; next} /DNA/ {print $0 \"\\tDNA\"; next} /MITE/ {print $0 \"\\tMITE\";next} {print $0 \"\\tOther\"}' | grep 'LINE\|SINE\|LTR\|DNA\|MITE\|Helitron' | sed 's/Unknow\//DNA\//g' > "+self.output_folder+"/reads_landscape && "
 		graph += "cat "+self.output_folder+"/reads_landscape | awk '{print $3}' | sed 's/Unknow\//DNA\//g' | sort -u -k1,1 > "+self.output_folder+"/sorted_families && "
 		graph += "sort -k 1,1 "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/new_list_of_RM_superclass_colors_sortedOK >"+self.output_folder+"/colors &&"
 		graph += "join -11 -21 "+self.output_folder+"/sorted_families "+self.output_folder+"/colors | awk '{print $1 \"\\t\" $2 \"\\t\\\"\"$3\"\\\"\"}' | sort -k2,2 > "+self.output_folder+"/factors_and_colors && "
@@ -450,7 +452,7 @@ class Graph:
 		graph += "mv "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscape.pdf "+self.output_folder+"/ && "
 		graph += "rm "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/Rplots.pdf &&"
 		graph += "rm "+self.output_folder+"/colors"
-		print(graph)
+		# print(graph)
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
