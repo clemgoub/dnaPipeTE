@@ -1,0 +1,84 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Running as a Service</title>
+</head>
+
+<body>
+<center><h1>Running As A Service</h1></center>
+<p>
+Assuming collectl has been installed from the rpm kit, it has been 
+configured to be run as a service, but disabled from automatically
+starting at boot.  To enable it, simply
+<i>chkconfig collectl on</i>, noting that by default collectl is 
+configured to collect most data.
+To see what the specific subsystems are, execute <i>collectl -V</i>
+and look at the daemon default values for <i>-s</i>.  You should then look at
+the <i>DaemonCommands</i> string /etc/collectl.conf to see if any changes to
+-s have been explictly set.  At the time of this writing, collectl has been 
+further configured to add slab and process data to the base defaults.
+<p>
+Further inspection of this command string will show the daemon has also been
+configured to write all its data to a set of compressed text files in
+<i>/var/log/collectl</i>, which was created when the kit was installed.  To verify
+collectl will properly run as a service, you can execute the command 
+<i>/etc/init.d/collectl start</i> (or as a shortcut on a redhat system use
+the command <i>service collectl start</i>) and examine the <i>log</i> file in /var/log/collectl 
+for the startup (and hopefully no termination) messages as well as the appearance 
+of either a <i>raw</i> or <i>raw.gz</i> data file in that same directory.  
+Note that since the output is buffered, the data file will probably have a length of 
+0 until the buffer fills or the flush interval passes, which is currently set to 60 seconds,
+which ever comes first.  Or the command <i>/etc/init.d/collectl flush</i> is executed.
+<p>
+In order to write its output as a compressed file, the perl <i>Compress</i> module 
+must be present as it is with newer perl distributions.  If not present
+you should install it, otherwise you will get messages warning you that compression is not
+installed.
+<p>
+To change any behaviors of the daemon such as the flush interval, output file
+location, etc., simply change the <i>DaemonCommands</i> line in 
+<i>/etc/collectl.conf</i>, which specifies the actual command string collectl is passed at 
+startup.  Use care in setting this string as incorrect settings may cause collectl
+to abnormally exit and if it does, you should examine the <i>log</i> file for 
+messages.
+<p>
+<b>One-time modification of runtime parameters</b>
+<p>
+If you want to change the way collectl runs as a daemon for a specific instance, you can
+pass the normal collectl switches to the start script as its second parameter (more on the
+first parameter later).  For example, to start collectl with a monitoring interval of
+15 seconds, just start it as follows:
+<p>
+<pre>
+/etc/init.d/collectl start '-i 15'
+</pre>
+<p>
+The next time it is started (or restarted) it will use its default values.
+<p>
+<b>Running multiple instances of a collectl daemon</b>
+<p>
+By default, collectl only supports running a single instance of a daemon and it you try to
+start a second you will get an error message.  However, there may be times you really want to
+run a second instance, most typically if you want to collect a subset of data at a different
+monitoring interval, and to do this one uses an alternative syntax which prefaces the
+parameters with a string such as <i>test</i> as in the following example:
+<p>
+<pre>
+/etc/init.d/collectl start test -i15
+</pre>
+<p>
+Also note in this example quotes weren't needed because there were no spaces in the second
+argument.  In this case a process named <i>collectl-test</i> will be created and use the 
+argument -i15.  You must be careful when using this format because if you leave off the
+second argument you'd actually start the main process with the invalid switch of </i>test</i>.
+<p>
+To perform other operations on this second instance, such as <i>stop</i> or <i>flush</i>, simply
+add the <i>test</i> qualifier to the command.  If you want to restart one of these instances be
+sure to include the appropriate arguments because you must use the 2 argument form of the command.
+This syntax was also chosen to assure the user does use additional switches because without them
+you'd essentially be running an identical copy of the default configuration.
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

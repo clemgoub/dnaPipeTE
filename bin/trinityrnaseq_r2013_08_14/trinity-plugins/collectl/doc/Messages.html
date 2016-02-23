@@ -1,0 +1,38 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Messages</title>
+</head>
+
+<body>
+<center><h1>Operational Messages</h1></center>
+<p>
+When something that may be of interest occurs, collectl calls an internal message reporting
+routine and assigns that message a status of <i>Informational, Warning, Error</i> or <i>Fatal</i>.
+In all cases, if a message of type <i>Fatal</i> is encountered, collectl will terminate.
+In all other cases it continues executing, often skipping what it was trying to do 
+when the error occurred.
+The way collectl deals with these messages is controlled by several factors:
+<p>
+<b>Interactive Messages</b>
+<ul>
+<li><i>Informational</i> messages are never displayed on the terminal.</li>
+<li><i>Warnings</i> are only displayed if <i>--quiet</i> has not been specified</i>
+<li><i>Errors</i> and <i>Fatal</i> messages are always reported</li>
+<li>If -m is specified, ALL messages are displayed on the terminal.  When collectl is not
+providing the desired results and it is not obvious why, adding this switch can be helpful.</li>
+</ul>
+<b>Daemon Mode Messages, requires -f and -m</b>
+<ul>
+<li>If collectl is started as a daemon and the -m switch is specified, all messages will be
+written to the message log in the collectl logging directory, the default being /var/log/collectl.
+If this switch is not specified no messages are ever recorded and so it is recommended that
+this switch, which is already in the collectl startup script, not be removed.</li>
+<li>Any messages of type <i>Error</i> or <i>Fatal</i> are also sent to syslog, but again only
+if logging is enabled with -m.</li>
+</ul>
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

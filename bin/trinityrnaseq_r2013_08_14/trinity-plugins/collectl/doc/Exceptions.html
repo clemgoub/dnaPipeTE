@@ -1,0 +1,41 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Exception Reporting</title>
+</head>
+
+<body>
+<center><h1>Exception Reporting</h1></center>
+<p>
+By default, collectl always reports all data for all devices.  However, in the
+cases where there are dozens or possibly hundreds of devices such as with large
+disk farms, it may be desirable to only look at those devices that are actually
+doing something of interest.  These are referred to as exceptions, because
+their activity has crossed a level of minimal activity.  The defaults for these levels
+can be displayed with the -V switch or
+changed to different values with the -l switch.  To change one or more values
+simply specify them as a string.  There are currently 4 levels one can set:
+<p>
+<ul>
+<li>SVC - Disk Service Time</li>
+<li>IOS - Number of Disk I/O Operations</li>
+<li>LusKBS - Lustre KBytes/Sec</li>
+<li>LusReints - Lustre MDS Reint operations</li>
+</ul>
+
+Note that one can also specify <i>all</i> conditions must be met or
+simply 1 must be met by adding a selection of AND (the default) or OR, respectively.
+<p>
+For example, to set the minimal SVC level to 50 and require both SVC and IOS
+limits be reached,  simply add the switch <i>-l SVC:50</i>.  
+To change both values and require only 1 be met, separate them with a
+<i>hyphen</i> and be sure to include OR as one of the parameters such as
+<i>-l SVC:50-IOS:10-OR</i>, noting that order is not important.
+<p>
+One should not confuse exceptions which are based on threshold values, with filters
+which are based on the presence of explicit field values.
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

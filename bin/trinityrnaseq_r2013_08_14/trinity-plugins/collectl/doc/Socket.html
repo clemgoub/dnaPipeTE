@@ -1,0 +1,24 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Socket Info</title>
+</head>
+
+<body>
+<center><h1>Socket Monitoring</h1></center>
+<p>
+<h3>Introduction</h3>
+Not really a whole lot to say here other than collectl does not report any socket details at this time but only
+summary data, which it gets from <i>/proc/net/sockstat</i>.   In brief format the data reported is the number of
+sockets in use by their type, specifically TCP, UDP and Raw.  It also reports the number if IP fragments.
+In verbose more it break things out at lower levels of detail.
+<p>
+In most cases this is of minimal interest unless you're trying to track down a specific socket related problem.  In the cases
+of a runaway process or someone opening but not closing sockets this number has been seen to grow quite large and even 
+consume all resources causing a system crash, but those cases are pretty rare.  In any event, during times of strange behavior
+it can't hurt to have a look at these numbers if for no other reason than to rule out socket problems.
+
+<table width=100%><tr><td align=right><i>updated August 30, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>
