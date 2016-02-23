@@ -1,0 +1,91 @@
+= Genome-guided Trinity for Gene Structure Annotation (Beta) =
+
+link:index.html[Trinity-home]
+
+A primary use of RNA-Seq is to identify transcribed regions of a genome, and to reconstruct the structures of transcripts including alternatively spliced variants.  Current state-of-the-art methods for genome-based transcript reconstruction involve aligning RNA-Seq reads to the genome using spliced (intron-aware) aligners, and then assembling the alignments to reconstuct transcript structures (eg. cufflinks, scripture).  We refer to this as the 'align-reads then assemble-alignments' approach.  Trinity supports an alternative, hybrid  approach to genome-based transcript reconstruction that uses a combination of RNA-Seq alignments to a genome coupled with RNA-seq read de novo assembly and transcript alignment assembly. This alternative approach involves four major steps: 'align-reads, assemble-reads, align-transcripts, then assemble-transcript_alignments'. Specifically, the process involves:
+
+- *align-reads*: GSNAP is used to align reads to the genome sequence. Reads are then partitioned into read-covered regions of the genome.
+
+- *assemble-reads*: Trinity is used to assemble the RNA-Seq reads in each partition.  This can be done in a massiviely parallel manner, typically requiring little RAM as compared to whole de novo RNA-Seq assemblies, and can be executed using standard hardware.
+
+- *align-transcripts*: The Trinity-assembled transcripts are aligned back to the genome using GMAP, as part of the PASA software pipeline.
+
+- *assemble-transcript_alignments*: The transcript alignments are assembled by PASA into complete transcript structures, resolving alternatively spliced transcript structures.
+
+We've found this system to be highly effective for annotation of diverse eukaryotic genomes, from the compact genomes of microbial eukaryotes to the more expanse genomes of plants and vertebrates.  The resulting transcript structures are provided in popular file formats for downstream analysis, including visualization (ex. bed for http://www.broadinstitute.org/igv/[IGV]), expression analysis (gtf for http://cufflinks.cbcb.umd.edu/[Tuxedo]), or coding gene identification (gff3 for http://evidencemodeler.sf.net[EVidenceModeler], gtf for http://transdecoder.sf.net[TransDecoder]).
+
+= Installation Requirements =
+
+Genome-guided Trinity requires installation of:
+
+- Trinity (http://trinityrnaseq.sf.net[http::/trinityrnaseq.sf.net])
+- GSNAP & GMAP (http://research-pub.gene.com/gmap/[http://research-pub.gene.com/gmap/])
+- PASA (http://pasa.sf.net[http://pasa.sf.net])
+
+= Running Genome-guided Trinity (Beta) =
+
+Below, we describe the steps required for running the genome-guided Trinity-based transcript reconstruction pipeline.
+
+== Align RNA-Seq reads to the genome ==
+
+The RNA-Seq reads need to first be aligned to the genome. There are many short-read spliced aligners that are well suited to this step. The complete read alignment accuracy is not so important at this stage... What is important, is that we have adequate sensitivity for mapping reads to their proper location in the genome, regardless of whether all introns are properly modeled. In our evaluation of a handful of spliced read aligners, we've found that GSNAP is well suited to this step.  We've wrapped 'gsnap' in our 'alignReads.pl' script within Trinity so that you can run it like so:
+
+  % $TRINITY_HOME/util/alignReads.pl --seqType fq --left reads.left.fq --right reads.right.fq --target genome.fasta --aligner gsnap -- -t 6
+
+[NOTE]
+If your RNA-Seq data are single-end, use the '--single reads.fq' parameter.  If your data are strand-specific, you do *not* need to indicate this here; it will be specified in subsequent steps below. 
+
+This should generate a coordinate-sorted bam alignment output file as 'gsnap_out/gsnap.coordSorted.bam'
+
+Convert this file to 'sam' format for downstream use by Trinity software like so:
+
+  % samtools view gsnap_out/gsnap.coordSorted.bam > gsnap.coordSorted.sam
+
+
+
+== Assemble the aligned reads using Trinity ==
+
+Before we get to executing the Trinity assembly steps, we need to first prep the aligned reads for use by Trinity. This involves several steps, as outlined below.
+
+First, the reads must be partitioned according to covered region, and separated according to transcribed strand if the data are strand-specific. To do so, run:
+
+  % $TRINITY_HOME/util/prep_rnaseq_alignments_for_genome_assisted_assembly.pl --coord_sorted_SAM gsnap.coordSorted.sam -I $MAX_INTRON_LENGTH
+
+[NOTE]
+If your data are strand-specific, include the '--SS_lib_type' parameter, identically as when running Trinity.  
+
+After the above step completes, all reads will be partitioned into separate .reads files.  Create a list of these files like so:
+
+  % find Dir_* -name "*reads" > read_files.list
+
+Generate a file containing the Trinity commands to be executed:
+
+  % $TRINITY_HOME/util/GG_write_trinity_cmds.pl --reads_list_file read_files.list --paired  > trinity_GG.cmds
+
+[NOTE]
+If data are strand-specific, include the '--SS' flag to indicate it.  If your data are single-end, exclude the '--paired' flag above. To mitigate the occurrence of fusion transcripts, such as in dense microbial eukaryotic genomes, you can have Trinity take the read pairing information into account and dissect loosely supported fusions of Inchworm contigs by employing the option '--jaccard_clip'.  Finally, if you'd like to include any tailored parameters to the Butterfly software, you can include these via the '--bfly_opts' parameter.
+
+
+Now, execute the Trinity assembly commands. This can be done massively parallel on a computing grid - check with your system administrators for proper methods for accomplishing that.  Alternatively, you can run all commands in parallel on a single server, using ParaFly included in Trinity:
+
+  % $TRINITY_HOME/trinity-plugins/parafly/bin/ParaFly -c trinity_GG.cmds -CPU 6 -failed_cmds trinity_GG.cmds.failed -v 
+
+
+Capture all the Trinity-assembled transcripts into a single fasta file, and automatically update their accession values to ensure that each identifier is unique:
+
+  % find Dir_*  -name "*inity.fasta" -exec cat {} + | $TRINITY_HOME/util/inchworm_accession_incrementer.pl > Trinity_GG.fasta
+
+
+== Align and assemble the Trinity-reconstructed transcripts using the PASA pipeline ==
+
+Assuming that you have the PASA and required software installed and properly configured, you can execute this final step of aligning the reconstructed transcripts to the genome and assembling these transcript alignments into PASA alignment assemblies like so:
+
+  % $PASA_HOME/scripts/Launch_PASA_pipeline.pl -c alignAssembly.config -C -R -g genome.fasta -t Trinity_GG.fasta --MAX_INTRON_LENGTH $max_intron_length
+
+[NOTE]
+If you have performed a strand-specific RNA-Seq assembly, indicate this to PASA using the parameter '--transcribed_is_aligned_orient'.
+
+The PASA-reconstructed transcripts will be provided in files $PASA_DATABASE_NAME.pasa_assemblies.denovo_transcript_isoforms.(gtf,bed,gff3,fasta).
+
+More details on how to run PASA using Trinity assemblies is provided at http://pasa.sourceforge.net/#A_RNASeq[pasa.sf.net under RNA-Seq].
+

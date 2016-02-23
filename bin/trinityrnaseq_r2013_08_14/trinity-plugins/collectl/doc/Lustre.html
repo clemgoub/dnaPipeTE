@@ -1,0 +1,112 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Lustre</title>
+</head>
+
+<body>
+<center><h1>Lustre</h1></center>
+<p>
+<h3>Overview</h3>
+The first thing to understand about lustre reporting is in most cases, where one has configured
+the server(s) and just wants to monitor them, all one need do is specify -sl or -sL and
+collectl will do the right thing.
+It will automatically detect the type of service(s) currently running and will
+either record or display the appropriate data.
+If you select -sl and the system doesn't have lustre installed, it will warn
+you and then disable that switch.
+<p>
+<h3>Controlling Which Data is Displayed</h3>
+Lustre records a wealth of performance data, far more than makes sense to
+display all the time, and so by default collectl displays minimal information
+such as bytes/operations read and written.  At the client detail level lustre
+can differentiate this
+data at the filesystem and even the OST level!  In order to accommodate the broadest flexibility
+one is allowed to control the way data is collected/displayed via several complementary
+switches.
+
+<ul>
+<li>-s:  As is normally the case, one can specify '-sl' for summary level data, '-sL' for
+detail data or combine them to get both.  However, since the client detail data can actually
+be presented at the individual filesystem or OST level, there is an option to show the OST
+level details (filesystem details are the default) <i>see --lustopts O</i>.
+<li>--lustopts: This switch is used to provide further detail about the types of data that
+is to be collected/displayed.  There are 5 such values that collectl cares about:
+<ul>
+<li>B - rpc buffer level data.</li>
+<li>D - disk block statistics, which applies to both MDS and OSS servers.  One should also note
+this is specific to HP SFS and this data is not available in the open source version.</li>
+<li>M - client metadata (note that this was the default prior to collectl V1.6.2).</li>
+<li>O - for client details only, show results by OST
+<li>R - read_ahead statistics.  Unlike the other options, which generate a lot of data,
+<i>--lustopts R</i> may be used with brief mode.</li>
+<p>
+As it turns out, nothing is quite as simple as it seems and while the following
+case is not typical, it needs to be addressed for completeness.  Since collectl allows one to
+collect one set of data and to later display a different set,
+consider what happens in one were
+to collect multiple types of lustre data for a client using <i>--lustopts MR</i>, but then just play back
+the basic client data which is collected without specifying <i>--lustopts</i>.
+By default, playback mode defaults
+to the settings data was collected with and to change the display one needs to explicitly
+change those settings.  To meet this need, use <i>--lustsvc</i>, which is described in more
+detail later.
+</ul>
+</ul>
+<p>
+In the spirit of letting the user display whatever they want to, collectl will allow one to
+select multiple values for <i>--lustopts</i> and it will try to display the results appropriately.
+Perhaps the easiest thing to do is just experiment and in most cases you'll get what you're 
+looking for.  There are a few combinations of <i>-s</i> and <i>--lustopts</i> that do not 
+make sense and if you choose one, you will be told.
+<p>
+
+<h3> What About Playback?</h3>
+As is always the case with playback, unless otherwise told to do something else, collectl 
+will playback its recorded data
+based on the parameters selected for collection.  In other words, if you specify 
+<i>--lustopts OBR</i>
+in record mode, collectl will record both RPC buffer and read_ahead stats.  When you play the
+data back, it will then display both as well.  However, you also have the option of specifying
+<i>--lustopts</i>, typically thought of as a collection-only switch, and it will force the output to what
+you'd like it to be.  If you select a statistics type that hasn't been recorded,
+that information will be displayed, but as zeros.
+<p>
+<h3>Recognizing Service Configuration Changes</h3>
+In some cases lustre services may change after collectl starts. In fact, it may not
+even be running and if so you'll get a message telling you it is not and that collectl
+cannot determine the system type since it could be a client, MDS, OSS or some 
+combination.  This includes services starting and stopping as well as the configurations 
+of those services themselves changing.
+For  example one might occasionally mount/umount different lustre filesystems on
+a client.  Not to worry.  Collectl
+periodically checks for configuration changes and automatically adjusts the data it collects
+as well as anything it may be currently displaying.  However this can also lead to the 
+output format changing.  If you know that the system type could change and you simply want to
+force the type of output to be consistent, use <i>--lustsvc</i> as described
+in the next section.
+<p>
+<h3>Changing the Default Recording/Display Behavior</h3>
+There are some times when you want specific control over what data is recorded or
+displayed rather than the default behavior OR collectl starts before lustre does and
+it can't determine the type of system it is.  This is typically the case when a system
+is playing multiple roles by providing more than one service.  For example, if a system
+has been configured as both an OSS and a client, every time you run collectl you will collect
+or display data about both and sometimes this is NOT what you want.  There may be other times
+where you have developed some reports or graphs that expect data in a standard format and
+you've collected a subset (or superset) of data.
+<p>
+To override this behavior of the lustre portion of the data (remember you can
+control the displaying of individual subsystems with -s), use <i>--lustsvc</i> to 
+specify the type of service(s) you're interested
+in and collectl will only pay attention to those, both for recording to a file as well as
+display.  Naturally when displaying
+data for services you never collectled data on, those services will print as zeros.
+<p>
+If all this sounds confusing, just experiment with various combinations of <i>-s,
+--lustopts</i> and <i>--lustsvcs</i> and observe the behavior.
+
+<table width=100%><tr><td align=right><i>updated Mar 26, 2010</i></td></tr></colgroup></table>
+
+</body>
+</html>

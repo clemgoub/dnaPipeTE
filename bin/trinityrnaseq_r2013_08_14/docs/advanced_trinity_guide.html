@@ -1,0 +1,622 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.2.6" />
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revision {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble,
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-right: 10%;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock {
+  margin-right: 0%;
+}
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock > div.content {
+  padding-left: 2.0em;
+}
+
+div.attribution {
+  text-align: right;
+}
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 2px solid silver;
+}
+
+div.exampleblock > div.content {
+  border-left: 2px solid silver;
+  padding: 0.5em;
+}
+
+div.verseblock div.content {
+  white-space: pre;
+}
+
+div.imageblock div.content { padding-left: 0; }
+div.imageblock img { border: 1px solid silver; }
+span.image img { border-style: none; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+div.olist > ol {
+  list-style-type: decimal;
+}
+div.olist2 > ol {
+  list-style-type: lower-alpha;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+
+div.hlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hlist td {
+  padding-bottom: 15px;
+}
+td.hlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+}
+td.hlist2 {
+  vertical-align: top;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-content {
+  padding-left: 2.0em;
+}
+
+div.exampleblock-content {
+  border-left: 2px solid silver;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+
+/* Because IE6 child selector is broken. */
+div.olist2 ol {
+  list-style-type: lower-alpha;
+}
+div.olist2 div.olist ol {
+  list-style-type: decimal;
+}
+</style>
+<title>Advanced Guide to Trinity</title>
+</head>
+<body>
+<div id="header">
+<h1>Advanced Guide to Trinity</h1>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="para"><p><a href="index.html">Trinity-home</a></p></div>
+<div class="para"><p>Welcome to the advanced guide to trinity.  You are probably reading this because you want to better understand what all those zillions of output files and output directories correspond to, and how you can attempt to troubleshoot certain processes.  We aim to provide much of that information here.</p></div>
+<div class="para"><p>Below, the individual Trinity processes (Inchworm, Chrysalis, and then Butterfly) are described, including their expected output files and data formats.  In the case of Butterfly, additional options are presented for being able to explore transcript graphs and tracking the progress of butterfly as it works its way through these graphs.</p></div>
+<div class="para"><p>Trinity was written as a collective effort by three individuals (Inchworm by Brian Haas, Chrysalis by Manfred Grabherr, and Butterfly by Moran Yassour). In addition to each tool being engineered separately, they each use different code-bases, Inchworm and Chrysalis were written in C++, and Butterfly was written in Java.  They interact only through well-defined file formats for intermediate products used as inputs by downstream processes.</p></div>
+<div class="para"><p>The Trinity assembly algorithm involves the following steps, each of which are described in more detail below, with respect to inputs and outputs generated at each stage.</p></div>
+<div class="ilist"><ul>
+<li>
+<p>
+<a href="#FASTA_to_FASTQ">Generating fasta files from Illumina Fastq files.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#Kmer_catalog">Computing a K-mer abundance catalog</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#Inchworm_assembly">Inchworm assembly of contigs via greedy K-mer extension</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#Chrysalis_clustering">Chrysalis clustering of Inchworm contigs based on shared subsequences (k-1mers) and read support.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#Chrysalis_graphs">Chrysalis construction of deBruijn graphs</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#Chrysalis_read_mapping">Chrysalis mapping of reads to Inchworm contig bundles</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#Chrysalis_graph_reads">Chrysalis incorporation of reads into deBruijn graphs</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#Butterfly_reconstruction">Butterfly reconstruction of transcripts including alternatively spliced isoforms.</a>
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<h2 id="FASTA_to_FASTQ">FASTQ to FASTA conversion</h2>
+<div class="sectionbody">
+<div class="para"><p>Trinity uses Francesco Strozzi's <a href="https://github.com/fstrozzi/Fastool">Fastool</a> software to efficiently convert FASTQ-formatted reads to FASTA format.  If the reads are specified as generated from strand-specific RNA-sequencing, then those reads (left or right fragments) indicated to match the reverse-complement of the transcript's sense strand are first reverse complemented before written to the FASTA file.  Hence, all reads in the resulting <em>trinity_out_dir/both.fa</em> file should be in the sense orientation in the case of strand-specific RNA-Seq processing.</p></div>
+</div>
+<h2 id="Kmer_catalog">Kmer Abundance Catalog Construction</h2>
+<div class="sectionbody">
+<div class="para"><p>Originally, extracting the kmers from the reads and computing their abundance values was a function of Inchworm.  Since the first release of Trinity, we've become aware of faster kmer abundance catalog-generating tools, and have incorporated these as alternatives to Inchworm for this step.</p></div>
+<div class="ilist"><ul>
+<li>
+<p>
+Jellyfish: A fast, lock-free approach for efficient parallel counting of occurrences of k-mers. Guillaume Marcais and Carl Kingsford. <a href="http://bioinformatics.oxfordjournals.org/content/27/6/764.long">Bioinformatics (2011) 27(6): 764-770</a>,  Code: <a href="http://www.cbcb.umd.edu/software/jellyfish">http://www.cbcb.umd.edu/software/jellyfish</a>.
+</p>
+</li>
+</ul></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">As of the 2012-06-08 Trinity release, Jellyfish is used exclusively for building the kmer catalog.</td>
+</tr></table>
+</div>
+<div class="para"><p>In the context of strand-specific RNA-Seq data, only the sense-strand kmers are cataloged. Otherwise, both strands are analyed, and forward and reverse-complement kmers are considered equivalent.</p></div>
+</div>
+<h2 id="Inchworm_assembly">Inchworm assembly of contigs via greedy K-mer extension</h2>
+<div class="sectionbody">
+<div class="para"><p>Inchworm reads the kmer abundance catalog and stores the pair(kmer, count) in memory in the form of a hash table.  The key-value pairs are the k-mers as keys and the abundance of the corresponding k-mer as the value.  The k-mer is stored as a 2-bit encoded unsigned integer, and with 64-bit architectures, allows for k-mers up to 32-mers to be stored.  We find that 25-mers work very well for both highly and lowly expressed transcripts, and so we leverage 25-mers as a fixed option with Trinity.  If you should run Inchworm separately, you can use any length k-mer up to 32-mers, but only the 25-mers are currently compatible with the Trinity package.</p></div>
+<div class="para"><p>When using strand-specific RNA-Seq data, inchworm is run in strand-specific mode, and retains the original k-mer orientation throughout.  Resulting inchworm contigs are then provided in the sense-orientation.</p></div>
+<div class="para"><p>The Inchworm-assembled contigs are reported as the file <em>trinity_out_dir/inchworm.K25.L48.fa</em>, with the name of the file indicating that a k-mer of 25 was used, and contigs at least 48 long were reported.  If strand-specific rna-seq data was not used, the filename will include <em>DS</em> to indicate double-stranded.  The fasta sequence accession for each contig contains information that is used by Chrysalis in the next step.  For example, the following header for an Inchworm fasta assembly:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>&gt;a1;142 K: 25 length: 3697
+GGAGCTGGAGGCCCCCAGGCAACTACACCGTCCACGTA....</tt></pre>
+</div></div>
+<div class="para"><p>indicates that the sequence entry <em>a1;142</em> has an average k-mer abundance value of 142.  This value is a proxy for transcript expression.</p></div>
+<div class="para"><p>Inchworm does a very good job at reconstructing full-length transcripts from RNA-Seq data, but since it leverages only unique k-mers for contig construction, it can only report the parts of alternatively spliced isoforms that are unique.  Subsequent Trinity steps reconstruct the full-length alternatively spliced transcripts.</p></div>
+<div class="para"><p>Since Inchworm puts all kmers into memory, it is a memory-intensive step, and is currently perhaps THE memory-limiting step of Trinity.  In the case of hundreds of millions of RNA-Seq reads, you can lower memory consumption by setting a minimum kmer threshold abundance, such as 2 (the default is 1 &#8212; so all kmers). Error-containing kmers will be greatly enriched within the low-abundance kmer counts and can be excluded with minimal loss is transcript reconstruction sensitivity. Set <em>Trinity.pl &#8212;min_kmer_cov 2</em> to reduce memory requirements with large read sets.</p></div>
+</div>
+<h2 id="Chrysalis_clustering">Chrysalis clustering of inchworm contigs based on shared subsequences (k-1mers) and read support</h2>
+<div class="sectionbody">
+<div class="para"><p>Inchworm contigs are generated by the greedy extension of kmers according to abundance values.  No two inchworm contigs, by definition, can share a k-mer.  Hence, alternatively spliced isoforms and paralogs that share sequences in common cannot be fully represented by inchworm contigs.  However, such related transcripts will contain (k-1)mers in common, and given common k-1mers as seeds, Chrysalis can determine if there are reads in the original RNA-Seq data that further support junctions between inchworm contigs.  The <em>GraphFromFasta</em> utility of Chrysalis performs pairwise comparisons among the inchworm contigs, and determines the number of reads that support junctions. Junction support requires a (k-1)mer in common and half a k-mer on each flank of the junction to exist within the reads.  Full transitive closure (single-linkage clustering) of inchworm contigs based on satisfied junction support defines the inchworm bundles.</p></div>
+<div class="para"><p>Trinity parameters that influence inchworm contig clustering include:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>#  --min_glue &lt;int&gt;               :min number of reads needed to glue two inchworm contigs
+#                                  together. (default: 2)
+#  --min_iso_ratio &lt;float&gt;        :min fraction of average kmer coverage between two iworm contigs
+#                                  required for gluing.  (default: 0.05)
+#  --glue_factor &lt;float&gt;          :fraction of max (iworm pair coverage) for read glue support (default: 0.05)</tt></pre>
+</div></div>
+<div class="para"><p>The bundled inchworm contigs are written as <em>trinity_out_dir/chrysalis/bundled.fasta</em>.  The inchworm contig sequences in a single bundle are described as a concatenated string with each contig delimited by an <em>X</em> character.</p></div>
+<div class="para"><p>Each bundle of sequences corresponds to an individual Chrysalis <em>component</em>.  The Chrysalis component definitions are written to <em>trinity_out_dir/chrysalis/GraphFromIwormFasta.out</em>, and looks like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>COMPONENT 0     3
+&gt;Component_0 9 0 [iworm&gt;a1;142_K:_25_length:_3697]
+GGAGCTGGAGGCCCCCAGGCAACTACACCGTCCACGTACCCAGAGGGGCTGGGCCCTCCCACCAGAGACCACGCCCTGGT
+GTGCCTTAGGGGCCCTGGTTTGTTAGTCTCTGAGTGTGCAGTTGCTGCACATGGGGCCCTGGCGCTTGCTGCACCAACTT
+CCTGTTGGGCCCGTGGTCCTTGGAGGCATGCAGTTCAGCAGACAGTGACTCAGCCATCCACCCAACATGCGGAACGTGTC
+ ... many more seq lines
+GTTTTTTGTTTGTTTTTTTTTAAACGAGCGTGGCTCCTCGCTAACTGCACCCCACCAGGCCGACAGCAAACGCCTCCAGC
+TTCCCGACAGACTCAGACCAAGGTGCGGCCCCGTATTTATGGAATGGCAAATAAAACCCGAGCCCTTTGGTCTCCACGTT
+TCTGATCTCTCCTTTCC
+&gt;Component_0 9 24 [iworm&gt;a25;13_K:_25_length:_85]
+AGGCTCCCCCGGGATGATCTACAGTACTCGTTATGGGAGTCCCAAAAGACAGCTCCAGTTTTACAGGAATCTGGGCAAAT
+CTGGC
+&gt;Component_0 9 29 [iworm&gt;a30;8_K:_25_length:_49]
+TCAACCTGTTCGATACGGCGGAGGGCTACGCTGCTGGAAAAGCTGAAGT</tt></pre>
+</div></div>
+<div class="para"><p>The header line indicates that (COMPONENT 0) is being described and that it contains 3 inchworm contig entries.
+Each inchworm contig that exists as part of that component is then described.</p></div>
+<div class="para"><p>Each component-specific bundle of inchworm contigs is written as a separate file for subsequent parallel processing:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>ex.  chrysalis/RawComps.0/comp0.iworm_bundle</tt></pre>
+</div></div>
+</div>
+<h2 id="Chrysalis_graphs">Chrysalis construction of deBruijn graphs</h2>
+<div class="sectionbody">
+<div class="para"><p>Chrysalis constructs a deBruijn graph from each of the compX.iworm_bundle files using the <em>FastaToDeBruijn</em> utility, generating files:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>ex. chrysalis/RawComps.0/comp0.raw.graph  :de Bruijn graph based on Inchworm contigs only</tt></pre>
+</div></div>
+<div class="para"><p>with format like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Component 0
+1       -1      1       GGAGCTGGAGGCCCCCAGGCAACT        1
+2       1       1       GAGCTGGAGGCCCCCAGGCAACTA        1
+3       2       1       AGCTGGAGGCCCCCAGGCAACTAC        1
+4       3       1       GCTGGAGGCCCCCAGGCAACTACA        1
+5       4       1       CTGGAGGCCCCCAGGCAACTACAC        1
+6       5       1       TGGAGGCCCCCAGGCAACTACACC        1
+...</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>and column headings:
+id     prev     1       kmer                            1</tt></pre>
+</div></div>
+<div class="para"><p>(ignore the 1 columns for now, since they're just placeholders).</p></div>
+<div class="para"><p>Node identifier -1 is a start node with no k-mer sequence.</p></div>
+<div class="para"><p>In the case of strand-specific data, the deBruijn graph is constructed in a strand-specific way.  For non-strand-specific data, a non-redundant deBruijn graph is presented, which can represent transcripts in either (or both, including antisense) orientation.</p></div>
+</div>
+<h2 id="Chrysalis_read_mapping">Chrysalis mapping of reads to Inchworm contig bundles</h2>
+<div class="sectionbody">
+<div class="para"><p>The Chrysalis <em>ReadsToTranscripts</em> utility maps each of the original RNA-Seq reads to the inchworm bundle containing the largest number of kmers in common.  <em>ReadsToTranscripts</em> reads the <em>trinity_out_dir/both.fa</em> reads fasta file and the <em>trinity_out_dir/chrysalis/bundled.fasta</em> file, streaming the <em>Trinity.pl &#8212;max_reads_per_loop</em> reads at a time and writing to component-specific read files:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>ex.  trinity_out_dir/chrysalis/RawComps.0/comp0.raw.fasta</tt></pre>
+</div></div>
+</div>
+<h2 id="Chrysalis_graph_reads">Chrysalis incorporation of reads into deBruijn graphs</h2>
+<div class="sectionbody">
+<div class="para"><p>The Chrysalis <em>QuantifyGraph</em> utility incorporates the component-mapped reads into the context of the deBruijn graph, and in doing so, weights the kmer edges by the read support.  Files generated include:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>ex.  chrysalis/RawComps.0/comp2.out :the de Bruijn graph with edge weights incorporating the mapped reads
+     chrysalis/RawComps.0/comp2.reads :the read sequences and anchor points within the above graph</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Component 2
+1       -1      0       CGGCGTGTGACGCAGTCAGGCCTC        0
+2       1       2       GGCGTGTGACGCAGTCAGGCCTCT        0
+3       2       3       GCGTGTGACGCAGTCAGGCCTCTG        0
+4       3       3       CGTGTGACGCAGTCAGGCCTCTGC        0
+5       4       3       GTGTGACGCAGTCAGGCCTCTGCG        0
+6       5       4       TGTGACGCAGTCAGGCCTCTGCGC        0
+7       6       4       GTGACGCAGTCAGGCCTCTGCGCG        0
+8       7       4       TGACGCAGTCAGGCCTCTGCGCGC        0
+9       8       4       GACGCAGTCAGGCCTCTGCGCGCT        0
+10      9       4       ACGCAGTCAGGCCTCTGCGCGCTG        0
+11      10      4       CGCAGTCAGGCCTCTGCGCGCTGC        0
+12      11      6       GCAGTCAGGCCTCTGCGCGCTGCG        0
+...</tt></pre>
+</div></div>
+<div class="para"><p>The format of the <em>.reads</em> file is like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Component 2
+&gt;61DFRAAXX100204:2:25:3750:2732/2       0       1833    51      1884            GGGAAGGCACTTTCCGGATGATCCCGTATCCCCTGGAGAAGGGACACCTATTTTATCCATACCCAATCTGTACAGA    +
+&gt;61DFRAAXX100204:2:25:7347:5444/2       0       202     51      253             GACTGCAGTCTCTGCTGCTGCTCGCAGACCTGCCCTGCGCTAGCTACCTAGCCCTGCCTCACTGCATCCCTCAAGA    +
+&gt;61DFRAAXX100204:2:25:8933:8122/2       0       2418    51      1183            CTTGGAGATAAACGAGTGTGCAACTGCGTACATTCTCTTGGCGGAAGAAGAAGCGACAACTATTGCTGAAGCAGAA    +
+&gt;61DFRAAXX100204:2:26:11187:19799/2     0       1324    51      1375            CTATATCAAAAGAAGGCTGGCGATGTGTGCCCGGAGACTTGGAAGGACCAGAGAAGCAGTGAAGATGATGAGAGAT    +
+&gt;61DFRAAXX100204:2:26:12653:14528/2     14      1432    51      1469            CTCCTAAGCATGTACAATATCCATGAGAACCTTCTAGAAGCTCTTCTGGAACTCCAAGCTTATGCTGATGTTCAGG    +
+&gt;61DFRAAXX100204:2:26:12686:3440/2      15      843     51      879             CAGAATGCAAAGTAAGGCGAAATCCACTGAATCTGTTTAGGGGTGCGGAATATAATCGGTACACTTGGGTCACAGG    +
+&gt;61DFRAAXX100204:2:26:16242:3695/2      14      279     51      316             GCATCCCTTAAGAACCGCGGCAGCCTTTCCTTGCCTGCTGGATTTTGAGAAGCAGCTCTTCGATTTGGGCTGGTGT    +
+&gt;61DFRAAXX100204:2:26:16448:13715/2     0       1753    51      1804            TGAAGCGATAGCATATGCATTCTTTCATCTTGCACACTGGAAGAGGGTGGAAGGGGCTTTGAATCTCTTGCATTGT    +
+&gt;61DFRAAXX100204:2:26:16861:10738/2     0       2865    51      622             CGACAACCTGAGCACAGTGAGCATGTTTTTGAACACGTTAACCCCAAAGTTCTACGTGGCCCTGACAGGCACTTCC    +
+&gt;61DFRAAXX100204:2:26:17369:11435/2     0       1005    51      1056            TGCAAAAAGCTTGGAGAGAAAGGAACCCTCAAGCCAGGATTTCTGCAGCTCATGAAGCCTTGGAGATAAACGAAAT    +
+...</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>with fields: read_accession, start_in_read, start_node_id, end_in_read, end_node_id, read_sequence, read_orientation_in_graph</tt></pre>
+</div></div>
+<div class="para"><p>(examples shown for formatting information only; they don't match up to each other here. Explore the sample data for synchronized examples).</p></div>
+</div>
+<h2 id="Butterfly_reconstruction">Butterfly reconstruction of transcripts including alternatively spliced isoforms</h2>
+<div class="sectionbody">
+<div class="para"><p>When Chrysalis completes, it creates a file called <em>trinity_out_dir/chrysalis/butterfly_commands</em> that contains the minimal command string to execute Butterfly on these components.  The Trinity.pl wrapper modifies these commands to include Java settings (such as heap size intialization and any butterfly parameters set at runtime).  The modified command file <em>butterfly_commands.adj</em> contains the butterfly commands that should be executed.</p></div>
+<div class="para"><p>Butterfly consumes the deBruijn <em>.out</em> and read-map <em>.reads</em> files for each corresponding Chrysalis component.  Butterfly traces the paths that reads and pairs of reads take within the graph and reports the most probable transcripts as a fasta file.</p></div>
+<div class="para"><p>The resulting Butterfly assembly file for component 2 would exist as: <em>comp2_allProbPaths.fasta</em>.  The format of the fasta file is like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>&gt;comp2_c0_seq1 len=2364 path=[0:0-587 588:588-1076 1146:1077-2363]
+GAGCTCTTCAGGAGGGGGAATGTGCTTGTGGTTTTTGGTCTTGTGCATTTTGTGACAAAG
+GAATTCCCTTTTGAATCGCGCTGTTCCCTTGAAACCCTGGAGCCTCTGGTTCAAGCAGCG
+CAGTCAGTCTGTGCAGTGTCCCTGACGTCATCCGGCGTATGCATAAGCTCTGCTATTGTC
+TTACCGCTAGAGCAGGGCTGAGGACTGCAGTCTCTGCTGCTGCTCGCAGACCTGCCCTGC
+...</tt></pre>
+</div></div>
+<div class="para"><p>The accession of each fasta entry is bundled with information, and is broken down like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>&gt;comp2_c0_seq1 len=2364 path=[0:0-587 588:588-1076 1146:1077-2363]</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>comp2: contig is derived from Chrysalis component # 2
+c0: contig also corresponds to Butterfly sub-component # 0  (during graph compaction and pruning, some components are partitioned into disconnected subcomponents).
+seq1: contig sequence count from chrysalis component 2, butterfly subcomponent zero.  If this subcomponent yields multiple sequences, these will have different seq numbers.
+len:  length of the transcript contig</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>path: list of vertices in the compacted graph that represent the final transcript sequence and the range within the given assembled sequence that those nodes corresond to.  For example, node:0 spans from position 0-587, and then connects to node 588: which extends from position 588-1076 within the transcript, and so on. It's coincidental in this case that the node identifier matches up with the start position within the sequence; it's not always the case, as shown by the third node of this sequence path.</tt></pre>
+</div></div>
+<div class="para"><p>The operations of butterfly can become more transparent if you execute the Butterfly command with a verbose setting of at least 5, in which case, in addition to yielding the most probably transcript contigs, it will report the underlying compacted graph structure, and describe the vertices that are being visited during transcript reconstruction.  For example, the following Butterfly command reports:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>RUNNING: java -Xmx1000M -jar /Users/bhaas/sVN/trinityrnaseq/Butterfly/Butterfly.jar -N 28363 -L 305 -F 280 -C chrysalis/RawComps.0/comp25 --edge-thr=0.05 --stderr -V 5
+fixExtremelyHighSingleEdges()
+method: combineSimilarPathsThatEndAtV(-1)
+method: combineSimilarPathsThatEndAtV(-1)
+method: combineSimilarPathsThatEndAtV(-1)
+method: combineSimilarPathsThatEndAtV(256)
+method: combineSimilarPathsThatEndAtV(256)
+method: combineSimilarPathsThatEndAtV(0)
+method: combineSimilarPathsThatEndAtV(0)
+method: combineSimilarPathsThatEndAtV(73)
+method: combineSimilarPathsThatEndAtV(73)
+method: combineSimilarPathsThatEndAtV(73)
+method: combineSimilarPathsThatEndAtV(247)
+method: combineSimilarPathsThatEndAtV(247)
+method: combineSimilarPathsThatEndAtV(100)
+method: combineSimilarPathsThatEndAtV(100)
+method: combineSimilarPathsThatEndAtV(109)
+method: combineSimilarPathsThatEndAtV(109)
+method: combineSimilarPathsThatEndAtV(-2)</tt></pre>
+</div></div>
+<div class="para"><p>The graph vertices that are being visited are provided in the parenthesis above, starting with (-1), which is the start node that all initial vertices link to, and ending at (-2), which is a final sink node.</p></div>
+<div class="para"><p>Butterfly, given the -V 5 setting, creates a file called <a href="comp25_justBeforeFindingPaths.pdf">comp25_justBeforeFindingPaths.dot</a> that represents the structure of the compacted graph.  This graph can be viewed using <a href="http://www.graphviz.org/">GraphViz</a>.  The graph can be exported in pdf format for searching (not sure why graphviz doesn't have a search function). The <em>Preview</em> software on Mac OSX works well for this (acroread doesn't for some unknown reason).  In the pdf-formatted file, you can search for node identifiers and find the corresponding vertex in the graph.  The graph nodes are formatted like so: TTTACCTCAC&#8230;GATGGCTCAG\:1\(0)\[73], with the trailing three numbers corresponding to: average_node_coverage, node_id, sequence_length.</p></div>
+<div class="para"><p>If you have very complex graphs that are taking an exceedingly long time to process (more than a day), you can consider increasing the <em>&#8212;edge-thr</em> Butterfly threshold to further simplify the graph before transcript reconstruction. Hopefully, this should not happen. Be sure to send us any ultra-long-running graphs so we can explore more efficient ways of processing them in Butterfly.</p></div>
+<div class="para"><p>Important Butterfly parameters accessible via <em>Trinity.pl</em> include:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>#  --max_number_of_paths_per_node &lt;int&gt;  :only most supported (N) paths are extended from node A-&gt;B,
+#                                         mitigating combinatoric path explorations. (default: 10)
+#  --group_pairs_distance &lt;int&gt;    :maximum length expected between fragment pairs (default: 500)
+#
+#  --path_reinforcement_distance &lt;int&gt;   :minimum overlap of reads with growing transcript
+#                                        path (default: 75)
+#
+#  --lenient_path_extension        :require minimal read overlap to allow for path extensions.
+#                                   (equivalent to --path_reinforcement_distance=1)
+#</tt></pre>
+</div></div>
+<div class="para"><p>A little more information on some of these parameters:</p></div>
+<div class="para"><p>The <em>&#8212;group_pairs_distance</em> defines the longest distance acceptable between two paired reads whereby they'll be grouped into a pair-path in the context of the deBruijn graph.  If pairs exist outside of this distance, then each read will be treated as if it's a single read rather than a connected pair.</p></div>
+<div class="para"><p>The <em>&#8212;path_reinforcement_distance</em> specifies the amount of overlap support required for a read (or pair) path to extend a growing transcript path witin the graph. Setting this value to a large number of bases relative to your expected fragment length will increase the specificity of the resulting transcript reconstructions, but could lead to more highly fragmented transcripts where coverage is low or uneven.  Setting the value too low will decrease the specificity of the reconstruction, allowing for weakly supported transcript extensions, but should enrich for more full-length transcripts where coverage is low.  Eventually, this parameter may be set dynamically by Butterfly, but for now it's constant across a given run.</p></div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2012-11-16 10:20:54 EDT
+</div>
+</div>
+</body>
+</html>

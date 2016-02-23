@@ -1,0 +1,1 @@
+/seq/annotation/bio_tools/trinityrnaseq/run_Trinity_use_LSF.sh --seqType fq --kmer_method jellyfish --max_memory 2G --left reads.left.fq.gz --right reads.right.fq.gz --SS_lib_type RF --group_pairs_distance 501 --path_reinforcement_distance 76 --min_contig_length 201 --CPU 4

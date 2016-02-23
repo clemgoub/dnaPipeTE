@@ -1,0 +1,96 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Disk Info</title>
+</head>
+
+<body>
+<center><h1>Disk Monitoring</h1></center>
+<p>
+<h3>Introduction</h3>
+
+As with other subsystems that have specific devices, collectl can report disk summary as well as detail data.
+Like other summary data, disk summary data represents the total activity across all disks or to be more precise, those
+enumerated in /proc/diskstats, with a couple of caveats:
+<ul>
+<li>Partition data is skipped</li>
+<li>Only those disk names that explicitly match the pattern in DiskFilter (see collectl.conf) are included. But don't
+worry, <i>all</i> major types of disks are included as well as several others as they are identified.</li>
+<li>Device mapper disks, while listed in the detail data are <i>NOT</i> included in the summary data to avoid
+double counting</li> 
+</ul>
+
+The three key counters for disk activity are bytes, iops and merges, though only bytes and iops are reported
+in brief summary mode.  The average I/O size which is also reportd in verbose and detail modes may be optionally 
+included in brief mode by including --iosize or --dskopts i.  If you're not sure why/when you'd care about summary
+data, be sure to read <a href=WhySummary.html>this</a>.
+<p>
+Disk detail goes a step further and in addition to including the same information that's reported for summary data
+also includes key device specific metrics relating to queue lengths, wait and service times as well as utilization.
+For those familiar with iostat, this is the same data it reports.  These numbers will help you determine if your
+individual disks are operating properly since high wait and/or service times are a bad thing and indicate something
+is causing an undesired delay somewhere.
+
+<p><b>Filtering</b>
+<br>If you'd like to limit the disks included in either the detail output or the summary
+totals, you can explicity include or exclude them using <i>--dskfilt</i>.  The target of
+this switch is actually one or more perl expressions, but if you don't know perl all you
+really need to know is these are strings that are compared to each disk name.  If the first
+(or only) name is preceded with a ^, disks that match the string(s) will be excluded.
+
+<p><i>No filtering...</i>
+<div class=terminal>
+<pre>
+collectl -sD
+# DISK STATISTICS (/sec)
+#          <---------reads---------><---------writes---------><--------averages--------> Pct
+#Name       KBytes Merged  IOs Size  KBytes Merged  IOs Size  RWSize  QLen  Wait SvcTim Util
+sda              0      0    0    0     291     67    5   58      58     0     0      0    0
+sdb              0      0    0    0       0      0    0    0       0     0     0      0    0
+dm-0             0      0    0    0     291      0   73    4       4     0     1      0    0
+dm-1             0      0    0    0       0      0    0    0       0     0     0      0    0
+hda              0      0    0    0       0      0    0    0       0     0     0      0    0
+</pre>
+</div>
+
+<p><i>Only include sd disks...</i>
+<div class=terminal>
+<pre>
+collectl -sD --dskfilt sd
+# DISK STATISTICS (/sec)
+#          <---------reads---------><---------writes---------><--------averages--------> Pct
+#Name       KBytes Merged  IOs Size  KBytes Merged  IOs Size  RWSize  QLen  Wait SvcTim Util
+sda              0      0    0    0       0      0    0    0       0     0     0      0    0
+sdb              0      0    0    0       0      0    0    0       0     0     0      0    0
+</pre>
+</div>
+
+<p><i>Exclude sd and dm disks...</i>
+<div class=terminal>
+<pre>
+collectl -sD --dskfilt ^sd,dm
+# DISK STATISTICS (/sec)
+#          <---------reads---------><---------writes---------><--------averages--------> Pct
+#Name       KBytes Merged  IOs Size  KBytes Merged  IOs Size  RWSize  QLen  Wait SvcTim Util
+hda              0      0    0    0       0      0    0    0       0     0     0      0    0
+</pre>
+</div>
+
+<p><i>Exclude disks with the letter 'a' in their name...</i>
+<div class=terminal>
+<pre>
+collectl -sD --dskfilt ^a
+# DISK STATISTICS (/sec)
+#          <---------reads---------><---------writes---------><--------averages--------> Pct
+#Name       KBytes Merged  IOs Size  KBytes Merged  IOs Size  RWSize  QLen  Wait SvcTim Util
+sdb              0      0    0    0       0      0    0    0       0     0     0      0    0
+dm-0             0      0    0    0       0      0    0    0       0     0     0      0    0
+dm-1             0      0    0    0       0      0    0    0       0     0     0      0    0
+</pre>
+</div>
+
+
+<p><table width=100%><tr><td align=right><i>updated Sept 15, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

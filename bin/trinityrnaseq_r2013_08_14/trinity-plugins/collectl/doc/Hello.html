@@ -1,0 +1,46 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Hello World</title>
+</head>
+
+<body>
+<center><h1>Hello World</h1></center>
+<p>
+<h3>Introduction</h3>
+<p>
+Included with collectl is the example file <i>hello.ph</i> which is a collectlized version of
+hello world.  It simulates a <i>hw</i> subsystem consisting of 3 hw instances, which in turn
+report a single counter.  Here is an example of its simulated /proc data, which is shown by
+using -d4.  Also notice in this case the discriminator is <i>hw</i> but <i>-n</i> is also
+included in the calls to <i>record()</i> to further identify individual devices:
+
+<div class=terminal>
+<pre>
+collectl --imp hello -d4
+>>> 1238167880.003 <<<
+hw-0 HelloWorld 0
+hw-1 HelloWorld 10
+hw-2 HelloWorld 40
+</pre></div>
+
+You can use this example module with virtually any combinations of switches and any other collectl
+subsystems as well as exporting the output over a socket, writing to a raw file or playing it back.
+As you should realize by now the combinations are far too extensive to list so below is only the
+simplest one, showing this data combined with cpu stats in brief format with timestamps in msecs.
+<div class=terminal>
+<pre>
+collectl --imp hello -sc -oTm
+#             <--------CPU--------><-Hello->
+#Time         cpu sys inter  ctxsw   Total
+11:40:29.002    0   0  1027    126     140
+11:40:30.002    0   0  1012    138     230
+</pre></div>
+
+For further information on using this capability see hello.ph which has been heavily annotated and
+should make a good staring template for developing your own custom modules.
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

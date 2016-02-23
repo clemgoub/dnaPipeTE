@@ -1,0 +1,115 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Interrupts</title>
+</head>
+
+<body>
+<center><h1>Interrupts</h1></center>
+<p>
+<h3>Introduction</h3>
+Prior to V2.5.0, collectl reported the total number of interrupts across all CPUs
+as part of the CPU summary data and nothing about interrupts in the CPU detail.  
+Since interrupt counts are actually reported in the kernel for each CPU 
+by individual interrupt number, that information will now be made available both
+in summary and detail formats.
+However, a slightly different methodology for categorization will be used because
+interrupt summary data will be reported by CPU and detailed interrupt data will 
+break out the data by individual interrupts for each CPU.
+<p>
+<h3>Requesting Interrupt Statistics</h3>
+Since <i>-si</i> has already been taken for reporting inode statistics, 
+interrupt summary data should be requested using <i>-sj</i> and detail data using <i>-sJ</i>.  
+Interrupts are also treated differently than other statistics in a couple of ways:
+<ul>
+<li>Rather than reporting a fixed number of fields like other summary data, the number
+of fields are variable and equal to the number of CPUs</li>
+<li>If one specifies -sCj one will NOT get a separate verbose format for the <i>Interrupt
+Summary</i>, but rather will have those details included as part of the CPU detail report
+as shown in the examples below.
+</ul>
+<p>
+<h3>Plot Data and s-expressions</h3>
+Although looking at interrupt data in <i>brief</i> or <i>verbose</i> fits quite well with
+collectl's reporting methodology, it doesn't fit the <i>plot</i> and <i>s-expression</i> 
+formats.  This is because both expect a fixed number of fields in for summary data and
+a variable number of fields for detail data, indexed by a device number.  However, 
+interrupt summary data is actually variable size based on the number of CPUs and the
+detail data doesn't really fit with anything and so trying to do so will generate an error.
+Therefore to report interrupt data in plot or s-sexpressions
+you will be required to request CPU detail data as well since interrupts are reported
+as part of that data.
+<p>
+<h3>Examples</h3>
+The following examples only show interrupt data except where CPU data is required.  Any of
+these reports can be extended to include other data types.
+<p>
+This first example shows the basic interrupt output displayed in <i>brief</i> mode on an 8 
+processor system, with timestamps.  If you include --verbose you essentially get the same
+display except with more significant digits for each interrupt.
+
+
+<div class=terminal>
+<pre>
+[mjs]# ./collectl.pl -sj -oT
+#         <-----------------Int----------------->
+#Time     Cpu0 Cpu1 Cpu2 Cpu3 Cpu4 Cpu5 Cpu6 Cpu7
+12:49:55  4828  16K 1000  16K   18  16K  16K    0
+12:49:56  4804  16K 1000  16K    0  16K  16K    0
+12:49:57  4811  16K 1000  16K   18  16K  16K    0
+</pre>
+</div>
+
+<p>
+As mentioned above, specifying -sCj is <i>special</i> as it takes the data for 2 separate
+subsystems (CPU detail and interrupt summary) and combines them in a single display as 
+shown for two sampling periods on a 4 processor system:
+
+<div class=terminal>
+<pre>
+[mjs]# ./collectl.pl -sCj -oT
+# SINGLE CPU STATISTICS
+#            CPU  USER NICE  SYS WAIT IRQ  SOFT STEAL IDLE INTRPT
+14:36:12       0     0    0    0    0    0    0     0  100     11
+14:36:12       1     0    0    0    0    0    0     0   99    999
+14:36:12       2     0    0    0    0    0    0     0  100      0
+14:36:12       3     0    0    0    0    0    0     0  100      0
+14:36:13       0     0    0    0    0    0    0     0  100     13
+14:36:13       1     0    0    0    0    0    0     0  100   1000
+14:36:13       2     0    0    0    0    0    0     0  100      0
+14:36:13       3     0    0    0    0    0    0     0  100      0
+</pre>
+</div>
+
+A third form that can be particularly useful is the <i>Interrupt Details</i> which shows
+the distribution of the individual interrupts across the CPUs.  What makes this form
+especially handy is it only shows those interrupts that changed during the
+monitoring cycle which is considerable easier to read than /proc/interrupts itself.
+
+<div class=terminal-wide14>
+<pre>
+[mjs]# ./collectl.pl -sJ -oT
+# INTERRUPT DETAILS
+#          Int    Cpu0   Cpu1   Cpu2   Cpu3   Cpu4   Cpu5   Cpu6   Cpu7   Type            Device(s)
+12:48:50   082       0      0      0   7731      0      0      0      0   PCI-MSI-X       eth2 (queue 0)
+12:48:50   098       0      0      0      0   2037      0      0      0   PCI-MSI-X       eth2 (queue 2)
+12:48:50   122       0      0   2240      0      0      0      0      0   PCI-MSI-X       eth2 (queue 5)
+12:48:50   138       0   7084      0      0      0      0      0      0   PCI-MSI-X       eth2 (queue 7)
+12:48:50   154       0      0      0      0      0   7723      0      0   PCI-MSI-X       eth3 (queue 0)
+12:48:50   162    9082      0      0      0      0      0      0      0   PCI-MSI-X       eth3 (queue 1)
+12:48:50   178       0      0      0      0      0      0   8253      0   PCI-MSI-X       eth3 (queue 3)
+12:48:50   210       0      0      0      0      0      0      0   6417   PCI-MSI-X       eth3 (queue 7)
+12:48:50   218       1      0      0      0      0      0      0      0   PCI-MSI         eth0
+</pre>
+</div>
+
+<h3>Restrictions</h3>
+If the number of CPUs change during processing, this can only be detected when monitoring CPU data
+at the same time.  If you are only monitoring interrupt data and there is a state change things will
+get very messy.  As users typically monitor Interrupts and CPU data at the same time it is not
+felt to be worth the extra effort or processing overhead to try and accommodate this rare case.
+
+<table width=100%><tr><td align=right><i>updated June 25, 2010</i></td></tr></colgroup></table>
+
+</body>
+</html>

@@ -1,0 +1,1062 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.8" />
+<title>Trinity: Frequently Asked Questions and Topics</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>Trinity: Frequently Asked Questions and Topics</h1>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph"><p><a href="index.html">Trinity-home</a></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="#ques_A">What computing resources are required?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_B">How long should this take?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_C">How can I run this in parallel on a computing grid?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_D">How do I identify the specific reads that were incorporated into the transcript assemblies?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_D2">How do I combine multiple libraries in a single Trinity run? Or how do I combine paired and single reads?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_E">Chrysalis died unexpectedly.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_E2">QuantifyGraph of Chrysalis died due to <em>std::bad_alloc</em></a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_F">A Butterfly process seems to run forever.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_F2">Some Butterfly commands fail.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_G">Butterfly fails with java Error: Cannot create GC thread. Out of system resources.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_H">How do I change the K-mer size?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_J">Can I combine strand-specific and non-strand-specific reads?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_K">What is the naming convention of the final</a>
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ques_A">What computing resources are required?</h3>
+<div class="paragraph"><p>Ideally, you will have access to a large-memory server, ideally having ~1G of RAM per 1M reads to be assembled (but often, much less memory may be required).  We regularly run Trinity on our Dell 256G RAM 22-core server.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ques_B">How long should this take?</h3>
+<div class="paragraph"><p>It depends on a number of factors including the number of reads to be assembled and the complexity of the transcript graphs.  The assembly from start to finish can take anywhere from ~1/2 hour to 1 hour per million reads (your mileage may vary).</p></div>
+<div class="paragraph"><p>To troubleshoot individual graphs using Butterfly, see <a href="advanced_trinity_guide.html">Advanced Guide to Trinity</a>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ques_C">How can I run this in parallel on a computing grid?</h3>
+<div class="paragraph"><p>The initial Inchworm and Chrysalis steps need to be run on a single server as a single process, however parts of Chrysalis and all of Butterfly can be run as naive parallel processes on a computing grid.</p></div>
+<div class="paragraph"><p>Running Trinity.pl with the option: <em>--no_run_quantifygraph</em> will stop Trinity just before the parallel processes can be executed.  There will be two sets of files generated, each containing commands that should be executed on a computing grid.</p></div>
+<div class="paragraph"><p>The first set of commands correspond t the Chrysalis quantifyGraph step, found at</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>trinity_out_dir/chrysalis/quantifyGraph_commands</code></pre>
+</div></div>
+<div class="paragraph"><p>after executing these commands on your computing grid, and ensuring that each succeeded, you can then execute the Butterfly commands found at:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>trinity_out_dir/chrysalis/butterfly_commands.adj</code></pre>
+</div></div>
+<div class="paragraph"><p>(be sure to use the .adj extension, since this file includes other butterfly parameters passed through the Trinity.pl wrapper).</p></div>
+<div class="paragraph"><p>How to get each of these commands to run on your grid will depend on your computing infrastructure.  We have several ways to do this via LSF, but they&#8217;re all home-grown solutions and not described here.</p></div>
+<div class="paragraph"><p>Once all butterfly commands have been executed, you can retrieve all the resulting assembled transcripts by concatenating the individual result files together like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>find trinity_out_dir/chrysalis -name "*allProbPaths.fasta" -exec cat {} + &gt; Trinity.fasta</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="ques_D">How do I identify the specific reads that were incorporated into the transcript assemblies?</h3>
+<div class="paragraph"><p>Currently, the mappings of reads to transcripts are not reported.  To obtain this information, we recommend realigning the reads to the assembled transcripts using <a href="http://bowtie-bio.sourceforge.net/index.shtml">Bowtie</a> or <a href="http://bio-bwa.sourceforge.net/">BWA</a>.  A wrapper around Bowtie that will generate alignments for you is included in the Trinity package as:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>util/alignReads.pl</code></pre>
+</div></div>
+<div class="paragraph"><p>and example data and example execution of this is included at:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>sample_data/read_alignment</code></pre>
+</div></div>
+<div class="paragraph"><p>for paired or single read data. See the various run.sh scripts available for examples.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ques_D2">How do I combine multiple libraries in a single Trinity run? Or, how do I combine paired and single reads?</h3>
+<div class="paragraph"><p>If you have RNA-Seq data from multiple libraries and you want to run them all through Trinity in a single pass, simply combine all your left.fq files into one left.fq file, and combine all right.fq files into one right.fq file. Then run Trinity using these separately concatenated left and right input files.</p></div>
+<div class="paragraph"><p>If you have additional singletons, add them to the .fq file that they correspond to based on the sequencing method used (if they&#8217;re equivalent to the left.fq entries, add them there, etc).</p></div>
+<div class="paragraph"><p>There is no good way to combine strand-specific data with non-strand-specific data, unless you decide to treat the entire data set as non-strand-specific.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ques_E">Chrysalis died unexpectedly. What do I do?</h3>
+<div class="paragraph"><p>In nearly every case examined thus far, this is because the stacksize memory grew beyond its maximal setting.  Chrysalis can sometimes recurse fairly deeply, in which case the stacksize can grow substantially.  Before running Trinity, be sure that your stacksize is set to <em>unlimited</em>.  On CentOS linux, you can check your default settings like so (it may be different on your linux distro):</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>bhaas@hyacinth$ limit</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>cputime      unlimited
+filesize     unlimited
+datasize     unlimited
+stacksize    100000 kbytes
+coredumpsize 0 kbytes
+memoryuse    unlimited
+vmemoryuse   unlimited
+descriptors  131072
+memorylocked 256 kbytes
+maxproc      2102272</code></pre>
+</div></div>
+<div class="paragraph"><p>and you would set the stacksize (and other settings) to unlimited like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>bhaas@hyacinth$ unlimit</code></pre>
+</div></div>
+<div class="paragraph"><p>and verify the new settings:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>bhaas@hyacinth$ limit</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>cputime      unlimited
+filesize     unlimited
+datasize     unlimited
+stacksize    unlimited
+coredumpsize unlimited
+memoryuse    unlimited
+vmemoryuse   unlimited
+descriptors  131072
+memorylocked 256 kbytes
+maxproc      2102272</code></pre>
+</div></div>
+<div class="paragraph"><p>On Solaris, Ubuntu linux, and perhaps Mac OSX, the syntax is different, and might be:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>ulimit -s unlimited</code></pre>
+</div></div>
+<div class="paragraph"><p>On Ubuntu, type: <em>ulimit -a</em> to examine and verify your settings.</p></div>
+<div class="paragraph"><p>On snow leopard, you cannot set it to unlimited for some reason (older versions you could), so try to max it out.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ques_E2">QuantifyGraph of Chrysalis died due to <em>std::bad_alloc</em></h3>
+<div class="paragraph"><p>If one or more QuantifyGraph (of Chrysalis) jobs should fail like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>terminate called after throwing an instance of 'std::bad_alloc'
+what():  std::bad_alloc</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>We are sorry, commands in file: [failed_quantify_graph_commands.1234.txt] failed.  :-(</code></pre>
+</div></div>
+<div class="paragraph"><p>it is because these processes ran out of available memory.  The fix is the following:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+adjust the commands in the <em>failed_quantify_graph_commands.1234.txt</em> file, setting <em>-max_reads 20000000</em> to a lower value (200000 is sufficient, and will be the new setting in post-Jan-2013 releases of Trinity).  Run these adjusted commands to completion.
+</p>
+</li>
+<li>
+<p>
+Create the quantifygraph checkpoint file like so:
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><code>% touch trinity_out_dir/chrysalis/quantifyGraph_commands.run.finished</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Rerun your original Trinity.pl command, which should then resume right after the quantifyGraph stage.
+</p>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="ques_F">Butterfly seems to run forever. What do I do?</h3>
+<div class="paragraph"><p>Occassionally (very rarely, such as one component per tens of thousands, if at all) Butterfly will encounter a complicated transcript graph and seems to take an eternity to process it.  You will notice this by running <em>top</em> and seeing a <em>java</em> process that has been running for a very long time.  For example, I&#8217;m running a dozen butterfly commands on my large server (22 cores, 256 GB RAM) and I can see various butterfly jobs running as <em>java</em> in the view:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>Tasks: 500 total,   7 running, 493 sleeping,   0 stopped,   0 zombie
+top - 09:13:33 up 131 days, 21:07,  4 users,  load average: 70.72, 53.70, 28.00Tasks: 510 total,   9 running, 501 sleeping,   0 stopped,   0 zombie
+Cpu(s): 89.1%us, 10.4%sy,  0.0%ni,  0.2%id,  0.0%wa,  0.1%hi,  0.2%si,  0.0%stMem:  264349428k total, 48345144k used, 216004284k free,   126640k buffers
+Swap:  8385920k total,   314336k used,  8071584k free, 18855720k cached
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+ 7775 bhaas     16   0 1373m 302m 8724 S 201.2  0.1   0:04.02 java
+ 7735 bhaas     17   0 1358m 329m 8776 S 171.1  0.1   0:04.47 java
+ 7310 bhaas     17   0 1300m 359m 8804 S 140.9  0.1   0:07.84 java
+ 8194 bhaas     17   0 1294m 165m 8680 S 125.8  0.1   0:01.88 java
+ 8313 bhaas     18   0 1356m  36m 8580 S  98.1  0.0   0:00.73 java
+ 8075 bhaas     17   0 1290m  53m 8668 S  93.1  0.0   0:01.18 java
+10241 bhaas     18   0 1376m 604m 8820 S  88.0  0.2   4:31.80 java
+32424 bhaas     18   0 1306m 474m 8816 S  88.0  0.2   0:58.53 java
+ 8143 bhaas     17   0 1292m  48m 8664 S  85.5  0.0   0:01.23 java
+ 8258 bhaas     17   0 1291m  48m 8656 S  80.5  0.0   0:01.07 java
+ 1305 bhaas     17   0 1377m 509m 8820 S  78.0  0.2   0:56.11 java
+10247 bhaas     18   0 1356m 1.0g 8812 S  78.0  0.4   4:26.23 java
+...</code></pre>
+</div></div>
+<div class="paragraph"><p>A way to see exactly what jobs are running is to execute the following:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code> bhaas@hyacinth$ ps auxww | grep Butterfly
+bhaas     4588 50.3  0.1 1355708 435476 pts/4  Sl   09:17   0:38 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 9814096 -L 300 -F 300 -C chrysalis/RawComps.0/comp374 --edge-thr=0.16
+bhaas     5920 51.3  0.1 1353604 409604 pts/4  Sl   09:18   0:33 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 10114793 -L 300 -F 300 -C chrysalis/RawComps.0/comp412 --edge-thr=0.16
+bhaas     7747 53.0  0.2 1325344 530752 pts/4  Sl   09:13   3:01 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 11032490 -L 300 -F 300 -C chrysalis/RawComps.0/comp127 --edge-thr=0.16
+bhaas    10241 56.5  0.2 1409492 625972 pts/4  Sl   09:06   7:18 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 10630881 -L 300 -F 300 -C chrysalis/RawComps.0/comp2 --edge-thr=0.16
+bhaas    10247 51.9  0.4 1389204 1077640 pts/4 Sl   09:06   6:42 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 10702374 -L 300 -F 300 -C chrysalis/RawComps.0/comp0 --edge-thr=0.16
+bhaas    10249 51.8  0.4 1394704 1082764 pts/4 Sl   09:06   6:41 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 10702374 -L 300 -F 300 -C chrysalis/RawComps.0/comp1 --edge-thr=0.16</code></pre>
+</div></div>
+<div class="paragraph"><p>Most of the butterfly commands have been running for only a short period of time (seconds), but there are a couple that have been running for several minutes.  Most commands will take less than a few minutes to run, and some can take up to an hour.  If you see a butterfly command (java) that has been running for many hours, you can consider killing it and trying it again later with altered butterfly parameters.  There are a couple of ways to kill the process.</p></div>
+<div class="paragraph"><p>From the command line, you can kill it like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>kill $pid</code></pre>
+</div></div>
+<div class="paragraph"><p>where $pid is the process ID in the first column of the <em>top</em> output or second column of the <em>ps</em> output.</p></div>
+<div class="paragraph"><p>From within top, you can kill it by typing <em>k</em>, enter, $pid, enter.  (on linux, this is how it works; your system may vary).</p></div>
+<div class="paragraph"><p>Once a Butterfly command has finished (or you&#8217;ve killed it to retry it later), the next butterfly command in the queue will take its place.</p></div>
+<div class="paragraph"><p>If all Butterfly commands complete successfully, then the Trinity.pl wrapper script will report success and concatenate all the individual butterfly assembly outputs into a single file (Trinity.fasta).</p></div>
+<div class="paragraph"><p>If any commands did not succeed, then the failed (or killed) commands will be reported and written to a file so that you can adjust the parameters and rerun. There are two primary reasons for why a Butterfly command might <em>run forever</em>:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+The Needleman-Wunsch global alignment seems to lock up when aligning long sequences.   Try running Butterfly in Smith-Waterman mode instead, by adding the <em>--SW</em> option.
+</p>
+</li>
+<li>
+<p>
+The transcript graph is highly complex.  By compacting the graph further, Butterfly will be able to more easily traverse it, though it may reduce the sensitivity for transcript reconstruction and alt-splice detection, so do the following sparingly.  You can add the option --edge-thr=$value to the butterfly command. By default, the $value is 0.05.  Try setting it to 0.16 or higher to substantially decrease the complexity of the graph, and improve upon the Butterfly runtime. (For more information on the <em>--edge-thr</em> parameter, see <a href="advanced_trinity_guide.html">Advanced Guide to Trinity</a>).
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>Once all butterfly commands have been executed, you can retrieve all the resulting assembled transcripts by concatenating the individual result files together like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>find trinity_out_dir/chrysalis -name "*allProbPaths.fasta" -exec cat {} + &gt; Trinity.fasta</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="ques_F2">Some Butterfly commands fail</h3>
+<div class="paragraph"><p>When butterfly commands fail, it&#8217;s usually due to not enough heap memory being available.  This tends happen with the largest component (comp0).  Failed butterfly commands will be written to a <em>failed_cmds.txt</em> file and the Trinity process will terminate.  Try rerunning the failed commands (which should be very few, such as 1-3 out of the tens of thousands of commands) manually and resetting the heap size -Xmx value to a higher number, such as 20G.  After these failed processes complete successfully, you can combine all the Butterfly results into a single file like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>find trinity_out_dir/chrysalis -name "*allProbPaths.fasta" -exec cat {} + &gt; Trinity.fasta</code></pre>
+</div></div>
+<div class="paragraph"><p>and consider the entire run a success (albeit with a little hand-holding).</p></div>
+</div>
+<div class="sect2">
+<h3 id="ques_G">Butterfly fails with java Error: Cannot create GC thread. Out of system resources.</h3>
+<div class="paragraph"><p>There are a couple reasons why this error message might creep up.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+<strong>all memory has been consumed on the machine</strong>.  Each butterfly process wants to reserve 20G of maximum heap space.  If there&#8217;s less than 20G of free memory on the machine per butterfly (--CPU setting), then java may not be able to initialize (depends on your OS configuration).  The -Xmx20G setting indicates that 10G of heap memory should be reserved, and you can lower this to 1G for most Butterfly commands, as needed.
+</p>
+</li>
+<li>
+<p>
+<strong>NUMA architecture</strong>:  one of our users found that the java invocation required: -XX:ParallelGCThreads=&lt;Numerical Thread Count&gt;, otherwise it would try to use too many threads.
+</p>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="ques_H">How do I change the K-mer size</h3>
+<div class="paragraph"><p>Although Inchworm has the capability of running independently with different k-mer sizes up to 32 (the 64-bit limit with 2-bit base encoding), Chrysalis and Butterfly are current fixed at the 25mer k-mer size.  In testing, we discovered early on that 25-mers appeared to be near-optimal across a different transcriptomes and different read abundance levels, and so fixed the value accordingly as part of the Trinity process.  Future development will aim to expose the k-mer setting as an option.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ques_J">Can I combine strand-specific and non-strand-specific reads?</h3>
+<div class="paragraph"><p>You can do so, but you wouldn&#8217;t be able to benefit as from the strand-specificity, since you&#8217;ll need to run Trinity in non-strand-specific mode.</p></div>
+</div>
+<div class="sect2">
+<h3 id="ques_K">What is the naming convention of the final, exported set of transcripts?</h3>
+<div class="paragraph"><p>The transcript names found in the output FASTA file are named like:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>compX_cY_seqZ</code></pre>
+</div></div>
+<div class="paragraph"><p>This is a product of graphing algorithms used to generate them, which is explained in detail in the <a href="advanced_trinity_guide.html">Advanced Guide to Trinity</a>.</p></div>
+<div class="paragraph"><p>In short, X defines the graphical component generated by Chrysalis (from clustering inchworm contigs).  Butterfly might tease subgraphs apart from each other within a single component, based on the read support data.  This gives rise to subgraphs (cY).  Each subgraph then gives rise to path sequences (seqZ).</p></div>
+<div class="paragraph"><p>While isoforms should have the same component number, transcripts sharing the same component number aren&#8217;t always isoforms. Those sequences with the same component number are derived from the same isolated de Bruijn graph.</p></div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2013-02-05 20:13:26 EST
+</div>
+</div>
+</body>
+</html>

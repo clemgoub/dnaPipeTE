@@ -1,0 +1,39 @@
+/*****************************************************************************
+  RepeatMasker "open-4.0" and later versions are distributed under the
+  Open Source License.  Please read license.txt for more information.
+/*****************************************************************************
+
+Updates of the RepeatMasker program are distributed with a copy of the
+Dfam database ( www.dfam.org ).  Currently this is a human-only database 
+for use with the new HMMER 3.x nhmmer program.  The full RepeatMasker 
+consensus database falls under the copy rights of the Genetic Information 
+Research Institute and are available at its website 
+    http://www.girinst.org/server/RepBase/RepBase.rptmsk.tar.gz
+
+We maintain these libraries as co-editor of RepBase Update and aim to
+keep them in sync with the RepBase Update libraries.  However, at any
+one time there are differences.  Entries can differ somewhat in
+sequence, generally not by more than a few percent.  The nomenclature
+is by and large identical. Discrepant RepBase and RepeatMasker names
+for identical sequences are indicated in the EMBL formatted version of
+the RepeatMasker database.
+
+An inevitable origin of differences is RepeatMasker's extensive
+post-alignment processing (improvement) of the repeat annotation. For
+one of many examples, internal sequences of LTR elements can be named
+after the LTRs, even if there is no specific entry for that element in
+the databases. The new alignment file format ( 4.0 and higher ) displays
+the actual consensus sequence identifier and a ID to cross-reference to
+the final annotation in the *.out file.
+
+The script queryRepeatDatabase.pl in the utilities directory
+( RepeatMasker/util/ ) will display how many repeats are in the library
+for a given species. For poorly-covered species, you can create your
+own libraries and use these with RepeatMasker. Alternatively, you can
+mask your sequence using our transposon-protein database at
+http://www.repeatmasker.org/cgi-bin/RepeatProteinMaskRequest. We will 
+make the protein-masking program and database part of the downloaded
+RepeatMasker package in the near future.
+
+Arian
+

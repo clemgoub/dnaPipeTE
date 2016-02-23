@@ -1,0 +1,376 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Importing Custom Data</title>
+</head>
+
+<body>
+<center><h1>Importing Custom Data</h1></center>
+<p>
+<h3>Introduction</h3>
+<p>
+The mechanism for including custom recording/reporting code into collectl is very similar to that for
+exporting custom data.  One uses the switch <i>--import</i> followed by one or more file names, separated
+by colons.  Following each file name are one or more file-specific arguments which if specified are
+comma separated as shown below:
+
+<div class=terminal>
+<pre>
+collectl --import file1,d:file2
+</pre></div>
+
+In this example collectl will look for the files <i>file1.ph</i> and <i>file2.ph</i>, noting
+that the first has the single argument 'd'.  Collectl will execute a perl <i>require</i> on each 
+file (in the order they're specified) and subsequently call functions in them from various locations
+within collectl.  Looking for strings in both <i>collectl</i> and <i>formatit.ph</i> that begin 
+with <i>&{$imp</i> will identify the locations where collectl calls the functions named in the API
+and may help during the development/testing process to better understand what collectl is doing.
+<p>
+As a reference, a simple module has been included in the same main directory as collectl itself,
+which is named <i>hello.ph</i> as collectl's version of <i>Hello World</i>.  Since it can't read
+anything from /proc it is hardcoded to generate 3 lines of data with increasing data values.  Beyond
+that bit a hand-waving, everything else it does is fully functional.  You can mix its output with
+any standard collectl data, record to raw or plot files, play back the data and even send its output
+over a socket.
+<p>
+From time to time additional <i>import</i> modules may be included in collectl which may also be used
+as reference.  For example, the module <i>misc.ph</i> is now also part of collectl.  It imports data
+about the uptime, number of people logged in, the cpu frequency and the number of mounted nfs file
+systems.
+<p>
+It should be noted that although collectl itself does not use <i>strict</i>, which is a long story,
+it is recommended these routines do.  This will help ensure that they do not accidentally reuse a
+variable of the same name that collectl does and accidentally step on it.
+
+<p><b>A couple of words about performance</b>
+<p>
+One of the key design objectives for collectl is efficiency and it is indeed very lightweight, 
+typically using less than 0.2% of the CPU when sampling once every 10 seconds.  Another way to 
+look at this is it often uses less than 192 CPU seconds in the course of an entire day.
+If you care about overhead, and you should, be sure to be as efficient as you can in your own code.
+If you have to run a command to get your data instead of reading it from /proc, that will be more
+expensive.  If that command has to do a lot of work, it will be even more expensive.
+<p>
+It is recommended your take advantage of collectl's
+<a href=http://collectl.sourceforge.net/Performance.html>built-in mechanism</a> for
+measuring its own performance.  For example, measuring the performance of the <i>hello.ph</i> module,
+which does almost nothing since it doesn't even look at /proc data, uses less than 1 second to read 8840 
+samples on an older 2GHz system, which is the equivalent of a full day's worth of sampling.  Monitoring
+CPU performance data take about 3-1/2 seconds and memory counters take about
+7 seconds, just to give a few examples of the more efficient types of data it collects.
+
+<p><h3>Access to collectl internal functions, variable and constants</h3>
+<p>
+Collectl is relatively big, at least for a perl script, consisting of over 100 internal subroutines, 
+most of which are simply for internal
+housekeeping, but some of which are of a more general purpose.  It also keeps most of its statistical
+data in single variables and one dimensional arrays.  Clearly hashes could make it more convenient
+for passing data around but it was felt that the use of more complex data structures would generate
+more overhead and so their use has been minimized.
+<p>
+While it is literally impossible to enumerate them all, there are a relatively small number of
+functions, variables and constants that should be considered when writing your routines to 
+insure a more seamless integration with collectl.  The following table is really only a means
+to get started.  If you need more details of what a function actually does or how a variable is used,
+read the code.
+
+<center>
+<table border=1 width=75%>
+<tr><td width=20%><b>Function</b></td><td><b>Definition</b></td></tr>
+<tr><td>cvt()</td><td>Convert a string to a maximum number of characters, appending 'K', 'M', etc
+as appropriate.  Can also be instructed to divide counters by 1000 and sizes by 1024.</td></tr>
+<tr><td>error()</td><td>Report error on terminal and if logging to a message file
+write a type 'E' message.  Then exit</td></tr>
+<tr><td>fix()</td><td>When a counter turns negative, it has wrapped.  This function will convert
+to a positive number by adding back the size of a 32-bit word OR a user specified data width.</td></tr>
+<tr><td>getexec()</td><td>Execute a command and record its output to a <i>raw file</i> when operating
+in collectl mode, prepended with the supplied string</td</tr>
+<tr><td>getproc()</td><td>Read data from /proc, prepending a string as with <i>getexec</i> except in
+this case you can also instruct it to skip lines at the beginning or end.  See the function itself
+for details</td></tr>
+<tr><td>record()</td><td>Only needed if not using <i>getproc</i>, which will call it for you.  It writes
+data to a <i>raw file> record when in record mode or calls the appropriate print routines in interactive
+mode.
+a single line of data</td></tr>
+<tr><td width=20%><b>Variable</b></td><td><b>Definition</b></td></tr>
+<tr><td>$datetime</td><td>The date/time stamp associated with the current set of data, in the user 
+requested format, based on the use of -o.  See the constant <i>$miniFiller</i> which is a string of 
+spaces of the same width.</td></tr>
+<tr><td>$intSecs</td><td>The number of seconds in the current interval.  This is <i>not</i> an integer.</td></tr>
+<tr><td width=20%><b>Constants</b></td><td><b>Definition</b></td></tr>
+<tr><td>$miniFiller</td><td>A string of spaces, the same number of characters as in the 
+<i>$datetime</i> variable</td></td>
+<tr><td>$rate</td><td>A text string that is set to <i>/secs</i> and appended to most of
+the verbose format headers, indicating rates are being displayed.  However, if the user specifies -on
+with the collectl command to indicate non-normalized data, it is set to <i>/int</i> to indicate 
+per-interval data is being reported.</td></tr>
+<tr><td>$SEP</td><td>This is the current plot format separator character, set to a space by default,
+but can be changed with --sep so <i>never</i> hard code spaces into your plot format output.</td></tr>
+</table>
+</center>
+<p>
+<h3>The API</h3>
+The API between collectl and user written code is actually a fixed number of callbacks.  In other
+words, when you tell collectl to import a piece of code, it not only uses that name to identify
+the code it also uses that name as a qualifier on the name of the functions it calls.
+If you load a module called <i>mymodule</i>, collectl will then make calls to <i>mymoduleInit(),
+mymoduleGetData()</i> and several others as enumerated in the table below.  You <i>must</i> include
+all these function call backs in your code or prevent them from being called by restricting which
+switches the user is allow to specify in the collectl command line.  For example if your module 
+doesn't want to support plot data and you generate an error if the user specified -P (which can be
+checked by examining <i>$plotFlag</i> in your init routine),  you can safely leave off the 
+<i>PrintPlot</i> callback.
+<p>
+
+<center>
+<table border=1 width=75%>
+<tr><td width=20%><b>Function</b></td><td><b>Definition</b></td></tr>
+<tr><td>Analyze</td><td>Examine performance counters and generate values for current interval</td></tr>
+<tr><td>GetData</td><td>Read performance data from /proc or any other mechanism of choice</td></tr>
+<tr><td>GetHeader</td><td>During playback only, supply the header for additional initialization</td></tr>
+<tr><td>Init</td><td>One time initializations are performed here</td></tr>
+<tr><td>InitInterval<td>Initializations required for each processing cycle</td></tr>
+<tr><td>IntervalEnd<td>Optional routine, called at end of each processing cycle if defined</td></tr>
+<tr><td>PrintBrief</td><td>Build output strings for brief format</td></tr>
+<tr><td>PrintExport</td><td>Build output strings for formatting by gexpr, lexpr and sexpr, which are 
+3 standard collectl <i>--export</i> modules</td></tr>
+<tr><td>PrintPlot</td><td>Build output string in plot format</td></tr>
+<tr><td>PrintVerbose</td><td>Build output string in verbose format</td></tr>
+<tr><td>UpdateHeader</td><td>Add custom line(s) to all file headers</td></tr>
+</table>
+</center>
+<p>
+There are also several constants that must be passed back to collectl during intialization.
+See <i>Init()</i> for more details.
+<p>
+<ul>
+<li>A string consisting of 's', 'd', or 'sd', indicating whether or not this module supports 
+<i>summary data, detail data</i> or <i>both</i>.
+<li>A unique string for any data collected by this code and ultimately
+passed to collectl in <i>record()</i>.  As a result, all data written to the raw file will be
+prepended by this discriminator so that during actual collection and/or playback collectl will know
+to call the analysis routine upon seeing this type of data.  Therefore this string must be unique
+with respect to any other data collection qualification strings.  This string will also be used as an
+extension for any detail plot files and so should be on the order of 3 or 4 characters long.</li> 
+</ul>
+
+<p><b>Analyze($type, \$data)</b>
+<p>
+This function is called for each line of recorded data that begins with the qualifier string that
+has been set in <i>Init</i>.  Any lines that don't begin with that string will never be seen by 
+this routine.  You should also be sure that string is unque enough that you aren't passed data 
+you don't expect.
+<ul>
+<li><b>$type</b> is the first space-separated field from the recorded data.  It is completely under
+your control to decide how to process that data.  In some cases there will only be a single line to
+process and no further decisions will be required.  In other cases there
+may be multiple lines and it may be necessary to include an additional discriminator when recording the
+data so that the analysis routine can figure out what to do with it.  For example, try running with
+-d4 and look at the data returned for -sf or -si.
+<li><b>$data</b> is a reference to the string of everything that follows <i>$type</i> in the current
+line of data being processed</li>
+</ul>
+
+<p><b>GetData()</b>
+<p>
+This function takes no arguments and is responsible for reading in the data to be recorded
+and processed by collectl and as such you should strive to make it as efficient as possible.
+If reading data from /proc, you can probably use the getproc()
+function, using 0 as the first parameter for doing generic reads.  If you wish to execute
+a command, you can call getexec() and pass it a 3 which is its generic argument for capturing
+the entire contents of whatever command is being executed.
+<p>
+If you want to <i>do your own thing</i> you can basically do anything you want, but be sure
+to call <i>record()</i> to actually write the data to the raw file and optionally
+pass it to the analysis routine later on.
+<p>
+In any case, each record <i>must</i> use the same discriminator that <i>Analyze</i> is expecting 
+so collectl can identify that data as coming from this module.  You may
+also want to look at the data gathering loop inside of collectl to get a better feel for
+how data collection works in general.
+<p>
+To make sure you're collecting data correctly, run collectl with -d4 as shown below for reading
+socket data, which uses the string <i>sock</i> as its own discriminator.  The <i>Analyze</i>
+routine then needs to look at the second field to identify how to interpret the remainder of
+the data line.
+
+<div class=terminal>
+<pre>
+collectl -ss -d4
+>>> 1238001124.002 <<<
+sock sockets: used 405
+sock TCP: inuse 10 orphan 0 tw 0 alloc 12 mem 0
+sock UDP: inuse 8 mem 0
+sock RAW: inuse 0
+sock FRAG: inuse 0 memory 0
+</pre></div>
+
+<p><b>GetHeader(\$header)</b>
+<p>
+This function is called when one needs to know what is stored in the header of a file being
+played back - it is only called if collectl doesn't find it and therefore optional.
+While it is impossible to know how a module will use <i>GetHeader</i>, it is often used to
+retrieve instance numbers, such as how many nvidia GPUs one might have been monitored or 
+their type (see <i>nvidia.ph</i>), both of which would have been written to the header 
+using a call to 
+<i>UpdateHeader</i>.
+<ul>
+<li><b>$header</b> is a reference to the header once it is read in collectl's <i>initFormat</i></li>
+</ul>
+<p>
+Since standard collectl processing is to always playback what the user requests, even if
+that data hadn't even been collected, the same holds true here.  If one had gotten to 
+this point and it is determined there is no data, the API does not contain a failure return
+code as does <i>init</i>.  Rather, one would simply end up reporting 0s for all values.
+
+<p><b>Init(\$options, \$key)</b>
+<p>
+This function is called once by collectl, before any data collection begins.  If there are any
+one-time initializations of variables to do, this is the place to do them.  For example, when processing
+incrementing variables one often subtracts the previous value from the current one and this is the
+ideal place to initialize their previous values to 0.  Naturally that will lead to erroneous results
+for the first interval, which is why collectl never includes those stats in its output.  However, if
+you don't initialize them to something you will get <i>uninitialized variable</i> warnings the first
+time they're used.
+
+<ul>
+<li><b>$options</b> is a reference to the option string, if any, passed immediately
+after the name following<i>--import</i> and specifies whether the user wants to see
+<i>summary data, detail data</i> or <i>both</i>.  If none specified it must be set to the
+default behavior desired for this module, typically 's'.</li>
+<li><b>$key</b> is a reference to a string of usually 2-4 characters which will be
+prepended to each data record and used in several places to associate data records with
+this module</li>
+</ul>
+<p>
+Upon completion return 1 to indicate <i>success</i>,  Returning a -1 will indicate <i>failure</i>
+and result in the imported module's functional calls to be removed from collectl's call 
+stack and will no longer be actively called.
+
+<p><b>InitInterval()</b>
+<p>
+During each data collection interval, collectl may need to reset some counters.  For example, when
+processing disk data, collectl adds together all the disk stats for each interval which are then
+reported as summary data.  At the beginning of each interval these counters must be reset to 0
+and it's at that point in the processing that this routine is called.
+
+<p><b>IntervalEnd()</b>
+<p>
+As described earlier, if this routine exists it is called at the end of an interval processing cycle.
+This makes it possible to do any post processing that may be require before the start of the next
+interval.  In many cases this is not necessary.
+
+<p><b>PrintBrief($type, \$line)</b>
+<p>
+The trick with brief mode is that that multiple types of data are displayed together on the same line.
+That means each imported module must append its own unique data to the current line of output as it 
+is being constructed without any carriage returns.  Further, since there are 2 header lines and 
+<i>brief format</i> supports the ability to print running totals when one enters <i>return</i> during 
+processing, there are a number of places one needs to have their code called from.
+<p>
+<ul>
+<li><b>$type</b> is an integer from 1 to 6 and is used to decide which subfunction to execute.
+Think of it this a <i>case statement</i> control variable. 
+<li><b>$line</b> is a reference to the current output line being constructed.  Simply append
+whatever makes sense for that function, be it a header or a value.  In the case of the running
+totals, since that is always printed on the terminal and never goes to a socket a simple
+<i>print</i> is sufficient.
+</ul>
+
+<p><b>PrintExport($type, \$ref1, \$ref2, \$ref3, \$ref4)</b>
+<p>
+What about custom export modules and how this effects them?  
+The good news is that at least for the standard 3, <i>sexpr, lexpr</i> and the newest
+<i>gexpr</i> all support <i>--import</i>.  In other words they too have callbacks that you must respond
+to if your code is being run at the same time as one of these.
+<p>
+Again, see <i>hello.ph</i> for an example, but suffice it to say you need to do something when
+called, even if only a null function is supplied.
+<p>
+Since both <i>lexpr</i> and <i>sexpr</i> can write their output to the terminal, the easiest way
+to test these is to just run collect and have it display on the terminal.  However, the output
+of gexpr is binary and so the easiest way to test this code is to tell it not to open a socket
+(though you must supply an address/port, even if invalid) and report the 3 data elements it is about to 
+encode by running with a debug value of 9 noting this is <i>gexpr's</i> own internal debug
+switch and not collectl's.  The 8 bit tells gexpr to <i>not</i> open the sockeT (which is why an
+invalid value is ok) and the 1 bit tells it to display its output nicely formatting on the terminal.
+
+<div class=terminal>
+<pre>
+collectl --import hello --export gexpr,1.2.3.4:5,d=9
+Name: hwtotals.hw          Units: num/sec               Val: 140
+Name: hwtotals.hw          Units: num/sec               Val: 230
+Name: hwtotals.hw          Units: num/sec               Val: 320
+</pre></div>
+<p>
+<ul>
+<li><b>$type</b> is a 'g', 'l' or 's' depending which of the 3 <i>expr</i> modules is exported and the
+interpretation of the 4 references that follow are type dependent</li>
+<li><b>type=g</b></li>
+<ul>
+<li><b>$ref1</b> is the data label</li>
+<li><b>$ref2</b> is the units string</li>
+<li><b>$ref3</b> is data value</li>
+</ul>
+<li><b>type=l</b></li>
+<ul>
+<li><b>$ref1</b> is the summary data label</li>
+<li><b>$ref2</b> is the summary data value</li>
+<li><b>$ref3</b> is the detail data label</li>
+<li><b>$ref4</b> is the detail data value</li>
+</ul>
+<li><b>type=s</b></li>
+<ul>
+<li><b>$ref1</b> is the summary data line</li>
+<li><b>$ref1</b> is the detail data line</li>
+</ul>
+</ul>
+
+<p><b>PrintPlot($type, \$line)</b>
+<p>
+This type of output is formatted for plotting, which can get quite complicated
+based on whether you are writing to a terminal, multiple files or a socket.  Fortunately
+all that headache is handled for you by collectl.  All you need to do is append your 
+<i>summary</i> or <i>detail</i> data to the current line being constructed, similar
+to the way brief data is handled.  Since it has to handle both headers as well as data, 
+there are 4 <i>types</i> included in the call.
+<p>
+<ul>
+<li><b>$type</b> is used as a selector to specify whether header/data and if for summary/detail 
+is to be constructed.</li>
+<li><b>$line</b> is a reference to the current line being constructed.  Be sure to use $SEP as
+a field separator so your code will correctly use collectl's <i>--sep</i> switch.
+</ul>
+
+<p><b>PrintVerbose($printHeader, $homeFlag, \$line)</b>
+<p>
+Like <i>PrintBrief</i>, this routine is in charge of printing verbose data but is much simpler
+since it doesn't have to insert code into the middle of running strings. 
+<p>
+<ul>
+<li><b>$printHeader</b> is actually a flag, which when set indicate it's time to print a header.
+As you can see in hello.ph, there are 2 global string worth knowing about.  Both <i>$miniFiller</i>
+and <i>$datetime</i> are normally set to null, but if the user specifies a time switch such as -oT,
+the first will be set to the appropriate number of pad characters and the second set to the time
+in the format specified by -o.
+<li><b>$homeFlag</b> is a localized copy of collectl's $homeFlag which when set indicates the
+display is in <i>home</i> mode and section separating <i>returns</i> should be omitted from the
+output to make it more dense.</li>
+<li><b>$line</b> is a reference to the line about to be printed. Set it to the you wish to print,
+rather than append to it.
+</ul>
+
+<p><b>UpdateHeader(\$line)</b>
+<p>
+<ul>
+<li><b>$line</b> is a reference to the string that contains the standard header that 
+appears at the beginning of all collectl files.  This call is made immediately before 
+writing out the final line of #s and so anything appended to this string will appear in
+the header as its own unique line.  If you do not want to add anything to the header
+simply make this an empty function.</li>
+</ul>
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

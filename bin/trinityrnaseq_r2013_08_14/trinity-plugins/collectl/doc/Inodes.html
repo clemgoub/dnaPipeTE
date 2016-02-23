@@ -1,0 +1,38 @@
+`><html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Inode Info</title>
+</head>
+
+<body>
+<center><h1>Inode Monitoring</h1></center>
+<p>
+The name of this subsystem is a slight misnomer because in addition to monitoring inodes it
+also monitors dentries as well.  The information being reported is quite self-explanatory 
+and there should really be no mystery here.
+<p>
+However, it may be worth noting that while inspired by <i>sar -v</i> the information isn't
+quite the same in case that's what you're expecting.  Sar also reports on the number
+pseudo terminals and somehow that didn't seem to fit with the types of data collectl reports
+and so was left out.
+<p>
+Another difference worth noting is that while both report the number of open files, actually
+calling them allocated file handles, it was felt that this number all by itself wasn't providing
+as much info as it could and so the percentage of the total has also been included in collectl's
+output.
+<p>
+While I wanted to do the same with dentries, reporting the percentage of the max, I ran into 
+a problem - <i>the number of unused cache entries is wrong</i>, or at least the definition is!
+Rather than decrease as new directories are created it goes up, which makes no sense to me and
+so trying to report it as a percentage doesn't seem to make any sense.  However, a closer 
+investigation makes me think this is in fact tracking the slab objects named <i>dentry_cache</i>
+which does increase as new directories are created.  However something still isn't quite right
+because while close, the numbers aren't close enough.
+<p>
+Investigation will continue, though at a lower priority.
+If/when resolved it will be fixed/documented accordingly.
+<p>
+<table width=100%><tr><td align=right><i>updated October 17, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>
