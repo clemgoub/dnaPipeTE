@@ -1,0 +1,124 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Exporting Data to Graphite</title>
+</head>
+
+<body>
+<center><h1>Exporting Data to Graphite</h1></center>
+<p>
+<h3>Introduction</h3>
+<p>
+With the release of Collectl Version 3.6.1, you can now send collectl data directly to <a href=http://graphite.wikidot.com>
+graphite </a>.  For existing collectl users this now provides you with yet another way to store/plot collectl data, whether on
+a single system or hundreds.  For graphite users who are not yet collectl users, you now have access to literally hundreds
+of performance metrics:
+<p>
+<ul>
+<li>Since all collectl instances collect this data at the same time, system noise on
+clusters running fine-grained parallel jobs is reduced, though for larger clusters.</li>
+<li>You can still log all the data collectl collects locally and only send a subset
+to graphite, reducing the load on both graphite and your network.</li>
+<li>You can monitor as infrequently as you like and send data to graphite at a
+coarser frequency of either of the average, minimum or maximum values over that interval.</li>
+<li>The r= switch, something unique to the graphite plugin, can help reduce the instantaneous 
+load on the graphite server itself.</li>
+<li>All this at collectl's low monitoring overhead</li>
+</ul>
+
+<h3>Usage</h3>
+<p>
+You use this export like any other, the only required option being the address to send the data to as in
+the following example:
+
+<div class=terminal>
+<pre>
+collectl --export graphite,192.168.1.113
+</pre></div>
+
+However you should also note that since by design this export does not provide any terminal output, there
+are only 2 real ways to make sure it is doing what you expect, the first being to inspect graphite's
+whisper storage area for your particular host name and make sure the data you're collecting is in fact
+showing up there:
+
+<div class=terminal>
+<pre>
+ls /opt/graphite/storage/whisper/poker
+cpuload  cputotals  ctxint  disktotals  nettotals
+</pre></div>
+
+or to simply run with the debug mask set to 1, which tells the graphite module to echo all the data it is
+sending to graphite, noting in this case even though collectl is collecting cpu, disk and network data we're
+not sending cpu data to graphite.  This is something you might do if logging more data to disk than you are
+sending to graphite, which in this case we are:
+
+<div class=terminal>
+<pre>
+collectl --export graphite,192.168.1.113,d=1,s=dn -rawtoo -f /var/log/collectl
+poker.disktotals.reads 0 1325609789
+poker.disktotals.readkbs 0 1325609789
+poker.disktotals.writes 0 1325609789
+poker.disktotals.writekbs 0 1325609789
+poker.nettotals.kbin 0 1325609789
+poker.nettotals.pktin 1 1325609789
+poker.nettotals.kbout 0 1325609789
+poker.nettotals.pktout 0 1325609789
+</pre></div>
+
+<b><i>tip</i></b> - if you add 8 to the debug flag, eg <i>d=9</i>, this tells the graphite module not to 
+actually establish the connection with graphite's carbon listener but to only echo the data that would 
+have been sent.
+<p>
+Once you're happy with the switch settings, be sure to update the <i>DaemonCommands</i> in /etc/collectl.conf
+and restart the collectl daemon to make them take effect.
+<p>
+<h3>Switches unique to graphite</h3>
+<b>e=escape</b>
+<br>When sending data to graphite, collectl prefaces each line item with the hostname.  If that name includes
+a domain name, extra <i>dots</i> add additional levels the the variable names which may not be desireable.  By including
+an escape character, those <i>dots</i> will be replaced by that character.
+<p>
+<b>r=seconds</b>
+<br>
+By design, collectl calls the export module as soon as the required data has been collected and collection
+is synchronized to the nearest milli-seconds across a cluster, this means all instances of collectl will send 
+their data to graphite at almost exactly the same time.   This high burst of data can overwhelm graphite and
+so to reduce the load when that is found to be a problem, OR if you just want to smooth out the load you can
+use <i>r=seconds</i> which literally means <i>delay sending your data to ganglia by a random number of micro-seconds
+<= seconds</i>.
+<p>
+There is an additional caveat and that is that this stall must have completed by the end of the
+current data collection periods and so you're restricted to a maximum delay of the interval less 1 second.
+This means if you run collectl with -i1, you can't use -r.  However, since most users run collectl with
+intervals of 5 or 10 seconds, values of 4 or 9 should be more than sufficient.  And if you choose a collection
+interval of 30 seconds you may still want to use a value of r closer to 5 or 10 seconds so that the data will
+arrive at graphite reasonablly close together.
+<p>
+For help with what other valid switches are, you can actually get the graphite module itself to tell
+you like this:
+<div class=terminal>
+<pre>
+collectl --export graphite,h
+</pre></div>
+
+<h3>Communications</h3>
+<p>
+Collectl will attempt to establish a TCP connection to the specified address/port, noting the default port is 2003.
+If that connection cannot be established, collectl will report an error but <i>not</i> exit!  This is because
+graphite itself may be down and need to be restarted.
+
+<div class=terminal>
+<pre>
+collectl --export graphite,192.168.1.113,d=1,s=dn
+Could not create socket to 192.168.1.113:2003.  Reason: Connection refused
+</pre></div>
+
+By design when collectl assumes the graphite address is correct and will try to reconnect every monitoring
+interval.  Further, to avoid generating too many errors, it will silently continue to retry and only report
+the connection failure every 100 times, a constant you can modify in the graphite.ph header if you really
+care.  Once graphite comes back online collectl will again start sending data to it.
+<p>
+<table width=100%><tr><td align=right><i>updated November 9, 2012</i></td></tr></colgroup></table>
+
+</body>
+</html>

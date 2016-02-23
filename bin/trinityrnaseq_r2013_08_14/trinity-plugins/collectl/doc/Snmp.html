@@ -1,0 +1,116 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Tcp/Ip Extended Stats</title>
+</head>
+
+<body>
+<center><h1>Tcp/Ip Extended Stats</h1></center>
+<center><h2><i>EXPERIMENTAL</i></h2></center>
+<p>
+<h3>Introduction</h3>
+Having recently discovered /proc/net/snmp (not really sure how I missed it), I decided to
+try to incorporate that statistics into collectl for 2 very good readons:
+<ul>
+<li>The overhead for collecting the data is extremely low</li>
+<li>The data can be very useful for tracking down networking problems</li>
+</ul>
+Unfortunately, as it often the case, this got messy very quickly.  On the two systems I looked at, one
+running <i>debian squeeze</i> and the other <i>RHEL 5.2</i> (I did not do an extensive investigtion) 
+the data was different.  More confusing, some fields were dropped while others were added!  
+Furthermore, this is the data that drives <i>netstat -s</i> and that too shows inconsistent fields.
+<p>
+Being torn between the challenge of getting this right the first time and getting something useful
+out there for people to use, I decided to:
+<ul>
+<li>Implement this in the form of an <i>--import</i> module so as to not cause a lot of changes to collectl proper
+if/when I decide to tweak it </i>.
+<li>Label this as an <i>experimental</i> module so it's real clear that this can and probably will change.
+</ul>
+
+<h3>How to use this module</h3>
+It's real simple as shown below:
+
+<div class=terminal><pre>
+collectl --import snmp
+#<-------Tcp/Ip Errors-------->
+# Loss FTrn   Ip Icmp  Tcp  Udp
+     0    0    0    0    0    0
+</pre></div>
+
+and like all other import modules, you can combine it with any combination of subsystems, like this:
+
+<div class=terminal><pre>
+collectl --import snmp -scn
+#<----CPU[HYPER]-----><----------Network----------><-------Tcp/Ip Errors-------->
+#cpu sys inter  ctxsw   KBIn  PktIn  KBOut  PktOut  Loss FTrn   Ip Icmp  Tcp  Udp
+   0   0    80     65      0      2      0       1     0    0    0    0    0    0
+   0   0   123     76      0      1      0       1     0    0    0    0    0    0
+</pre></div>
+You can also combine it with other switches for time formatting, write data to a file and even play it back.
+Just remember in playback mode you still need to include <i>--import snmp</i> so collectl will load the
+necessary print routines.
+<p>
+<b>Options</b>
+<p>
+The examples about show this module running in brief mode in which it is simply summaring some error counts.
+In verbose mode it shows a LOT more and can be controlled by the <i>o=</i> modifier as shown here:
+
+<div class=terminal><pre>
+collectl --import snmp,o=i
+# SNMP SUMMARY
+#<----------------------------------IpPkts----------------------------------->
+# Receiv Delivr Forwrd DiscdI InvAdd   Sent DiscrO ReasRq ReasOK FragOK FragCr
+       1      1      0      0      0      1      0      0      0      0      0
+       1      1      0      0      0      1      0      0      0      0      0
+</pre></div>
+
+There are currently 7 options, one for each type of data.  It should also be noted that this modules
+also reads the same data read by the -st option and so you can use that as well or not, for reasons
+that may become clearer later on.  You can combine the options in any way you wish, but note that their
+output will be appended to the same line.  You may need a wider terminal and/or smaller font if you
+choose all at once.  Their values and corresponding fields in /proc/net/snmp and /proc/net/netstat are:
+<ul>
+<li>i - Ip
+<li>c - Icmp
+<li>m - IcmpMsg
+<li>t - Tcp
+<li>u - Udp
+<li>I - TcpExt
+<li>T - IpExt
+</ul>
+
+The completeness of the information reported for each option varies and the header names can be confusing
+(feel free to make suggestions on the mailing list or support forum).  It should also be noted
+not all fields are reported and an attempt was made to at least include what netstat reports.  But since
+not all netstats report the same thing that isn't always the case either.  Again, all comments welcome.
+<p>
+Finally, at this point in time this module does NOT write anything in plot format - a good reason to
+use -st if you really want that data.  It also doesn't write anything in export format.
+<p>
+<b>Normalization</b>
+<p>
+One big change is from collectl's method of normalizing results as /sec values.  Most of the data reported
+by this module are error counts or otherwise small numbers and even values as low as 1 can indicate 
+problems.  When reported as /sec values over intervals other than 1, these values will be reported as 0
+and missed unless one remembers to include -on.  Therefore almost all values will be reported as actual
+values for the entire reporting interval's duration.  The only exceptions are:
+<ul>
+<li> o=i InReceives, InDelivers, OutRequests</li>
+<li> o=t ActiveOpens, PassiveOpens, OutSegs, InSegs</li>
+<li> o=u InDatagrame, OutDatagrams</li>
+</ul>
+
+Once again, feedback is welcome here too.
+<p>
+<h3>Future Plans</h3>
+The plan it to ultimately replace what -st currently reports with what this module reports.  In other words,
+some day you're be able to run <i>collectl -st --tcpopts xxx</i> replacing xxx with the same options currently
+used by the snmp module.  That will also mean collectl will no longer report <i>PureAcks</i> and <i>HPAcks</i>
+as it currently does in brief mode as it is also felt the other information reported is more useful.  Again,
+any and all optinions are welcome.
+<p>
+<table width=100%><tr><td align=right><i>updated Jan 31, 2012</i></td></tr></colgroup></table>
+
+</body>
+</html>
