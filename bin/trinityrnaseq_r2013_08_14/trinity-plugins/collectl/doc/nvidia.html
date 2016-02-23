@@ -1,0 +1,74 @@
+`><html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>nvidia GPU Monitoring</title>
+</head>
+
+<body>
+<center><h1>nvidia GPU Monitoring</h1></center>
+<p>
+<h3>Introduction</h3>
+It is now possible to monitor nvidia GPUs by including the option <i>--import nvidia</i>
+with the collectl command.  Naturally if you've recorded nvidia data you'll need to
+include this switch on playback as well.
+<p>
+The nvidia module currently reports 4 variables: temperature, fan speed and GPU/memory 
+utilization. Other than temperature which is in degrees C, the other 3 are reported as
+percentages.
+<p>
+This module supports all 3 collectl formatting modes, specifically <i>brief,
+verbose</i> and <i>detail</i>.  Since there is nothing more of interest to report in
+verbose mode, both it and brief mode report the same thing.  As with all other collectl
+output modes, brief/verbose report averages (since totals would make no sense) and in
+detail mode one can see values for each GPU.  However if there is only 1 GPU present, all
+three modes report the same results.
+<p>
+There is one key thing to be aware of with respect to what data is reported.  Since it
+normally would not be possible to report data collected at different intervals in a 
+consistent line of brief format, and by default this module only collects data once a minute,
+a technique introduced in the import <i>misc.ph</i> is used and that is to always report 
+the more recent value collected even if it changes at a different frequency!  In other words,
+just because a value was reported with a  specific timestamp it does not necessarily mean
+it was collected at that exact time.
+<p>
+The following example illustrates several of things worth noting:
+
+<div class=terminal>
+<pre>
+[root@cn10 mjs]# collectl --import nvidia,i=3 -oT
+#         <------nvidia------->
+#Time      Temp Fan% Gpu% Mem%
+06:23:41     54   30    0    0
+06:23:43     54   30    0    0
+06:23:44     54   30    0    0
+06:23:45     54   30    0    0
+06:23:47     54   30    0    0
+</pre>
+</div class=terminal>
+
+As described in the section on performance, it actually takes over a second
+to read the data from a GPU and that is visually illustrated above because one can see
+gaps in the data being reported.  Since we're running collectl interactively, it wants
+to report once a second but when it reads the GPU data it misses an interval.
+More specifically, the data is actually read during the interval that
+started 06:23:41 and since it took over a second the next interval didn't start until 2
+seconds later!  Then at 06:23:43 and 06:23:44, the data read earlier is reported.  At
+06:23:45 data is again read from the GPU and since we miss an interval, the next one 
+occurs are 06:23:47.
+<p>
+<h3>Performance</h3>
+The interface actually calls the nvidia command <i>nvidia-smi</i> to query the GPUs, which
+unfortunately is not very lightweight, taking about 1.3 seconds to query the GPU.
+Recalling that there are 86400 seconds in a day and 84 seconds is a 0.1% load, one would 
+not want to run this commandevery 10 second monitoring cycle!  By default, a monitoring 
+interval of 1 minute has been chosen which will still use a little over 2% of a CPU, but 
+it is also felt that most of the time one chooses this option to see what is happening 
+within the GPU and one may miss important changes with less frequent monitoring.  
+However, as with other <i>--import</i> modules, one can see in the example above that it
+is easy to change the monitoring frequency.  In other words to monitor the GPU at 5 minute
+intervals, use <i>--import nvidia,i=300</i>.
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

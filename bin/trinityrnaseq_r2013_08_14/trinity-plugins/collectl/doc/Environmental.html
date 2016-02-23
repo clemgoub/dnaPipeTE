@@ -1,0 +1,378 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>IPMI/Environmental Monitoring</title>
+</head>
+
+<body>
+<center><h1>IPMI/Environmental Monitoring</h1></center>
+<center><font size=6><i>experimental</i></font></center>
+<p>
+<h3>Overview</h3>
+Most modern computer systems have the capability of reporting temperatures and fan
+speeds (as well as other information) via ipmi.  However, the format of the device 
+names is not standardized making it extremely difficult if not impossible to 
+programmatically interpret and report it.  This feature has been declared to be
+<i>experimental</i> in order to evaluate its success on a broader set of hardware,
+which I expect will be determined by the number of bug reports.  As such it is
+disabled in collectl.conf so if you want to enable it when running as a daemon
+be sure to include an E in the -s string in the <i>DeamonCommands</i> line as
+shown below:
+<pre>
+DaemonCommands = -f /var/log/collectl -r00:01,7 -m -F60 -s+CEYZ
+</pre>
+<h3>Prerequisites</h3>
+Collectl depends on the open source tool <a href=http://ipmitool.sourceforge.net/>ipmitool</a>,
+which must be installed first.  Installation is as simple as pulling down and unpacking the kit
+with tar and executing the commands:
+
+<pre>
+./configure
+make
+make install
+</pre>
+
+That's all it takes.  However, collectl must be run as <i>root</i> and your system must
+support ipmi.  The easiest way to tell is
+if the command <i>dmidecode | grep IPMI</i> runs without error.  If you get the error 
+<i>Could not open device at /dev/ipmi0...</i> you are not running as <i>root</i>.
+If you get some other error your system probably
+does not support ipmi and even if you were able to install impitool, you won't be able
+to use it.
+<p>
+The next step is to start the ipmi driver, and this is generally done via the command
+<i>service ipmi start</i> on a RedHat system or something line <i>/etc/init.d/impi start</i>
+on others.  On some systems such as HP blades, you may need to install a
+custom ipmi driver such as <i>hp-OpenIPMI</i> and start that instead of the standard
+driver.
+<p>
+At this point you should be able to execute the command "<i>ipmitool sdr</i> and see a all
+your sensor data or the commands <i>ipmitool sdr type fan</i> and <i>ipmitool sdr type 
+temp</i> to just see fan and temperature data:
+<div class=terminal>
+<pre>
+[root@bl460-63 ipmitool-1.8.9]# ipmitool sdr
+UID Light        | 0 unspecified     | ok
+Int. Health LED  | 0 unspecified     | ok
+VRM 1            | 0 unspecified     | cr
+VRM 2            | 0 unspecified     | cr
+Temp 1           | 47 degrees C      | ok
+Temp 2           | 34 degrees C      | ok
+Temp 3           | 30 degrees C      | ok
+Temp 4           | 30 degrees C      | ok
+Temp 5           | 31 degrees C      | ok
+Temp 6           | 30 degrees C      | ok
+Temp 7           | 30 degrees C      | ok
+Temp 8           | 66 degrees C      | ok
+Temp 9           | 20 degrees C      | ok
+Virtual Fan      | 37.24 unspecifi | nc
+Enclosure Status | 0 unspecified     | nc
+</pre></div>
+
+<h3>The collectl interface</h3>
+Collectl uses a 3rd monitoring interval to collect ipmi data, which by default is 2 minutes.
+This is done for several reasons:
+<ul>
+<li>The <i>ipmitool</i> interface involves running another process and adds to the load,
+using a less frequent interval helps minimize collectl's footprint</li>
+<li>This type of data changes at a slow enough rate as to not require monitoring too frequently
+although the <i>current</i> readings which have just been added to Version 3.1.2 do seem to
+change in nead real-time and so the monitoring interval may need to be rethought</li>
+</ul>
+
+Although you can run collectl to report this data interatively to report a single sample,
+its typical use is expected to be as a daemon.  When run as a daemon collectl and -sE 
+is specified, which is currently the default, it will first check to see if
+<i>ipmitool</i> is present and if a communications device of the form <i>/dev/ipmi*</i>
+is present.  If so it will start collecting ipmi data for fans and temperature sensors.
+If it can detect a current sensor is present, it will report on that too.
+<p>
+You can control the way ipmi data is displayed in playback mode using <i>--envopts</i>
+and one of 3 switches that allow you to only report fan or temperature data and if you
+are reporting both, which is the default, you can request the 2 types of data be displayed
+on separate lines.  This latter option can be useful if you have a lot of devices on 
+which to report.
+<p>
+The following is an example of time-stamped output on an HP BL460c Blade, first without any options
+
+<div class=terminal-wide13>
+<pre>
+collectl.pl -sE -i::1 -oT
+# ENVIRONMENTAL STATISTICS
+#             VFan   Temp1   Temp2   Temp3   Temp4   Temp5   Temp6   Temp7   Temp8   Temp9   Power
+08:39:15    37.240      47      35      30      30      33      30      30      58      24     206
+08:39:16    37.240      47      35      30      30      33      30      30      58      24     206
+08:39:17    37.240      47      35      30      30      33      30      30      58      24     206
+</pre>
+</div>
+Here we see the effect of <i>--envopts M</i> when examining an HP DL380-G5.
+However it does also generate a lot more 
+<i>noise</i> in the output.  It's main purpose is for dealing
+with too much data to comfortably display on a single line.
+
+<div class=terminal-wide13>
+<pre>
+collectl.pl -sE -i::1 -oT --envopts M
+### RECORD    1 >>> opteron167 <<< (1218022891.002) (Wed Aug  6 07:41:31 2008) ###
+
+# ENVIRONMENTAL STATISTICS
+#   CFAN1   CFAN2   CFAN3   CFAN4   CFAN5   CFAN6   CFAN7   CFAN8   CFAN9  CFAN10   SFAN1   SFAN2
+     6200    6000    6200    6200    6200    5800    6200    6000    6200    6000    6000    6200
+#  CTEMP0  CTEMP1   STEMP
+       51      48      29
+
+### RECORD    2 >>> opteron167 <<< (1218022892.002) (Wed Aug  6 07:41:32 2008) ###
+
+# ENVIRONMENTAL STATISTICS
+#   CFAN1   CFAN2   CFAN3   CFAN4   CFAN5   CFAN6   CFAN7   CFAN8   CFAN9  CFAN10   SFAN1   SFAN2
+     6200    6000    6200    6200    6200    5800    6200    6000    6200    6000    6000    6200
+#  CTEMP0  CTEMP1   STEMP
+       51      48      29
+</pre>
+</div>
+
+If you choose to convert the data to plot format, a file with the extension <i>env</i>
+will be created.
+
+<p>
+<h3>Device Names and the collectl challenge</h3>
+As already mentioned, there is no standard on how one names an ipmi device and as a
+result the names used even on the small sample of systems tested during development
+have been quite different.  Here is are just a few ways fan names are reported:
+
+<pre>
+Fan 1
+Fans
+CPU FAN1
+SYS FAN1
+Fan1A (CPU)
+FAN CPU0
+FAN MOD 1A RPM
+Fan Redundancy
+</pre>
+
+On the one hand, collectl could simply report the exact names as they are reported,
+but the challenge of trying to format them in such a way as to provide a compact
+display are impossible.  Given that the collectl standard reporting format is a 
+single data header line, the notion of multiple-line headers is not an option.
+While it is tempting to simply determine the widest device name and use that for
+a header width, for systems that report over a dozen devices you couldn't fit them
+on the same line and that's only for systems that have been tested.
+<p>
+After looking at all these different names and formats, one common theme did emerge.
+All devices appear to have optional numbers (I didn't see any with just letters)
+and those numbers if there have optional letters.  Furthermore, there seems to be some sort of
+optional type associated with many as well.  This led to the idea of a 
+standard naming for these devices as follows:
+<p>
+<i>[type]Fan|Temp[devicenumber[deviceletter]]</i>
+<p>
+in which the <i>type</i> field would be limited to a single character.  Applying this
+scheme to the examples above leads to the following name mapping:
+
+<pre>
+Fan 1              Fan1
+Fans               Fan
+CPU FAN1           CFAN1
+SYS FAN1           SFAN1
+Fan1A (CPU)        CFan1A
+FAN CPU0           CFAN0
+FAN MOD 1A RPM     MFAN1A
+Fan Redundancy     RFan
+</pre>
+
+This is admittedly not perfect but seems like a reasonable compromise and since collectl
+will report the device names in the same order returned by ipmitool it is not all that 
+difficult to figure out how collectl chose to map them.
+<p>
+<h3>Parsing Names and Customization</h3>
+This is where the fun begins <i>or things get really ugly</i>, depending on your perspective.
+<p>
+After examing many different types of device name formats, it was determined that most
+tended to follow the pattern of
+
+<p><i>prefix type instanceNumber suffix</i><p>
+
+Where things get a little crazy is that sometimes the actual instance number can be part
+of the prefix OR sometimes the instance contains a letter.
+<p>
+All that said, collectl breaks a device name into these components, assuming a numeric
+instance.  It then applies the minimal set of tests/modifications, note there are examples
+of all these cases in the sample names shown earlier:
+<ul>
+<li>if the suffix contains the string in ()s, set the prefix to the string contained within</li>
+<li>if an instance and suffix, append first word of suffix to the instance</li>
+<li>if no prefix or instance and the suffix doesn't start with a digit, set the prefix to the suffix</li>
+<li>if there is a prefix, prepend the first letter to the device name which is <i>fan</i> or <i>temp</i></li>
+<li>if there is a prefix and it contains a digit, use that as the instance number</li>
+<li>remove all whitespace</li>
+</ul>
+
+Since this can get verf confusing, a special switch names <i>--envdebug</i> has been included
+which will show the actual parsing of the device names.  The following is an example of parsing
+some of the names listed above:
+
+<pre>
+Fan CPU0 Tach,3480
+  Prefix:   Name: Fan  Instance:   Suffix: CPU0 Tach
+Fan1A (CPU),EAh,ok,29.3,Performance Met
+  Prefix:   Name: Fan  Instance: 1  Suffix: A (CPU)
+FAN MOD 1A RPM,5775,RPM,ok
+  Prefix:   Name: FAN  Instance:   Suffix: MOD 1A RPM
+</pre>
+
+<ul>
+<li>In the first example, the prefix is set to <i>CPU0</i>.  Then in instance set to 0 and the
+<i>C</i> prepended to <i>Fan</i></li>
+<li>In the second case the prefix is set to <i>CPU</i> and ultimately the name resolved to <i>CFan1A</i></li>
+<li>In the third case the prefix is set to <i>MOD</i> and the device name set to <i>MFAN</i> and the
+instance number is lost when what we really want is to have it set to <i>1A</i>!!!</li>
+</ul>
+<h3>Standard and User Defined Parsing Rules</h3>
+Collectl provides a mechanism for dealing with device names that do not result in the 
+generation of satisfactory names as described in the last section, by providing a file
+of translation <i>rules</i> for the system(s) they apply to.
+This file is currently populated with a number of HP systems this mechanism has
+been tested on and the <i>rules</i> are actually one or more perl pattern matching/replacement
+expressions. If the system name can be obtained via <i>dmidecode</i>, this file
+is searched for a matching stanza and its translations applied to device names
+before their initial parsing and/or immediately after a device name is generated.
+<p>
+If your system is not in this <i>standard</i> set, you can either add your own rules to 
+<i>/usr/share/collectl/envrules.std</i> (assuming your system type can be obained 
+through dmidecode) or put them in a standalone file and tell collectl to use it
+instead of the standard one using <i>--envrules</i>.  If you do use your own file it 
+should simply contains line of the following form (no stanza preface) noting that spaces
+and comments (lines preceeded with a #) are permitted:
+
+<pre>
+[ignore]
+/pattern/
+...
+[pre]
+/pattern1/replace1/
+/pattern2/replace2/
+...
+[post]
+/pattern1/replace1/
+/pattern2/replace2/
+...
+</pre>
+
+If you know perl (and you really should if you want to do this), collectl builds a perl
+pattern match command if you specify <i>[ignore]</i> and ignores any strings returned by 
+ipmitool that match.  This is a good way to reduce the volume of sensors on systems that
+may have dozens of them and you're only interested in a specific subset.
+<p>
+In the cases of <i>[pre]</i> and <i>[post]</i> a perl substistituion command is built out
+of the <i>pattern</i> and <i>replace</i> strings and applied to the sensor names.  There
+is one caveat about <i>[post]</i> and that is it only applies to the actual derived sensor
+name and <i>not</i> the instance, so it you want to change a specific instance consider 
+using a <i>pre</i> string to make a  unique sensor name and then change it to what you 
+really want with <i>post</i>.  So looking  at the string <pre>FAN MOD 1A RPM</pre> 
+and the processing rules described in the previous section, the <i>MOD</i>
+suffix will be prepended to <i>FAN</i> and the first letter used to name the device
+<i>MFAN</i>, losing the instance information with is <i>1A</i>.
+<p>
+There are at least 3 options here.  The first is to simply remove <i> MOD </i> from 
+each name which we can do with the rule: <pre>/ MOD//</pre> which will result in
+the instance names being picked up correctly because they will now immediately follow
+<i>FAN</i>.  In fact, if you include <i>--envdebug</i> along with your rules you'll
+see the results of the replacement:
+
+<div class=terminal>
+<pre>
+FAN MOD 1A RPM,5775,RPM,ok
+  Pre-Remapped 'FAN MOD 1A RPM' to 'FAN 1A RPM'
+  Prefix:   Name: FAN  Instance: 1  Suffix: A RPM
+</div>
+</pre>
+
+The second option would be to move
+<i>MOD</i> to the front of the string so that the rule that uses the first letter
+as part of the final name will take effect and that rule will look like:
+<pre>/(.*) MOD (.*)/MOD $1$2/</pre> and results in the following parsing:
+
+<pre>
+<div class=terminal>
+FAN MOD 1A RPM,5775,RPM,ok
+  Pre-Remapped 'FAN MOD 1A RPM' to 'MOD FAN 1A RPM'
+  Prefix: MOD   Name: FAN  Instance: 1  Suffix: A RPM
+</pre>
+</div>
+
+<p>
+Unfortunately in order to make perl iterpret the <i>$1$2</i> symbols an <i>eval</i>
+is required which generates a little extra overhead and while not horrible an
+even better solution is the third option which doesn't use any special $ symbols:
+<pre>/FAN MOD/MOD FAN/</pre>
+which produces exactly the same results as the previous example except without the
+<i>eval</i> command.
+<p>
+There is in fact at least one other mechanism for those that are not all that familiar
+with perl and is only being included for completeness, and that is to simply hardcode
+the replacement of each device with the desired output.  In other words
+<pre>
+/FAN MOD 1A RPM/MOD FAN1 A/
+/FAN MOD 2A RPM/MOD FAN2 A/
+/FAN MOD 3A RPM/MOD FAN3 A/
+etc
+</pre> will produce strings that can also be properly parsed without involved $ variables
+but this means you need to specify each unique device name to remap and it will also result
+in <i>all</i> pattern matching statements to be executed for each device which will also
+result in slightly more overhead.
+<p>
+<h3>Power Monitoring</h3>
+Currently all the systems that power monitoring has been testing on report it as the field
+<i>Power Meter</i> and without more examples, the parsing is currently set up to specifically
+look for that field.
+<p>
+<h3>Performance and Alternate IMPI Devices</h3>
+<p>
+In some situations there may be multiple ipmi devices over which to communicate and if so, the
+default one may not necessarily be the fastest one.  If you thing the ipmi commands are taking
+too long to execute, try a simple experiment like this:
+
+<pre>
+ipmitool sdr dump /tmp/xxx
+time for i in `seq 1 10`; do ipmitool -S /tmp/xxx sdr > /dev/null; done;
+real    0m20.476s
+user    0m0.004s
+sys     0m0.015s
+</pre>
+
+As you can see, even though the command only used 0.02 seconds of CPU time, the elapsed time 
+was over 20 seconds, a good indication something is not right.  If look in /proc/ipmi you make
+see more than one directory as in the following case:
+
+<pre>
+[root@hpdc3dmgt1 ~]# ls /proc/ipmi
+0  1
+</pre>
+
+This means there are 2 different IPMI devices and since the default is one, let's try repating
+the command above on the other device.  Also notice that since we've already initialized
+our cache file we do not need to reissue the <i>ipmitool sdr dump</i> command:
+
+<pre>
+time for i in `seq 1 10`; do ipmitool -S /tmp/xxx -d1 sdr > /dev/null; done;
+real    0m0.487s
+user    0m0.004s
+sys     0m0.013s
+</pre>
+
+See how the elapsed time is only a fraction using device 1?  To tell collectl to use this
+device instead of the default, simply specify the number in the <i>--envopts</i> switch,
+for example <i> collectl -sE --envopts 1</i>
+
+<p>
+<h3>Restrictions</h3>
+Some systems report what appears to be device codes in the data field and the data in the 4th
+field and I don't know why.  For now, when this occurs report the 4th column as the data
+instead.  If this breaks other things it will have to be removed and invalid data reported
+for those who do not report it in column 2.
+
+<table width=100%><tr><td align=right><i>updated June 25, 2010</i></td></tr></colgroup></table>
+
+</body>
+</html>

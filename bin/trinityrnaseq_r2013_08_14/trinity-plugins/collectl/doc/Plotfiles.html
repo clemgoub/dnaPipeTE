@@ -1,0 +1,189 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Plot Files</title>
+</head>
+
+<body>
+<center><h1>Plot Files</h1></center>
+<p>
+One of collectl's main features is its ability to generate files in a ready-to-plot format which
+is compatible with what gnuplot expects and there are actually 2 main types of files that it
+generates.  The first, which has an extension of <i>tab</i>, represents a table of all the summary
+data.  What makes this file unique is that all data elements are in a fixed set of columns - 
+some columns may get added over time, but for all intents and purposes, the set of data for say CPUs
+do not change regardless of how many CPUs are in the system.  The second type of files deal with 
+detail data, the amount of which changes with the number of instances so a 4 CPU system will have 1/2
+the data an 8 CPU system has.  There is one file for each type of detail data.
+<p>
+Plot files can be generated in 2 ways and each has its own advantages as well as disadvantages.
+<ul>
+<li>Post processing - collectl runs with minimal overhead, writing all its data to <i>raw</i> files.
+Those files are then converted to plot files at some time in the future</i>
+<li>During collectl - in this mode, collectl writes directly to plot files eliminating the need
+for conversion of raw file</li>
+</ul>
+
+At first glance, it sounds like you'd always want to generate plot files directly since you avoid
+the need for the conversion step, but you should also realize a few things about this methodology:
+<ul>
+<li>When plot files are generated directly you no longer have access to the original data.   This means
+you can't play back the data over selected periods of time nor can you select different data to examine,
+for example if you chose to record CPU summary data but later decide you want to see CPU detail data.</li>
+<li>In some cases you may want to look at data in unnormalized form and cannot</li>
+<li>Some data is never converted to plot format and therefore is lost forever</li>
+<p>
+<li>With raw data you can always see the data in its original format if any questions arise to its accuracy</li>
+<li>You can play back data multiple times, generating different views as well as plot files as often as you like</li>
+<li>You can select different time intervals over which to play back the data</li>
+<li>Playing back raw data allows you to display it in multiple formats such as <i>--export vmstat</i> or use
+<i>--top</i> to look at process data in different ways</li>
+<li>Most important, if you really want the best of both worlds you can record data in plot format <i>and</i>
+with the use of <i>--rawtoo</i> also record the data in raw form.
+</ul>
+<h3>Generating Plot Files On-The-Fly</h3>
+While generating files this way is as easy as appending <i>-P</i> to the collectl command either
+when run interactively or in /etc/collectl.conf, there are a couple of things to keep in mind:
+<ul>
+<li>If you want immediate access to the data while collectl is running be sure to always flush
+the buffers and don't compress the data by including the switches: <i>-F0 -oz</i></li>
+<li>Compressed data takes about 90% less storage, so this may be an option too</li>
+<li>Be sure to explicitly list all the subsystems you want plots for.  In other words if you want CPU
+detail data, be sure to include <i>C</i> with the subsystem selection.  If you want both summary and
+detail CPU data you'll need <i>cC</i>.
+<li>If you're afraid you'll lose critical data, consider using <i>--rawtoo</i>
+</ul>
+
+<h3>Generating Plot Files from RAW Files</h3>
+Collectl has the capability to play back a single file or multiple once
+but in either case
+the first thing collectl does is examine the raw file header to get the
+source host name and creation date.  There will always be a new set of data
+generated for each unique combination of host and creation date.  Note that
+depending on the subsystems chosen there may be multiple output files generated.
+This also means a single raw file that spans multiple
+dates will result in a single set of data.
+<p>
+By default, the name of the plot file contains only the date and a test is made
+to see if a file with that name already exists.  If not, it is created in
+append mode.  This means that multiple raw data files for the same
+host on the same date will result in a single set of data.  However, if that
+file already exists, collectl will NOT process any data, and request you
+specify <i>-oc</i> to tell it to perform the first open in <i>create mode</i>
+so that subsequent files can be appended.  If you specify <i>-oa</i>
+all files will be appended to the original one which may not be what you want.
+Collectl cannot read your mind so to be safe, be explicit.  If you want to
+generate a unique set of data files for each raw file use <i>-ou</i>
+which causes the time to be included in file names, resulting in a unique output
+file name for each raw file.
+<p>
+This certainly maximizes your flexibility for all the reasons listed earlier.  However, this now puts
+the responsibility of managing your data more squarely on your shoulders.  Some of the questions you need
+to answer include:
+<ul>
+<li>Do you want to convert the raw files to plot files every day or just when needed?</li>
+<li>Where do you want to store the plot files and how will you get them there?</li>
+<li>Will you automate the file copies/conversion via a cron job or do it manually when needed?</li>
+<li>Should you always convert everything to plot files or just do summary data, only generating detail
+data when needed?</li>
+<li>As with <i>on-the-fly</i> generation, should the plot files be compressed or not?</li>
+</ul>
+
+Having answered these questions and perhaps others, it now just becomes a matter of executing
+the appropriate copy and/or collectl commands, which can be relatively easily scripted.  
+<p>
+<i><b>TIP</b></i> - If you rsync raw files to another server and then process
+them using a wildcard in your playback command, you will probably end up processing some of today's files too!
+If you then later copy over the rest of today's file(s) you will need to recreate today's plot file since
+collectl will not overwrite an exiting file by default.  <i>But</i> if you specify the -oc switch with a wild
+card you will end up recreating <i>all</i> the plot files which will result in a lot more processing
+than you were planning on.  Collectl supports a special syntax that allows you to playback just the
+files from yesterday by replacing that string with yesterday's date as in the following:
+<p><pre>
+collectl -p "YESTERDAY*" etc...
+</pre>
+noting that all uppercase characters are required and you can include other characters in the string
+such as a host name if need be.
+<p>
+<i><b>TIP</b></i> - If you want to create multiple sets of plot files from the same raw file, you can always
+include a unique qualifier along with the directory name with the -f switch to give each set a different
+prefix.
+
+<h3>Daily vs Unique Plot Files</h3>
+Collectl <i>raw</i> files are created every time a new instance of collectl is run or whenever
+collectl is instructed to create new one via <i>-r</i> such as when running as a Daemon.  This
+is why each file name include a <i>time</i> as well as a <i>date</i>.  However
+trying to plot multiple files for any given day can be problematic even for an automation script
+that might help generate plots for you and so by default collectl creates non-timestamped, daily
+plot files.
+<p>
+Whether you choose to create plot files on-the-fly or manually (by playing back existing files),
+if you've not instructed collectl to do anything with unique file, it will simply append new data
+onto an existing file.  One the other hand if you explicitly ask for  <i>unique</i> files, whenever
+a new <i>raw</i> is processed or a new instance of collect is run, a new plot file will be created
+that includes a corresponding timestamp.
+<p>
+The obvious question then becomes, <i>why would you ever choose to create unique files when they're
+such a pain to plot?</i> and there are actually several good reasons you might choose to do so:
+<ul>
+<li>If periodically <i>rsycn</i> plot files to another system, one large file is always changed 
+and must be copied in full.  When there are multiple files only the latest one is ever copied.</li>
+<li>If generating a single plot file from a <i>raw</i> file multiple times/day to be more dynamic,
+collectl always has to process the full raw file, which will take longer as the file grows.  If you
+create multiple raw files only the latest will need to be reprocessed.</li>
+<li>But the <i>main</i> reason, and one that requires more explanation, is dealing with
+configuration changes</li>
+</ul>
+<b>Dealing with configuration changes</b>
+<br>Consider the following situation: you run collectl twice during the same day with the following commands:
+
+<pre>
+collectl -scd  -P -f/tmp
+collectl -scdm -P -f/tmp
+</pre>
+
+or perhaps you even generated <i>raw</i> files first and later play them back, converting them to
+plottable files.  In either case you now want to plot the data.  Since it's all in the same file, the
+headers that are initially written will only tell you there is cpu and disk data in the file!  Collectl
+will have written a second set of headers in the file at the time the second instance was run, but do
+you really want to have to make a pass through the whole file every time you want to generate a plot
+looking for additional data?  Furthermore, there will be less columns of data in the first part of the
+file that the latter, a condition that will probably cause most plotting packages to blow up, so you
+really need unique files.
+<p>
+Another situation that can cause this is when dealing with detail data for dynamic subsystems such as
+Lustre and disks.  Dynamic change detection for Lustre has always been a part collectl but 
+support for dynamic disk configuration changes has been added to collectl V3.3.4.  When a 
+configuration change is detected, it forces collectl to create a new file, whether generating data 
+in <i>raw</i> or <i>plot</i> format.  Furthermore, if you later try to combine disk data from multiple raw
+files into a single plot file that has disk configuration change data in it, collectl won't let you 
+unless you specific -ou forcing the generation of unique files.  Lustre changes can be combined into
+a single plot file by adding in any missing columns and 0-filling them.
+<p>
+<center>
+<i>Caution</i>
+<table width=80%>
+<tr><td>If you are generating non-unique plot files on-the-fly and a 
+configuration change occurs, that new data will simply be appended to the single file.  
+<i>There is nothing collectl can do about this</i>, because it wants to keep all files
+in a consistent name format and will not switch to unique name formatting without
+explicitly being told to do so.</td></tr>
+</table>
+</center>
+<p>
+Configuration changes do not happen often <i>and</i> this is only an issue when generating
+plot files in real-time.  Furthermore, since this only effects detail, because
+the summary data will always accurately reflect the sum of the instance data, this typically
+will not effect anyone but is being stated for completeness.
+<p>
+If after all this you choose to generate real-time, non-unique detailed plot files and find 
+yourself in a situation where you should have, you can always write a script to split the 
+plot files back into individual ones since there is sufficient data in the internal headers
+to do so.  If you have multiple unique files and find single files easier to deal with, you
+can also choose to write a post-processing script that merges these into a single file with
+zero-filled columns where there is missing data.
+
+<table width=100%><tr><td align=right><i>updated June 4, 2009</i></td></tr></colgroup></table>
+
+</body>
+</html>

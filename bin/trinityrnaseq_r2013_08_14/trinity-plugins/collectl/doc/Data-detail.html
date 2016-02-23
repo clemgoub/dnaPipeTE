@@ -1,0 +1,841 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Detail Data</title>
+</head>
+
+<body>
+<center><h1>Detail Data</h1></center>
+<p>
+<h3>Buddy (Memory Fragmentation) Data, <i>collectl -sB</i></h3>
+<p>
+<div class=terminal-wide14><pre>
+# MEMORY FRAGMENTATION (4K pages)
+#Node    Zone      1Pg    2Pgs    4Pgs    8Pgs   16Pgs   32Pgs   64Pgs  128Pgs  256Pgs  512Pgs 1024Pgs
+</pre></div>
+
+This table shows the number of memory fragments by pagesize in increasing powers of 2 for various types of
+memory defined by the combination of <i>Node</i> and <i>Zone</i>.
+<p>
+<h3>CPU Data, <i>collectl -sC</i></h3>
+<p>
+<div class=terminal><pre>
+# SINGLE CPU STATISTICS
+#   CPU  USER NICE  SYS WAIT IRQ  SOFT STEAL IDLE INTRPT
+</pre></div>
+
+
+These are the same fields as reported for verbose CPU Summary, each preceeded by the 
+CPU number.  If running collectl V2.5.0 or greater AND you request interrupt summary
+data, the <i>INTRPT</i> field will also be included.
+<p>
+<table>
+<tr valign=top><td><b>CPU</b></td>
+<td>The CPU number which the stats are associated with</td>
+
+<tr valign=top><td><b>User</b></td>
+<td>Time spent in User mode, not including time spend in "nice" mode.</td></tr>
+
+<tr valign=top><td><b>Nice</b></td>
+<td>Time spent in Nice mode, that is lower priority as adjusted by
+the nice command and have the "N" status flag set when examined with "ps".</td></tr>
+
+<tr valign=top><td><b>Sys</b></td>
+<td>This is time spent in "pure" system time.</td></tr>
+
+<tr valign=top><td><b>Wait</b></td>
+<td>Also known as "iowait", this is the time the CPU was idle during an
+outstanding disk I/O request.  This is not considered to be part of the total or
+system times reported in brief mode.</td></tr>
+
+<tr valign=top><td><b>Irq</b></td>
+<td>Time spent processing interrupts and also considered to be part of
+the summary system time reported in "brief" mode.</td></tr>
+
+<tr valign=top><td><b>Soft</b></td>
+<td>Time spent processing soft interrupts and also considered to be part
+of the summary system time reported in "brief" mode.</td></tr>
+
+<tr valign=top><td><b>Steal</b></td>
+<td>Time spend in involuntary wait state while the hypervisor was servicing
+another virtual processor.</td></tr>
+
+<tr valign=top><td><b>Intrpt</b></td>
+<td>If the interrupt summary stats were requested at the same time, this
+will be included which is the aggregate number of interrupts for each CPU.
+</table>
+
+<h3>Disk Data, <i>collectl -sD</i></h3>
+<p>
+If you specify filtering with <i>--dskfilt</i>, the disk names that match the pattern(s)
+will either be included or excluded from the the summary data.  However, the data will
+<i>still</i> be collected so if recorded to a file can later be viewed.  Note: if you
+specify <i>--dskopts f</i>, fractional values will be reported for some of the fields
+for more precision.
+<p>
+<div class=terminal-wide14><pre>
+# DISK STATISTICS (/sec)
+#          <---------reads---------><---------writes---------><--------averages--------> Pct
+#Name       KBytes Merged  IOs Size  KBytes Merged  IOs Size  RWSize  QLen  Wait SvcTim Util
+</pre></div>
+
+<table>
+<tr><td><b>Name</b></td>
+<td>Name of the disk the statistics are being reported for.</td></tr>
+
+<tr><td><b>KBytes<b></td>
+<td>KB read/sec</td></tr>
+
+<tr valign=top><td><b>Merged</b></td>
+<td>Read requests merged per second when being dequeued.</td></tr>
+
+<tr><td><b>IOs</b></td>
+<td>Number of reads/sec</td></tr>
+
+<tr><td><b>Size<b></td>
+<td>Average read I/O size in KBytes</td></tr>
+
+<tr><td><b>KBytes<b></td>
+<td>KB written/sec</td></tr>
+
+<tr valign=top><td><b>Merged</b></td>
+<td>Write requests merged per second when being dequeued.</tr></tr>
+
+<tr><td><b>IOs</b></td>
+<td>Number of writes/sec</td></tr>
+
+<tr><td><b>Size<b></td>
+<td>Average write I/O size in KBytes</td></tr>
+
+<tr><td><b>RWSize<b></td>
+<td>Average combined read and write I/O size in KBytes.  This is <i>not</i> the average
+of the read and write sizes but rather the sum of the reads/write divided by the number
+of I/Os</td></tr>
+
+<tr><td><b>QLen</b></td>
+<td>Average number of requests queued</td></tr>
+
+<tr><td><b>Wait</b></td>
+<td>Average time in msec for a request has been waiting in the queue</td></tr>
+
+<tr><td><b>SvcTim</b></td>
+<td>Average time in msec for a request to be serviced by the device</td></tr>
+
+<tr><td><b>Util</b></td>
+<td>Percentage of CPU time during which I/O requests were issued</td></tr>
+</table>
+<p>
+<h3>Infiniband, <i>collectl -sX</i></h3>
+<p>
+<div class=terminal><pre>
+# INFINIBAND STATISTICS (/sec)
+#HCA    KBIn   PktIn  SizeIn   KBOut  PktOut SizeOut  Errors
+</pre></div>
+
+<table>
+<tr><td><b>HCA</b></td><td>HCA instance name</td></tr>
+<tr><td><b>KBIn</b></td><td>KB received/sec.</td></tr>
+<tr><td><b>PktIn</b></td><td>Received packets/sec.</td></tr>
+<tr><td><b>SizeIn</b></td><td>Average incoming packet size in KB</td></tr>
+<tr><td><b>KBOut</b></td><td>KB transmitted/sec.</td></tr>
+<tr><td><b>PktOut</b></td><td>Transmitted packets/sec.</td></tr>
+<tr><td><b>SizeOut</b></td><td>Average outgoing packet size in KB</td></tr>
+<tr valign=top><td><b>Errs</b></td><td>Count of current errors.  Since these are typically infrequent, it
+is felt that reporting them as a rate would result in either not seeing them OR
+round-off hiding their values.</td></tr>
+</table>
+<p>
+<h3>Interrupts, <i>collectl -sJ</i></h3>
+<p>
+<div class=terminal><pre>
+# INTERRUPT DETAILS
+# Int    Cpu0   [Cpu...]   Type            Device(s)
+</pre></div>
+<p>
+<table>
+<tr><td valign=top><b>Int</b></td><td>Interrupt number within the range 0-255.  Note that
+only those interrupts that have had any activity since the last monitoring
+interval will be reported</td></tr>
+
+<tr><td valign=top><b>CPUn...</b></td><td>The CPU for which the interrupt count is being
+reported.  There will be one column/CPU</td></tr>
+
+<tr><td valign=top><b>Type</b></td><td>Interrupt type</td></tr>
+
+<tr><td valign=top><b>Device</b></td><td>The names of the devices which are 
+generating this interrut</td></tr>
+</table>
+
+<h3>Lustre Data, <i>collectl -sL</i></h3>
+<p>
+There are several formats the lustre detail data can take based on whether you're
+looking at a client or an OSS (there is not any MDS specific detail data, though it does
+share the same disk-level buffer size data as the OSS).  Furthermore, if one specifies
+the <i>-sLL</i> form of the detail switch OST level details will be reported where
+appropriate.
+<p>
+<b>Lustre Client</b>, <i>collectl -sL</i>
+<div class=terminal><pre>
+# LUSTRE CLIENT DETAIL (/sec)
+#Fils  KBRead  Reads SizeKB KBWrite Writes SizeKB
+</pre></div>
+<table>
+<tr><td valign=top><b>Filsys</b></td><td>Name of the filesystem these stats apply to</td></tr>
+<tr><td valign=top><b>KBRead</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>SizeKB</b></td><td>Average read size</td></tr>
+<tr><td valign=top><b>Reads</b></td> <td>Reads/sec</td></tr>
+<tr><td valign=top><b>KBWrite</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Writes</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>SizeKB</b></td><td>Average write size</td></tr>
+<tr><td valign=top><b>
+</table>
+<p>
+<b>Lustre Client</b>, <i>collectl --lustops O</i>
+<div class=terminal><pre>
+# LUSTRE CLIENT DETAIL (/sec)
+#Fils  Ost     KBRead  Reads SizeKB KBWrite Writes SizeKB
+</pre></div>
+The data here is the same as that reported for the standard client side lustre data except
+now it is broken down by OST within the file system.
+<p>
+<table>
+<tr><td valign=top><b>Filsys</b></td><td>Name of the filesystem these stats apply to</td></tr>
+<tr><td valign=top><b>Ost</b></td>   <td>OST name within the filesystem</td></tr>
+<tr><td valign=top><b>KBRead</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Reads</b></td> <td>Reads/sec</td></tr>
+<tr><td valign=top><b>SizeKB</b></td><td>Average read size</td></tr>
+<tr><td valign=top><b>KBWrite</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Writes</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>SizeKB</b></td><td>Average write size</td></tr>
+</table>
+<p>
+<b>Lustre Client RPB-Buffer Stats</b>, <i>collectl --lustopts B</i>
+<div class=terminal><pre>
+# LUSTRE CLIENT DETAIL: RPC-BUFFERS (pages)
+#Filsys  Ost   RdK  Rds   1K   2K   ...   WrtK Wrts   1K   2K   ...
+</pre></div>
+This form also includes the reads/writs within the filesystem, but also add the sizes of
+the RPM buffers.  Since these numbers always apply to OSTs you need to use the <i>-sLL</i>
+form of the subsystem switch.
+<p>
+<table>
+<tr><td valign=top><b>Filsys</b></td><td>Name of the filesystem these stats apply to</td></tr>
+<tr><td valign=top><b>Ost</b></td><td>OST name within the filesystem</td></tr>
+<tr><td valign=top><b>RdK</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Rds</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of pages of of this size read</td></tr>
+<tr><td valign=top><b>WrtK</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Wrts</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of pages of of this size written</td></tr>
+</table>
+<p>
+<b>Lustre Client Metadata</b>, <i>collectl -sL --lustopts M</i>
+<div class=terminal-wide14><pre>
+# LUSTRE CLIENT DETAIL: METADATA
+#Filsys   KBRead  Reads KBWrite  Writes  Open Close GAttr SAttr  Seek Fsync DrtHit DrtMis
+</pre></div>
+<p>
+<table>
+<tr><td valign=top><b>Filsys</b></td><td>Name of the filesystem these stats apply to</td></tr>
+<tr><td valign=top><b>KBRead</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Reads</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>KBWrite</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Writes</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>Open</b></td><td>Opens/sec</td></tr>
+<tr><td valign=top><b>Close</b></td><td>Closes/sec</td></tr>
+<tr><td valign=top><b>GAttr</b></td><td>Get Attributes/sec</td></tr>
+<tr><td valign=top><b>SAttr</b></td><td>Set Attributes/sec</td></tr>
+<tr><td valign=top><b>Seek</b></td><td>Seeks/sec</td></tr>
+<tr><td valign=top><b>Fsync</b></td><td>FSyncs/sex</td></tr>
+<tr><td valign=top><b>DrtHit</b></td><td>Dirty Hits/sec</td></tr>
+<tr><td valign=top><b>DrtMis</b></td><td>Dirty Misses/sec</td></tr>
+</table>
+<p>
+<b>Lustre Client Readhead</b>, <i>collectl -sL --lustopts R</i>
+<div class=terminal-wide14><pre>
+# LUSTRE CLIENT DETAIL: READAHEAD
+#Filsys   KBRead Reads  KBWrite Writes  Pend  Hits Misses NotCon MisWin LckFal  Discrd ZFile ZerWin RA2Eof HitMax
+</pre></div>
+<p>
+<table>
+<tr><td valign=top><b>Filsys</b></td><td>Name of the filesystem these stats apply to</td></tr>
+<tr><td valign=top><b>KBRead</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Reads</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>KBWrite</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Writes</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>Pend</b></td><td>Pending issued pages</td></tr>
+<tr><td valign=top><b>Hits</b></td><td>Hits</td></tr>
+<tr><td valign=top><b>Misses</b></td><td>Misses</td></tr>
+<tr><td valign=top><b>NotCon</b></td><td>Readpage not consecutive</td></tr>
+<tr><td valign=top><b>MisWin</b></td><td>Miss inside window</td></tr>
+<tr><td valign=top><b>LckFal</b></td><td>Failed lock match</td></tr>
+<tr><td valign=top><b>Discrd</b></td><td>Read but discarded</td></tr>
+<tr><td valign=top><b>ZFile</b></td><td>Zero length file</td></tr>
+<tr><td valign=top><b>ZerWin</b></td><td>Zero size window</td></tr>
+<tr><td valign=top><b>RA2Eof</b></td><td>Read-ahead to EOF</td></tr>
+<tr><td valign=top><b>HitMax</b></td><td>Hit max r-a issue</td></tr>
+</table>
+<p>
+<b>Lustre OSS</b>, <i>collectl -sL</i>
+<div class=terminal><pre>
+# LUSTRE FILESYSTEM SINGLE OST STATISTICS (/sec)
+#Ost            KBRead   Reads  SizeKB    KBWrite  Writes  SizeKB
+</pre></div>
+<table>
+<tr><td valign=top><b>Ost</b></td><td>OST name</td></tr>
+<tr><td valign=top><b>KBRead</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Reads</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>SizeKB</b></td><td>Average read size</td></tr>
+<tr><td valign=top><b>KBWrite</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Writes</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>SizeKB</b></td><td>Average write size</td></tr>
+</table>
+<p>
+
+<b>Lustre OSS RPC Buffers</b>, <i>collectl -sL --lustopts B</i>
+<div class=terminal><pre>
+# LUSTRE FILESYSTEM SINGLE OST STATISTICS
+#Ost            RdK  Rds   1P   2P  ...  WrtK Wrts   1P   2P  ...
+</pre></div>
+<table>
+<tr><td valign=top><b>Filsys</b></td><td>Name of the filesystem these stats apply to</td></tr>
+<tr><td valign=top><b>Ost</b></td><td>OST name within the filesystem</td></tr>
+<tr><td valign=top><b>RdK</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Rds</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>nP</b></td><td>Number of pages of of this size read</td></tr>
+<tr><td valign=top><b>WrtK</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Wrts</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>nP</b></td><td>Number of pages of of this size written</td></tr>
+</table>
+<p>
+<b>Lustre OSS and MDS Disk Buffers</b>, <i>collectl -sL --lustopts D</i>
+<p>
+This display is very similar the the RPC buffers in that the sizes of different size
+I/O requests are reported.  In this case there are requests send to the disk driver.
+Note that this report is only available for HP's SFS.
+<div class=terminal><pre>
+# LUSTRE DISK BLOCK LEVEL DETAIL (units are 512 bytes)
+#DISK RdK  Rds 0.5K   1K   2K   ...   WrtK Wrts 0.5K   1K   2K   ...
+</pre></div>
+<table>
+<tr><td valign=top><b>Disk</b></td><td>Name of the disk these stats apply to</td></tr>
+<tr><td valign=top><b>RdK</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>Rds</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of blocks of of this size read</td></tr>
+<tr><td valign=top><b>WrtK</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>Wrts</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of blocks of of this size written</td></tr>
+</table>
+<p>
+<h3>Memory Data, <i>collectl -sM</i></h3>
+<p>
+This is also known as <a href=http://en.wikipedia.org/wiki/Non-Uniform_Memory_Access>numa</a>
+data and provides detail information about memory utilization in each numa node.
+<p>
+<div class=terminal-wide14><pre>
+# MEMORY STATISTICS
+# Node    Total     Used     Free     Slab   Mapped     Anon    Locked  Inact Hit%
+</pre></div>
+<table>
+<tr><td><b>Node</b></td>
+<td>Numa node number, which is usually the same as a physical socket</td></tr>
+
+<tr><td><b>Total</b></td>
+<td>Total physical memory</td></tr>
+
+<tr valign=top><td><b>Used</b></td>
+<td>Used physical memory.  This does not include memory used by the kernel itself.</td></tr>
+
+<tr valign=top><td><b>Free</b></td>
+<td>Unallocated memory</td></tr>
+
+<tr valign=top><td><b>Slab</b></td>
+<td>Memory used for slabs, see <i>collectl -sY</i></td></tr>
+
+<tr valign=top><td><b>Mapped</b></td>
+<td>Memory mapped by processes</td></tr>
+
+<tr valign=top><td><b>Anon</b></td>
+<td>Anonymous memory</i></td></tr>
+
+<tr valign=top><td><b>Locked</b></td>
+<td>Locked memory</i></td></tr>
+
+<tr valign=top><td><b>Inactive</b></td>
+<td>Inactive pages, which is the sum of Inactive(anon) and Inactive(file).
+Note that Inactive(anon) is <i>not</i> considered nor included in the previous
+anonynous memory field.</td></tr>
+
+<tr valign=top><td><b>Hit%</b></td>
+<td>It is currenlty not entirely clear how useful this number actually is as it refers to the hit percentages
+for both local and foreign memory as a single number.  Most importat, it does <i>not</i> refer to memory access
+but rather memory allocation.  In other words, it does not differentiate between one failing to allocation
+memory and only referencing it a small number of time vs a very large number of times.  Clearly the latter would
+be more interesting from a performance perspective.
+</td></tr>
+</table>
+<p>
+<h3>Network Data, <i>collectl -sN</i></h3>
+<p>
+If you specify filtering with <i>--netfilt</i>, the names that match the pattern(s)
+will either be included or excluded from the the summary data.  However, the data will
+<i>still</i> be collected so if recorded to a file can later be viewed.
+<p>
+<div class=terminal-wide14><pre>
+# NETWORK STATISTICS (/sec)
+#Num    Name  KBIn  PktIn SizeIn  MultI   CmpI  ErrsI  KBOut PktOut  SizeO   CmpO   ErrsO
+</pre></div>
+<p>
+<table>
+<tr><td><b>Num</b></td>
+<td>Each network interface is numbered, starting with 0</td></tr>
+
+<tr><td><b>Name</b></td>
+<td>Name of the interface</td></tr>
+
+<tr><td><b>KBIn</b></td>
+<td>Incoming KB/sec</td></tr>
+
+<tr><td><b>PktIn</b></td>
+<td>Incoming packets/sec</td></tr>
+
+<tr><td><b>SizeI</b></td>
+<td>Average incoming packet size in bytes</td></tr>
+
+<tr><td><b>MultI</b></td>
+<td>Incoming multicast packets/sec</td></tr>
+
+<tr><td><b>CmpI</b></td>
+<td>Incoming compressed packets/sec</td></tr>
+
+<tr valign=top><td><b>ErrsI</b></td>
+<td>Total incoming errors/sec.  This is an aggregration of incoming errors.   To see explicit
+error counters use <i>--netopts e</i></td></tr>
+
+<tr><td><b>KBOut</b></td>
+<td>Outgoing KB/sec</td></tr>
+
+<tr><td><b>PktOut</b></td>
+<td>Outgoing packets/sec</td></tr>
+
+<tr><td><b>SizeO</b></td>
+<td>Average outgoing packet size in bytes</td></tr>
+
+<tr><td><b>CmpO</b></td>
+<td>Outgoing compressed packets/sec</td></tr>
+
+<tr valign=top><td><b>ErrsO</b></td>
+<td>Total outgoing errors/sec.  This is an aggregation of outgoing errors.  To see explicit
+error counters use <i>--netopts e</i></td></tr>
+</table>
+<p>
+<h3>Network Data, <i>collectl -sN --netopts e</i></h3>
+<p>
+<div class=terminal-wide14>
+<pre>
+# NETWORK ERRORS SUMMARY (/sec)
+#Num    Name   ErrIn  DropIn  FifoIn FrameIn    ErrOut DropOut FifoOut CollOut CarrOut
+</pre></div>
+
+<table>
+<tr><td><b>Num</b></td>
+<td>Each network interface is numbered, starting with 0</td></tr>
+<tr><td><b>Name</b></td>
+<td>Name of the interface</td></tr>
+<tr><td><b>ErrIn</b></td>
+<td>Receive errors/sec detected by the device driver</td></tr>
+<tr><td><b>DropIn</b></td>
+<td>Receive packets dropped/sec</td></tr>
+<tr><td><b>FifoIn</b></td>
+<td>Receive packet FIFO buffer errors/sec</td></tr>
+<tr><td><b>FrameIn</b></td>
+<td>Receive packet framing errors/sec</td></tr>
+<tr><td><b>ErrOut</b></td>
+<td>Transmit errors/sec detected by the device driver</td></tr>
+<tr><td><b>DropOut</b></td>
+<td>Transmit packets dropped/sec</td></tr>
+<tr><td><b>FifoOut</b></td>
+<td>Transmit packet FIFO buffer errors/sec</td></tr>
+<tr><td><b>CollOut</b></td>
+<td>Transmit collisions/sec detected on the interface</td></tr>
+<tr><td><b>CarrOut</b></td>
+<td>Transmit packet carrier loss errors detected/sec</td></tr>
+</table>
+<p>
+<h3>NFS Data, <i>collectl -sF</i></h3>
+<p>
+By default, collectl will report all 6 types of nfs data (clients and servers for 
+all 3 versions of nfs) unless one has limited the reporting with <i>--nfsfilt</i>.
+For versions prior to 3.2.1 which only collected a single type of
+data, collectl will only report that single type.
+<p>
+Also note that nfs V2 records 2 fields that V3 doesn't record and V4 records many
+more.  At this time and detail data is standardized on the V3 format and fields 
+not collected will be left blank.  These fields map onto those reported by 
+<i>nfsstat</i> as indicated and are reported as rates.
+
+<div class=terminal-wide14>
+<pre>
+# NFS SERVER/CLIENT DETAILS (/sec)
+#Type Read Writ Comm Look Accs Gttr Sttr Rdir Cre8 Rmov Rnam Link Rlnk Null Syml Mkdr Rmdr Fsta Finf Path Mknd Rdr+
+</pre></div>
+
+<table>
+<tr><td><b>Type</b></td><td>a combination of <i>Clt</i> or <i>Svr</i> and one
+of <i>2, 3</i> or <i>4</i></td></tr>
+<tr><td><b>Read</b></td><td>Reads</td></tr>
+<tr><td><b>Writ</b></td><td>Writes</td></tr>
+<tr><td><b>Comm</b></td><td>Commits</td></tr>
+<tr><td><b>Look</b></td><td>Lookups</td></tr>
+<tr><td><b>Accs</b></td><td>Accesses</td></tr>
+<tr><td><b>Gttr</b></td><td>Getattrs</td></tr>
+<tr><td><b>Sttr</b></td><td>Setattrs</td></tr>
+<tr><td><b>Rdir</b></td><td>Readdirs</td></tr>
+<tr><td><b>Cre8</b></td><td>Creates</td></tr>
+<tr><td><b>Rmov</b></td><td>Removes</td></tr>
+<tr><td><b>Rnam</b></td><td>Renames</td></tr>
+<tr><td><b>Link</b></td><td>Links</td></tr>
+<tr><td><b>Rlnk</b></td><td>Readlinks</tr>
+<tr><td><b>Null</b></td><td>Nulls</td></tr>
+<tr><td><b>Syml</b></td><td>Symlinks</td></tr>
+<tr><td><b>Mkdr</b></td><td>Mkdirs</td></tr>
+<tr><td><b>Rmdr</b></td><td>Rmdirs</td></tr>
+<tr><td><b>Fsta</b></td><td>Fsstats</td></tr>
+<tr><td><b>Finf</b></td><td>Fsinfos</td></tr>
+<tr><td><b>Path</b></td><td>Pathconfs</td></tr>
+<tr><td><b>Mknd</b></td><td>Mknods</td></tr>
+<tr><td><b>Rdr+</b></td><td>Readdirpluses</td></tr>
+</table>
+
+<p>
+<h3>Process Data, <i>collectl -sZ</i></h3>
+<p>
+There are actually multiple formats process data can be displayed in, the default being the one
+shown immediately below.  By using <i>--procopts</i> as shown in later examples, you can change
+what is displayed, noting that when playing back the data from a raw file, <i>all</i> information
+has been recorded and so you can actually play it back multiple times and see different views.
+<p>
+These switched can also be use in conjunction with <i>--top</i>.
+<p>
+<div class=terminal-wide14><pre>
+# PROCESS SUMMARY (faults are /sec)
+# PID  User     PR  PPID S   VSZ   RSS  CP  SysT  UsrT Pct  AccuTime  RKB  WKB MajF MinF Command
+</pre></div>
+
+<table>
+<tr valign=top><td><b>PID<b></td>
+<td>Pid of the process</td></tr>
+
+<tr valign=top><td><b>User<b></td>
+<td>Name of user which this process is running under.  In playback mode on a
+different machine, use -oP to direct collectl to use the password file named in
+collectl.conf (default is /etc/passwd) to lookup the corresponding username.
+Otherwise the UID will be reported instead.</td></tr>
+
+<tr valign=top><td><b>PR<b></td>
+<td>Process priority</td></tr>
+
+<tr valign=top><td><b>PPID<b></td>
+<td>PID of this process's parent</td></tr>
+
+<tr valign=top><td><b>S<b></td>
+<td>Process State: S - Sleeping, D - Uninterruptable Sleep, R - Running, Z - Zombie or T - Stopped/Traced</td></tr>
+
+<tr valign=top><td><b>VSZ<b></td>
+<td>This is the amount of VS memory used by this process</td></tr>
+
+<tr valign=top><td><b>RSS<b></td>
+<td>This is the amount of RSS memory used by this process</td></tr>
+
+<tr valign=top><td><b>CP<b></td>
+<td>CPU number this process is currently running on</td></tr>
+
+<tr valign=top><td><b>SysT<b></td>
+<td>The amount of System Time this process used during this interval</td></tr>
+
+<tr valign=top><td><b>UsrT<b></td>
+<td>The amount of User Time this process used during this interval</td></tr>
+
+<tr valign=top><td><b>Pct<b></td>
+<td>Percentage of the current interval taken up by this task (the User and System
+time are used for this calculation)</td></tr>
+
+<tr valign=top><td><b>AccuTime<b></td>
+<td>Total accumulated System and User time since the process began execution</td></tr>
+
+<tr valign=top><td><b>RKB<b></td>
+<td>This is the number of kilobytes of data written by each process.  Both
+this and the WKB field are only present if the kernel had proces I/O
+monitoring enabled which is not the default as of 2.6.23.</td></tr>
+
+<tr valign=top><td><b>WKB<b></td>
+<td>This is the number of kilobytes of data read by each process</td></tr>
+
+<tr valign=top><td><b>MajF<b></td>
+<td>Major Page Faults per second</td></tr>
+
+<tr valign=top><td><b>MinF<b></td>
+<td>Minor Page Faults per second</td></tr>
+
+<tr valign=top><td><b>Command<b></td>
+<td>Command that is running.  Path and command line options are NOT included
+unless <i>--procopts w</i></td></tr>
+</table>
+<p>
+
+<h3>Process Data, <i>collectl -sZ --procopts x</i></h3>
+<p>
+This format is essentially idential to the last except that it adds <i>extended</i> information
+to the display, specifically <i>VCtx</i> and <i>NCtx</i>.
+<p>
+<div class=terminal-wide14><pre>
+# PROCESS SUMMARY (counters are /sec)
+# PID  User     PR  PPID THRD S   VSZ   RSS CP  SysT  UsrT Pct  AccuTime  RKB  WKB VCtx NCtx MajF MinF Command
+</pre></div>
+<table>
+<tr valign=top><td><b>VCtx &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<b></td>
+<td>Voluntary context switches</td></tr>
+<tr valign=top><td><b>NCtx<b></td>
+<td>Non-voluntary context switches</td></tr>
+</table>
+<p>
+<h3>Process I/O Data, <i>collectl --procopts i</i></h3>
+<div class=terminal-wide14><pre>
+# PID  User    PPID S  SysT  UsrT   Pct AccuTime   RKB   WKB  RKBC  WKBC  RSys  WSys  Cncl  Command
+</pre></div>
+<table>
+<tr valign=top><td><b>PID<b></td>
+<td>Pid of the process</td></tr>
+
+<tr valign=top><td><b>User<b></td>
+<td>Name of user which this process is running under.  In playback mode on a
+different machine, use -oP to direct collectl to use the password file named in
+collectl.conf (default is /etc/passwd) to lookup the corresponding username.
+Otherwise the UID will be reported instead.</td></tr>
+
+<tr valign=top><td><b>PPID<b></td>
+<td>PID of this process's parent</td></tr>
+
+<tr valign=top><td><b>S<b></td>
+<td>Process State: S - Sleeping, D - Uninterruptable Sleep, R - Running, Z - Zombie or T - Stopped/Traced</td></tr>
+
+<tr valign=top><td><b>SysT<b></td>
+<td>The amount of System Time this process used during this interval</td></tr>
+
+<tr valign=top><td><b>UsrT<b></td>
+<td>The amount of User Time this process used during this interval</td></tr>
+
+<tr valign=top><td><b>Pct<b></td>
+<td>Percentage of the current interval taken up by this task (the User and System
+time are used for this calculation)</td></tr>
+
+<tr valign=top><td><b>AccuTime<b></td>
+<td>Total accumulated System and User time since the process began execution</td></tr>
+
+<tr valign=top><td><b>RKB<b></td>
+<td>Attempt to count the number of bytes which this process really did cause to
+be fetched from the storage layer by doing calls to <i>read_bytes</i>. 
+This is done at the submit_bio() level, so it is accurate for block-backed 
+filesystems.</td></tr>
+
+<tr valign=top><td><b>WKB<b></td>
+<td>Attempt to count the number of bytes which this process caused to be sent to
+the storage layer by doing calls to <i>write_bytes</i>. 
+This is done at page-dirtying time.</td></tr>
+
+<tr valign=top><td><b>RKBC<b></td>
+<td>Number of bytes which were read via read, readv, pread and sendfile.  Since
+these requests are satisfied from kernel pagecache they won't be accounted for
+by RKB, because they didn't require any I/O.</td></tr>
+
+<tr valign=top><td><b>WKBC<b></td>
+<td>Number of bytes which were written via write, writev, pwrite and sendfile.
+Like RKBC, since the I/O uses the pagecache these values won't be accounted
+for by WKB.
+</td></tr>
+
+<tr valign=top><td><b>RSys<b></td>
+<td>Number of read syscalls, specifically: read, pread, readv and sendfile</td></tr>
+
+<tr valign=top><td><b>WSys<b></td>
+<td>Number of write syscalls, specifically: write, pwrite, writev and sendfile</td></tr>
+
+<tr valign=top><td><b>Cncl<b></td>
+<td>Number of cancelled write bytes.</td></tr>
+
+</table>
+<p>
+<h3>Process Memory Data, <i>collectl --procmem</i></h3>
+<div class=terminal-wide14><pre>
+# PID  User     S VmSize  VmLck  VmRSS VmData  VmStk  VmExe  VmLib  VmSwp MajF MinF Command
+</pre></div>
+
+<table>
+<tr valign=top><td><b>PID<b></td>
+<td>Pid of the process</td></tr>
+
+<tr valign=top><td><b>User<b></td>
+<td>Name of user which this process is running under.  In playback mode on a
+different machine, use -oP to direct collectl to use the password file named in
+collectl.conf (default is /etc/passwd) to lookup the corresponding username.
+Otherwise the UID will be reported instead.</td></tr>
+
+<tr valign=top><td><b>S<b></td>
+<td>Process State: S - Sleeping, D - Uninterruptable Sleep, R - Running, Z - Zombie or T - Stopped/Traced</td></tr>
+
+<tr valign=top><td><b>VmSize<b></td>
+<td>Size of Virtual memory used by the entire process</td></tr>
+
+<tr valign=top><td><b>VmLck<b></td>
+<td>Size of Locked Virtual Memory</td></tr>
+
+<tr valign=top><td><b>VmRSS<b></td>
+<td>Size of Resident Virtual Memory</td></tr>
+
+<tr valign=top><td><b>VmData<b></td>
+<td>Size of Virtual Memory used for heap</td></tr>
+
+<tr valign=top><td><b>VmStk<b></td>
+<td>Size of Virtual Memory used for stack</td></tr>
+
+<tr valign=top><td><b>VmExe<b></td>
+<td>Size of Virtual Memory used for exe and statically linked libraries</td></tr>
+
+<tr valign=top><td><b>VmLib<b></td>
+<td>Size of Virtual Memory used for dynamically linked libraries</td></tr>
+
+<tr valign=top><td><b>VmSwp<b></td>
+<td>Size of Virtual Memory used for swapping.  This does not necessarily mean a process
+is actively swapping but only that the memory has been mapped.</td></tr>
+
+<tr valign=top><td><b>MajF<b></td>
+<td>Major Page Faults per second</td></tr>
+
+<tr valign=top><td><b>MinF<b></td>
+<td>Minor Page Faults per second</td></tr>
+
+<tr valign=top><td><b>Command<b></td>
+<td>Command that is running.  Path and command line options are NOT included unless <i>--procopt w</i></td></tr>
+</table>
+<p>
+<h3>Slab Data, <i>collectl -sY</i></h3>
+<p>
+There are actualy 3 different formats for slab data.  The first applies to all kernels prior to 2.6.22
+and contains the same fields as the Summary report for each named slab and loses the <i>caches</i>
+fields.
+<p>
+<div class=terminal-wide14><pre>
+# SLAB DETAIL
+#          <-----------Objects----------><---------Slab Allocation------><----Change-->
+#Name      InUse   Bytes   Alloc   Bytes   InUse   Bytes   Total   Bytes   Diff    Pct
+</pre></div>
+
+<table>
+<tr><td colspan=2>Objects</td</tr>
+<tr valign=top><td><b>InUse</b></td>
+<td>Total number of objects that are currently in use.</td></tr>
+
+<tr valign=top><td><b>Bytes</b></td>
+<td>Total size of all the objects in use.</td></tr>
+
+<tr valign=top><td><b>Alloc</b></td>
+<td>Total number of objects that have been allocated but not necessarily in use.</td></tr>
+
+<tr valign=top><td><b>Bytes</b></td>
+<td>Total size of all the allocated objects whether in use or not.</td></tr>
+
+<tr><td colspan=2>Slab Allocation</td</tr>
+<tr valign=top><td><b>InUse</b></td>
+<td>Number of slabs that have at least one active object in them.</td></tr>
+
+<tr valign=top><td><b>Bytes</b></td>
+<td>Total size of all the slabs.</td></tr>
+
+<tr valign=top><td><b>Total</b></td>
+<td>Total number of slabs that have been allocated whether in use or not.</td></tr>
+
+<tr valign=top><td><b>Bytes</b></td>
+<td>Total size of all the slabs that have been allocted whether in use or not.</td></tr>
+
+<tr valign=top><td><b>Diff</b></td>
+<td>Change in size of this slab since last sample in bytes</td></tr>
+
+<tr valign=top><td><b>Pct</b></td>
+<td>Percentage change in size of this slab</td></tr>
+</table>
+<p>
+This second format applies to the new <i>SLUB</i> allocator starting with the 2.6.22 kernel.  As with the old
+format slab detail report, the same fields as are found in the Slab Summary Report are shown for each named slab.
+
+<div class=terminal-wide14><pre>
+# SLAB DETAIL
+#                             <----------- objects --------><--- slabs ---><---------allocated memory-------->
+#Slab Name                    Size  /slab   In Use    Avail  SizeK  Number     UsedK    TotalK   Change    Pct
+</pre></div>
+
+<table>
+<tr><td colspan=2>Objects</td</tr>
+<tr><td><b>Size</b></td>
+<td>Size of a single slab object</td></tr>
+
+<tr><td><b>/Slab</b></td>
+<td>The number of objecs in a single slab</td></tr>
+
+<tr><td><b>InUse</b></td>
+<td>The total number of objects that have been allocated to processes.</td></tr>
+
+<tr valign=top><td><b>Avail</b></td>
+<td>The total number of objects that are available in the currently allocated slabs.
+This includes those that have already been allocated toprocesses.</td></tr>
+
+<tr><td colspan=2>Slabs</td></tr>
+<tr valign=top><td><b>SizeK</b></td>
+<td>The size of one slab, which typically contains multiple objects</td></tr>
+
+<tr valign=top><td><b>Number</b></td>
+<td>This is the number of individual slabs that have been allocated and
+taking physical memory.</td></tr>
+
+<tr><td colspan=2>Memory</td></tr>
+<tr valign=top><td><b>UsedK</b></td>
+<td>Memory used by those objects that have been allocated to processes.</td></tr>
+
+<tr valign=top><td><b>TotalK</b></td>
+<td>Total physical memory allocated to processes.  When there is no filtering
+in effect, this number will be equal to the Slabs field reported by -sm.</td></tr>
+
+<tr valign=top><td><b>Change</b></td>
+<td>Change in size of this slab since last sample in bytes</td></tr>
+
+<tr valign=top><td><b>Pct</b></td>
+<td>Percentage change in size of this slab</td></tr>
+</table>
+<p>
+The third format uses a common format based on the <i>slabtop</i> utility for displaying
+top slab data sorted by any of the listed column headers.  All on need to do is use one of
+these names as the argument to the <i>--top</i> switch in lower case (<i>use --showtopopts
+for full list of options to the --top switch</i>).  All the same rules apply for
+controlling the number of lines in the data section, mixing in subsystem data and even using
+with playback mode.
+
+<div class=terminal-wide14><pre>
+# TOP SLABS 15:38:08
+#NumObj  ActObj  ObjSize  NumSlab  Obj/Slab  TotSize  TotChg  TotPct  Name
+</pre></div>
+
+<table>
+<tr><td><b>NumObj</b></td><td>Total number of objects that are available, which includes those in use</td></tr>
+<tr><td><b>ActObj</b></td><td>Number of objects that are in use</td></tr>
+<tr><td><b>ObjSize</b></td><td>Size of an individual slab object</td></tr>
+<tr><td><b>NumSlab</b></td><td>Total number of slabs that have been allocated</td></tr>
+<tr><td><b>Obj/Slab</b></td><td>This is the constant number of objects that fit into one slab</td></tr>
+<tr><td><b>TotSize</b></td><td>Amount of memory consumed by this slab even if not all objects are actualy allocated</td></tr>
+<tr><td><b>TotChg</b></td><td>Change in size of this slab since last sample in bytes</td></tr>
+<tr><td><b>TotPct</b></td><td>Percentage change in size of this slab</td></tr>
+<tr><td><b>Name</b></td><td>Slab Name</td></tr>
+</table>
+
+<table width=100%><tr><td align=right><i>updated November 9, 2012</i></td></tr></colgroup></table>
+
+</body>
+</html>

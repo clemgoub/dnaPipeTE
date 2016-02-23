@@ -1,0 +1,55 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - CPU Monitoring</title>
+</head>
+
+<body>
+<center><h1>CPU Monitoring</h1></center>
+<p>
+<h3>Introduction</h3>
+As of Version 3.4.2 of collectl, collectl can now detect
+dynamic changes to a CPU's state.  In other words, going offline or coming back online.
+When one or more CPUs is indeed found to be off line, collectl will include a message in
+an output header to indicate this.  Furthermore, when display CPU numbers in headers, those
+names will have their number changed to Xs to indicate this has occurred, such as in the 
+following:
+
+<div class=terminal>
+<pre>
+[root@node02 mjs]# ./collectl.pl -scj
+waiting for 1 second sample...
+# *** One or more CPUs disabled ***
+#<--------CPU--------><-----------------Int------------------>
+#cpu sys inter  ctxsw Cpu0 Cpu1 Cpu2 CpuX Cpu4 Cpu5 Cpu6 Cpu7
+   0   0  1051     49 1000   17    0    0    4    0    0   29
+</pre>
+</div class=terminal>
+
+As the state changes, the headers will change accordingly.  If there is a state change between 
+headers this won't be seen until the next headers are displayed.  If displaying detail data,
+one CAN tell the stat has changed.  In the case of looking at only CPU data, ALL percentages for
+a CPU that is offline will display as zeros.  If looking at interrupts, the CPU number will be 
+changed to an X in the header (see <i>Restrictions</i> below).
+<p>
+When logging to a file, if any CPUs are found to be offline when collectl starts, that number
+will be written to the file header in the field <i>CPUsDis</i>.  A new flag <i>D</i> will also
+be added to the <i>Flags</i> field.  However, one will still see the same effects of a CPU
+state change in the output during playback.
+<p>
+<b>Restrictions</b>
+<br>If a CPU goes offline <i>after</i> collectl has started and one is logging to disk, it will not
+be noted in the file header.
+<p>
+When monitoring process data, this header will indicate if a CPU was found to be offline at the
+time collectl started as well as during processing.  However, if the state changes and you're not
+explicitly displaying CPU data, there will be no indication of dynamic CPU state changes reported.
+<p>
+If you are only monitoring interrupt data and there is a state change things will get very messy.
+As users typically monitor Interrupts and CPU data at the same time it is not felt to be worth 
+the extra effort or processng overhead to try and accommodate this rare case.
+
+<table width=100%><tr><td align=right><i>updated Dec 13, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

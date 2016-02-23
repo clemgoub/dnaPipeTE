@@ -1,0 +1,133 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Slow Proc Access?</title>
+</head>
+
+<body>
+<center><h2>Is Your Kernel Reading /proc Too Slowly?</h2></center>
+<p>
+<h3>Introduction</h3>
+The 2.6.32 release of the kernel introduced a regression that causes the /proc to be read significantly
+more slowly and <i>with significantly more overhead</i> on systems with high core counts.  In fact this
+overhead has been measured to be over a factor of 50 reading /proc/stat on a system with 8 sockets and
+48 cores.
+<p>
+The good news is newer RedHat and SUSE distros have been updated to mitigate this problem, specifically
+RHEL 6.2 and SLES SP1.  As for other distros, I just don't have the access to verify everything, so if you
+are running a different distro and can verify this problem has been resolved, I'd appreciate hearing about
+which specific version addresses it so I can publish the news here.
+<p>
+So why should you even care about this?  You may have high core counts and running a kernel that has not yet been 
+patched.  While this probably won't have any impact on any of your running applications - but do
+you ever run top?  iostat?  sar?  or any other monitoring tools?  If you're reading this you probably run
+collectl.  Most monitoring tools are farily light-weight and for a good reason - if you're trying to measure
+something you don't want the tool's overhead to get in the way.  <i>Unfortunately with this regression
+it will now!</i>
+<p>
+<h3>The Analysis</h3>
+Whenever a monitoring change is made to collectl I measure its overhead, just to make
+sure it's being done efficiently.  The way I do this is simulate a day's worth of sampling at an
+interval of 0 seconds and timing it.  In this case I had recently added numa monitoring and initially found
+this problem reading <i>/sys/devices/system/node</i>, but with more testing found it appears elsewhere 
+as well.
+<p>
+In the following example, you can see monitoring CPU data takes about 3 seconds to read almost
+9K samples and write them to a file on a 2-socket/dual-core system.  Very efficient!
+<p>
+<div class=terminal><pre>
+time collectl -sc -i0 -c 8640 -f/tmp
+real    0m2.879s
+user    0m1.908s
+sys     0m0.913s
+</pre></div>
+Next I ran the same command on an 8-socket/48-core system and look at the difference.  Note that the overhead
+was so high and took so long I only took 1/10th the number of samples (I get impatient).  This system is
+running Fedora 14, which is a 2.6.35 kernel, and this alone is over 5 times the overhead
+of the previous example which normalizing to a full day would be over 50 times the load:
+
+<div class=terminal><pre>
+time collectl -sc -i0 -c 864 -f/tmp
+real    0m16.783s
+user    0m3.003s
+sys     0m13.523s
+</pre></div>
+
+<h3>How can you tell if <i>your</i> system has this problem?</h3>
+Before you panic, there are 2 things to keep in mind:
+<ul>
+<li>This only seems to effect systems with higher core counts, on the order of 32 or more.  There 
+may be some impact at the 16 core level, but not very significant.</li>
+<li>You must be running a kernel with the problematic code from the 2.6.32 release.</li>
+</ul>
+<p>
+Since a simply <i>uname</i> command will tell you your kernel version, you might think that's all
+it takes, but nothing is always that simple because most vendors patch their kernels and you can't
+always be sure what code it's actually running.
+<p>
+One simple way to
+tell for sure is to run the very simple test below which times a read of /proc/stat (which seems to be 
+the most heavily effected) by using <i>strace</i> see how much time is spent in the actually <i>read</i>.
+<p>
+The following is on my 2-socket/dual-core system:
+
+<div class=terminal><pre>
+strace -c cat /proc/stat>/dev/null
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000251         251         1           execve
+  0.00    0.000000           0         3           read
+  0.00    0.000000           0         1           write
+  0.00    0.000000           0         4           open
+  0.00    0.000000           0         5           close
+  0.00    0.000000           0         5           fstat
+  0.00    0.000000           0         8           mmap
+  0.00    0.000000           0         3           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         3           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           uname
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000251                    37         1 total
+</pre></div>
+
+while the following in on the 8-socket/48-core system:
+<div class=terminal><pre>
+strace -c cat /proc/stat >/dev/null
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.014997        4999         3           read
+  0.00    0.000000           0         1           write
+  0.00    0.000000           0        20        16 open
+  0.00    0.000000           0         6           close
+  0.00    0.000000           0        12        10 stat
+  0.00    0.000000           0         5           fstat
+  0.00    0.000000           0         8           mmap
+  0.00    0.000000           0         3           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         4           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.014997                    66        27 total
+</pre></div>
+
+As you can see the differences are dramatic!  On my 4-core machine virtually 0 time is spent doing
+the read while on the 48 core machine almost 15 msec is spent reading, <i>and that's only reading 
+/proc/stat one time!</i>  Also remember - monitoring tools typically read a lot of different 
+/proc structures.  Perhaps now you can get a better appreciation of how significant this problem
+really is.
+<p>
+<h3>What is collectl doing about this?</h3>
+While there is nothing collectl can do to reduce this overhead, staring with the next release it will 
+be including code upon startup times the reading of /proc on newer kernels with core counts of 32 or 
+more and warns the users if their systems exhibit this problem.  It will also skip this test for RHEL 6.2
+and SLES SP1.  As I hear that other distros have been identified that have also fixed this problem,
+I'll start excluding them from the tests as well.
+
+<p><table width=100%><tr><td align=right><i>updated Jan 18, 2012</i></td></tr></colgroup></table>
+
+</body>
+</html>

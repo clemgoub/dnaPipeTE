@@ -1,0 +1,106 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - The Math</title>
+</head>
+
+<body>
+<center><h1>The Math</h1></center>
+<p>
+<h3>The Basics</h3>
+At first glance, the way collectl calculates its numbers is pretty straight forward.  It
+looks at successive intervals of counters, calculates their differences and <i>normalizes</i>
+the result by dividing by the interval, the result of which is the counter's rate/second.
+If -on is specified collectl does not divide by the interval and simply reports the difference.
+However, one occasionally may see numbers that don't make sense, such as a 1Gb network
+reporting rates almost <a href=NetworkStats.html>double</a> what it is capable of or 
+other anomolous numbers.  
+<p>
+<h3>The Interval Time Stamps</h3>
+By design, collectl takes one time stamp at the start of each monitoring interval and
+associates that time with all the samples taken during that interval.
+This has been done for one major reason - there needs to be a single time 
+associated with all data points, especially if you want to plot the data.
+The overhead in collecting the data is fairly constant and therefore the interval for 
+that sample is fairly consistent and so the rates reported are also consistent.
+<p>
+However, there can be a problem that is important to understand and has been seen in
+the past.  A device had the wrong firmware
+level and under some conditions caused a long delay in the middle of the collection 
+interval.  Some samples were collected close the the starting time of that
+interval while all that followed the delay were actually collected at a time much later
+than was being reported.
+<p>
+Consider the following in which we're looking at raw data collected for 2 subsystems,
+call them XXX and YYY.  Let's also assume that the counters we're monitoring are
+increasing at a steady rate of 100 units/sec.  In this example, during the 10:00:01 interval
+there was a 10 second hang in collecting the YYY sample.  The XXX sample was correctly
+recorded, but by the time the YYY sample was collected, 1000 units were recorded.  As we
+move to the next interval which was delayed by 10 seconds, the sample for XXX has
+accumulated 1000 units and the sample for YYY is 100.
+
+<pre>
+TYPE            XXX     YYY
+10:00:00        100     100
+10:00:01        200     1100
+10:00:11        1200    1200
+10:00:12        1300    1300
+</pre>
+
+The problem here is when reporting the 2 rates at 10:00:01, we'll see a rate of 1000
+units/sec for YYY because based on the timestamp that interval only appears to be 1
+second long.  Conversely, the rate reported for that same subsystem at 10:00:11 will be
+10 units/sec because this interval is reported as 10 seconds long.  Also note that for
+this interval the counter for XXX has been incremented correctly and the resultant rates
+are reported correctly.
+This is because the sampling occured before the delays.  If
+one were to move the timestamp to the end of the interval, it would fix the problem with
+YYY, but then move it to XXX.
+<p>
+It IS important to understand that this is only a problem if the delay is during the data
+collection itself.  If there is a system delay that causes all data collection to be
+delayed but once started runs as expected, <i>and this has been seen to be the typical
+case</i>, the intervals may be longer but the counters will
+have increased proportionaly and the results consistent.
+<p>
+The only real answer to this problem would be to timestamp individual samples, however
+it is also felt that this problem is rare enough as to not be of serious concern and
+changing the methodology of timestamping would cause more problems than it solves.
+<p>
+<h3>The Counter Update Rate</h3>
+This is a problem that is very real and worth understanding even it if you never 
+personally see it.  If the rate at which a counter is updated is too coarse, 
+especially if it is close to the monitoring interval, the reported numbers will
+be off.  For most of the data collectl reports on, this is not a problem because these
+counters ARE updated frequently.  However, it turns out that some network drivers only 
+updated about once a second and in early versions of the 2.6 kernel (and may the one
+you're currently running on), you may see some very strange anomolies in the output if
+you look at 1-second data samples.
+See <a href=NetworkStats.html>this page<a> for more details.
+<p>
+<h3>Normalization</h3>
+As described elsewhere, collectl divides counter values by the interval between 
+samples and then rounds off the results.  When run interactively with a
+default interval of 1 second, this is not an issue.  However, for data collected in deamon
+mode this can actually be of significance.  Consider a network that has 1-4 errors over a 10
+second period.  This will normalize to a value of <5 and be rounded off to 0!  The same is
+true for values reported for process/slab statistics, where these are typically measured
+over 60 seconds.  Normalization in these cases can be even more dramatic.
+<p>
+One other thing to consider is that when selecting only non-zero values be reported, one
+might be occasionally be surprised by see values of 0 being reported.  This will occur
+if there is a non-zero value that is then nomalized to 0.
+<p>
+If you think you might need to see these <i>close to 0</i> values, you should include <i>-on</i>
+which tells collectl <i>not</i> to normalize its output before reporting.
+<p>
+<h3>In conclusion</h3>
+As they say, <a href=http://en.wikipedia.org/wiki/Garbage_in,_garbage_out>
+<i>garbage in, garbage out</i></a> and so if the number you're seeing look wrong, it's
+worth trying to understand why and you shouldn't necessary take them as face
+value.
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

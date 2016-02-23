@@ -1,0 +1,372 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Brief Data</title>
+</head>
+
+<body>
+<center><h1>Brief Data</h1></center>
+<p>
+This format does NOT include data for any individual devices such as cpu, disk, 
+network, nfs, lustre, process, slabs or tcp.  If you do select any one of them
+collectl will force --verbose format.
+
+<h3>Buddy (Memory Fragmentation) Data, <i>collectl -sB</i></h3>
+<p>
+The smaller the value the more accuracy as follows:
+<ul>
+<li>0-9 are represented by the digits 0 through 9</li>
+<li>10-99 by the letters a through i</li>
+<li>100-999 by the letters j through r</li>
+<li>>1000 by powers of 10, using s through z</li>
+</ul>
+
+Remember, the whole purpose of monitoring fragments in brief mode is to identify trends,
+particularly when there are a small number of them.
+
+<div class=terminal><pre>
+#<---Memory-->
+#   Fragments
+  smkj9576040
+</pre></div>
+<h3>CPU Data, <i>collectl -sc</i></h3>
+
+<div class=terminal>
+<pre>
+#<--------CPU-------->
+#cpu sys inter  ctxsw
+</pre>
+</div>
+
+<table>
+<tr valign=top>
+<td><b>cpu</b></td>
+<td>Percent of time the cpu was busy during the current interval averaged 
+across all CPUs and is actually the total percentage of time the CPU in one of the following:
+<i>system, user, nice, irq, soft-irq and steal</i>.  Note that this does NOT include time
+spend in I/O wait.</td>
+</tr>
+
+<tr valign=top>
+<td><b>sys</b></td>
+<td>Percentage of time the cpu was executing in system mode during the current
+interval.  This includes all those modes as above except <i>user</i> and <i>nice</i> to to 
+determine the amount of time spent as a user you need to subtract these from the total cpu
+field.</td>
+</tr>
+
+<tr>
+<td><b>inter</b></td>
+<td>Total number of interrupts/sec.</td>
+</trtr>
+
+<tr>
+<td><b>ctxsw</b></td><td>Total number of context switches/sec.</td>
+</tr>
+</table>
+<p>
+<h3>Disk, <i>collectl -sd</i></h3>
+<p>
+If you specify filtering with <i>--dskfilt</i>, the disks that match the pattern(s)
+will either be included or excluded from the the summary data.  However, the data will
+<i>still</i> be collected so if recorded to a file can later be viewed.
+
+<div class=terminal>
+<pre>
+#<---------------Disks---------------->
+#KBRead  Reads  Size KBWrit Writes Size
+</pre>
+</div>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB read/sec</td></tr>
+<tr><td><b>Reads</b></td><td>Number of reads/sec</td></tr>
+<tr><td><b>Size</b></td><td>Average read size in KB.  This field only included 
+if <i>--dskopts i</i> or <i>--iosize</i> specified</td></tr>
+<tr><td><b>KBWrite<b></td><td>KB written/sec</td></tr>
+<tr><td><b>Writes</b></td><td>Number of writes/sec</td></tr>
+<tr><td><b>Size</b></td><td>Average write size in KB.  This field only included 
+if <i>--dskopts i</i> or <i>--iosize</i> specified</td></tr>
+</table>
+<p>
+<h3>Infiniband, <i>collectl -sx</i></h3>
+
+<div class=terminal>
+<pre>
+#<---------------InfiniBand--------------->
+#  KBIn  PktIn Size  KBOut PktOut Size Errs
+</pre>
+</div>
+
+<table>
+<tr><td><b>KBIn</b></td><td>KB received/sec.</td></tr>
+<tr><td><b>PckIn</b></td><td>Packets received/sec.</td></tr>
+<tr><td><b>Size</b></td><td>Average incoming packet size in KB.  This field is only
+included if <i>--xopts i</i> or <i>--iosize</i> included</td></tr>
+<tr><td><b>KBOut</b></td><td>KB sent/sec.</td></tr>
+<tr><td><b>PktOut</b></td><td>Packets sent/sec.</td></tr>
+<tr><td><b>Size</b></td><td>Average outgoing packet size in KB.  This field is only
+included if <i>--xopts i</i> or <i>--iosize</i> included</td></tr>
+<tr valign=top><td><b>Errs</b></td><td>Count of current errors.  Since these 
+are typically infrequent, it is felt that reporting them as a rate would result 
+in either not seeing them OR round-off hiding their values.</td></tr>
+</table>
+
+<p><h3>Inodes/Filesystem, <i>collectl -si</i></h3>
+
+<div class=terminal>
+<pre>
+#<----Files--->
+#Handle Inodes
+   5100 116110
+</pre></div>
+
+<table>
+<tr><td><b>Handles</b></td><td>Number of allocated file handles</td></tr>
+<tr><td><b>Inodes</b></td><td>Number of inodes in use</td></tr>
+</table>
+
+<p><h3>Lustre</b></h3>
+<p>
+Lustre data actually falls into one of 3 categories - client, mds and oss.  Collectl
+determines the type of system it is running on (a system can have multiple 
+personalities) and reports on all it finds, unless specifically selected via -L.
+
+<p><b>Lustre Client</b>, <i>collectl -sl</i>
+
+<div class=terminal>
+<pre>
+#<-------------Lustre Client------------->
+# KBRead  Reads Size  KBWrite Writes Size
+</pre>
+</div>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB/sec delivered to the client.</td></tr>
+<tr><td valign=top><b>Reads</b></td><td>Reads/sec delivered to the client, 
+<tr><td><b>Size</b></td><td>Average read size in KB.  This field only included 
+if <i>--iosize</i> specified</td></tr>
+not necessarily from the lustre storage servers.</td></tr>
+<tr><td><b>KBWrite</b></td><td>KB Writes/sec delivered to the storage servers.</td></tr>
+<tr><td><b>Writes</b></td><td>Writes/sec delivered to the storage servers.</td></tr>
+<tr><td><b>Size</b></td><td>Average write size in KB.  This field only included 
+if <i>--iosize</i> specified</td></tr>
+</table>
+
+<p>The following format of lustre client data is selected by including -OR and
+adds readahead statistics to the previous six, noting the <i>Size</i> fields
+are dependent on <i>--iosize</i> being specificed.
+
+<div class=terminal>
+<pre>
+#<--------------------Lustre Client-------------------->
+# KBRead  Reads Size  KBWrite Writes Size   Hits Misses
+</pre>
+</div>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB/sec delivered to the client.</td></tr>
+<tr><td valign=top><b>Reads</b></td><td>Reads/sec delivered to the client, 
+not necessarily from the lustre storage servers.</td></tr>
+<tr><td><b>Size</b></td><td>Average read size in KB.</tr>
+<tr><td><b>KBWrite</b></td><td>KB Writes/sec delivered to the storage servers.</td></tr>
+<tr><td><b>Writes</b></td><td>Writes/sec delivered to the storage servers.</td></tr>
+<tr><td><b>Size</b></td><td>Average write size in KB.</tr>
+<tr><td><b>Hits</b></td><td>Number of reads/sec from the lustre prefetch cache.</td></tr>
+<tr><td><b>Misses</b></td><td>Number of misses/sec from the prefetch cache which must then 
+be satisfied by reading from the storage servers.</td></tr>
+</table>
+<p>
+<b>Lustre MDS (Meta-Data Server)</b><br>
+The first format is for lustre versions 1.6.5 and beyond while the second format is for
+earlier releases
+
+<p>
+<div class=terminal>
+<pre>
+#<--------Lustre MDS-------->
+#Gattr+ Sattr+   Sync  Unlnk
+</pre>
+</div>
+
+<p>
+<div class=terminal>
+<pre>
+#<--------Lustre MDS-------->
+#Gattr+ Sattr+   Sync  Reint
+</pre>
+</div>
+
+<table>
+<tr valign=top><td><b>Gattr+</b></td><td>Total number of all getattr operations/sec.  See Getattr,
+GttrLck and Gxattr in the <a href=Data-verbose.html>verbose</a> data section</td></tr>
+<tr valign=top><td><b>Sattr+</b></td><td>Total number of all getattr operations/sec.  See Setattr
+and Sxattr in the <a href=Data-verbose.html>verbose</a> data section</td></tr>
+<tr><td><b>Sync</b></td><td>Number of syncs/sec</td></tr>
+<tr><td><b>Unlnk</b></td><td>Number of file deletes/sec</td></tr>
+<tr valign=top><td><b>Reint</b></td><td>Number of reints/sec which include unlinks and setattrs.
+Since older version did not break out setattrs, they are not included in <i>Sattr+</i>.
+</table>
+
+<p><b>Lustre OSS (Object Storage Server)</b>, <i>collectl -sc</i>
+
+<div class=terminal>
+<pre>
+#<--------------Lustre OST-------------->
+# KBRead  Reads Size  KBWrit Writes Size
+</pre>
+</div>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB/sec read</td></tr>
+<tr><td><b>Reads</b></td><td>Reads/sec</td></tr>
+<tr><td><b>Size</b></td><td>Average read size in KB.  This field only included 
+if <i>--iosize</i> specified</td></tr>
+<tr><td><b>KBWrite</b></td><td>KB/sec written</td></tr>
+<tr><td><b>Writes</b></td><td>Writes/sec</li>
+<tr><td><b>Size</b></td><td>Average write size in KB.  This field only included 
+if <i>--iosize</i> specified</td></tr>
+</table>
+
+<p><h3>Memory, <i>collectl -sm</i></h3>
+
+<div class=terminal>
+<pre>
+#<-----------Memory---------->
+#free buff cach inac slab  map
+</pre>
+</div>
+
+<table>
+<tr valign=top><td><b>free</b></td><td>Total free memory, which unfortunately is NOT the 
+difference between total memory and the following amounts allocated to used memory.</td></tr>
+<tr valign=top><td><b>buff</b></td><td>Memory used as system buffers.</td></tr>
+<tr valign=top><td><b>cach</b></td><td>This is also commonly known as the file system buffer 
+cache as buffered I/O uses this memory to cache the data.</td></tr>
+<tr><td><b>inac</b></td><td>Inactive memory.</td></tr>
+<tr><td><b>slab</b></td><td>Total memory allocated to slabs.</td></tr>
+<tr><td><b>map</b></td><td>Total mapped memory, which include AnonPages.</td></tr>
+</table>
+<p>
+<center><b><i>Note</i></b></center>
+If you include <i>--memopts R</i>, these values wil be displayed as changes/sec between intervals
+rather than absolute values.  This switch will also honor <i>-on</i> in that the values will not
+be normalized to a rate but rather displayed as changes in size per interval.
+
+<p><h3>Network, <i>collectl -sn</i></h3>
+<p>
+If you specify filtering with <i>--netfilt</i>, the names that match the pattern(s)
+will either be included or excluded from the the summary data.  However, the data will
+<i>still</i> be collected so if recorded to a file can later be viewed.
+<p>
+Also be sure to keep in mind that like all other data, network counters are always normalized
+to /sec rates.  This means that something like errors, which themselves might be really
+small, could be reported as 0 if less than 1/2 the sampling interval.  To see unnormalized
+values use <i>-on</i>.
+
+<div class=terminal>
+<pre>
+#<------------------Network------------------>
+#  KBIn  PktIn Size  KBOut  PktOut Size Error
+</pre>
+</div>
+
+<table>
+<tr valign=top><td><b>KBIn</b></td><td>KB received/sec over all real network interfaces and therefore 
+excludes 'lo' and 'sit'.</td></tr>
+<tr><td><b>PktIn</b></td><td>Packets received/sec over all real network interfaces.</td></tr>
+<tr><td><b>Size</b></td><td>Average incoming packet size in bytes.  This field is only included
+if <i>--netopts i</i> or <i>--iosize</i> specified</td></tr>
+<tr><td><b>KBOut</b></td><td>KB sent/sec over all real network interfaces.</td></tr>
+<tr><td><b>PktOut</b></td><td>Packets sent/sec over all real network interfaces.</td></tr>
+<tr><td><b>Size</b></td><td>Average outgoing packet size in bytes.  This field is only included
+if <i>--netopts i</i> or <i>--iosize</i> specified</td></tr>
+<tr valign=top><td><b>Error</b></td><td>Total incoming/outgoing errors/sec.  To see individual error counts, use <i>--verbose</i>.
+This field is only included if <i>--netopts e</i> specified</td></tr>
+</table>
+
+<p><h3>NFS</b>, <i>collectl -sf</i></h3>
+
+As of version 3.2.1 collectl now collects all types of nfs data, both clients and servers as well 
+as versions 2, 3 and 4. In brief format it therefore reports summaried data across all nfs types
+as shown below.  If <i>--nfsfilt</i> was included in the command to limit the types of data 
+reported, those values will be included in the header line as a reminder as shown in the second 
+form to the right, in which case only V3 server and V4 client data are being summarized.
+
+<div class=terminal>
+<pre>
+#<------NFS Totals------>            #<------NFS [s3,c4]----->
+# Reads Writes Meta Comm             # Reads Writes Meta Comm
+</pre>
+</div>
+
+<table>
+<tr><td><b>Reads</b></td><td>Total nfs reads/sec.</td></tr>
+<tr><td><b>Writes</b></td><td>Total nfs writes/sec.</td></tr>
+<tr valign=top><td><b>Meta</b></td><td>Total nfs meta data calls/sec, where meta data is considered to be
+any of: <i>lookup, access, getattr, setattr, readdir</i> and <i>readdirplus</i>, noting that
+not all types of nfs version report all as V3 clients/servers do.</td></tr>
+<tr><td><b>Comm</b></td><td>Total nfs commits/sec.</td></tr>
+</table>
+
+<p><h3>Slabs, <i>collectl -sy</i></h3>
+
+<div class=terminal>
+<pre>
+#<----slab---->
+# Alloc   Bytes
+</pre>
+</div>
+
+<table>
+<tr><td><b>Alloc</b></td><td>Total Number of slabs allocated</td></tr>
+<tr><td><b>Bytes</b></td><td>Total Number of bytes allocated as slabs</td></tr>
+</table>
+
+<p><h3>Sockets, <i>collectl -ss</i></h3>
+
+<div class=terminal>
+<pre>
+#<------Sockets----->
+#  Tcp  Udp  Raw Frag
+</pre>
+</div>
+
+<table>
+<tr><td><b>Tcp</b></td><td>Total TCP sockets currently in use.</td></tr>
+<tr><td><b>Udp</b></td><td>Total UDP sockets currently in use.</td></tr>
+<tr><td><b>Raw</b></td><td>Total RAW sockets currently in use.</td></tr>
+<tr><td><b>Frag</b></td><td>Total number of IP fragments queues currently in use.</td></tr>
+</table>
+
+<p><h3>TCP, <i>collectl -st</i></h3>
+
+The TCP data collected and actually depends on the value of <i>--tcpfilt</i>, which by default is
+set to itcu, which stands for <i>IP, Tcp, Udp</i> and <i>ICMP</i>.  A 5th filter <i>T</i>
+will result in <i>Tcp Extended</i> values being reported.
+
+<div class=terminal>
+<pre>
+#<----------TCP---------->
+#  IP  Tcp  Udp Icmp TcpX 
+    0    0    0    0    0 
+</pre>
+</div>
+
+<table>
+<tr><td><b>IP</b>Summary of a number of IP errors from /prod/net/snmp:
+    <i>InHdrErrors+InAddrErrors+InUnknownProtos+InDiscards+OutDiscards+ReasmFails+FragFails</i></td></tr>
+<tr><td><b>Tcp</b>Summary of a number of Tcp errors from /prod/net/snmp:
+    <i>AttemptFails+InErrs</i></td></tr>
+<tr><td><b>Udp</b>Summary of a number of Udp errors, from /prod/net/snmp:
+    <i>NoPorts+InErrors</i></td></tr>
+<tr><td><b>Icmp</b>Summary of a number of Icmp errors, from /prod/net/snmp:
+    <i>InErrors+InDestUnreachs+OutErrors</i></td></tr>
+<tr><td><b>TcpX</b>Summary of a number of Txp Extended errors, from /prod/net/snmp:
+    <i>TcpLoss+TCPFastRetrans</i></td></tr>
+</table>
+
+<table width=100%><tr><td align=right><i>updated September 29, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Command Equivalence Matrix</title>
+</head>
+
+<body>
+<center><h1>Command Equivalence Matrix</h1></center>
+<p>
+The following table needs a little explaining as it is rarely the case that the output of a 
+particular utility maps identically to an equivalent collectl command.  In some cases
+a single sar switch will approximate a single collectl subsystem and in other case it
+takes multiple sar switches to do so.
+<p>
+The point is this matrix is only a rough guideline to some command equivalences and
+simply changing the case of the collectl subsystem or adding the verbose switch will
+provide even more output.  There are even some options (see the <i>uppercase O</i> 
+switch) that can also effect what gets displayed.  
+And of course there is the <i>lowercase o</i>
+switch which allows you to specify formatting options like date, time, etc.
+<p>
+In other words there are simply too many permutations to list them all here and you're
+just going to have to experiment.
+<p>
+Finally, there is a special case worth noting.  There is no collectl command equivilent 
+to <i>sar -R</i>.  It's not entirely clear to me if this data is needed, but it 
+certainly could be added if the demand is there.
+
+<center>
+<table cellspacing=0 border=2>
+<tr>
+  <td><b>SAR Commands</b></td><td width=25%><b>Equivalence</b></td>
+  <td><b>Other Commands</b></td><td width=25%><b>Equivalence</b></td>
+</tr>
+<tr>
+  <td>sar -b</td><td>collectl -sd</td>
+  <td>iostat -x</td><td>collectl -sD</td>
+</tr>
+<tr>
+  <td>sar -B</td><td>collectl -sm --verbose</td>
+  <td>/proc/fs/lustre</td><td>collectl -sl --verbose</td>
+</tr>
+<tr>
+  <td>sar -clquw</td><td>collectl -sx --verbose</td>
+  <td>mpstat</td>    <td>collectl -sc --verbose</td>
+</tr>
+<tr>
+  <td>sar -d</td><td>collectl -sD</td>
+  <td>netstat -i</td>    <td>collectl -sN</td>
+</tr>
+<tr>
+  <td>sar -cI XALL</td><td>collectl -sJ</td>
+  <td>nfsstat</td>    <td>collectl -sfF</td>
+</tr>
+<tr>
+  <td>sar -n ALL</td><td>collectl -sfsN</td>
+  <td>perfquery</td>    <td>collectl -sx</td>
+</tr>
+<tr>
+  <td>sar -P ALL</td><td>collectl -sC</td>
+  <td>cat /proc/net/netstat</td>    <td>collectl -sY</td>
+</tr>
+<tr>
+  <td>sar -r</td><td>collectl -sm --verbose</td>
+  <td>ps</td>    <td>collectl -sZ</td>
+</tr>
+<tr>
+  <td>sar -R</td><td>collectl -sm --memopts R</td>
+  <td>slabtop</td> <td>collectl -sY --slabopts S</td>
+</tr>
+<tr>
+  <td>sar -v</td><td>collectl -si</td>
+  <td>top</td>    <td>collectl --top -scm</td>
+</tr>
+<tr>
+  <td>sar -W</td><td>collectl --vmstat</td>
+  <td>vmstat</td>    <td>collectl --vmstat</td>
+</tr>
+</table>
+</center>
+
+<table width=100%><tr><td align=right><i>updated October 4, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>
