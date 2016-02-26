@@ -166,7 +166,7 @@ class FastqSamplerToFasta:
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
 		if self.use_coverage:
-			self.number = int(float(self.genome_base)/float(self.size_min))
+			self.number = int(float(self.genome_base)/float(size_min))
 		tirages = random.sample(range(np), self.number*self.sample_number)
 		for i in range(self.sample_number):
 			tirages_sample = tirages[(self.number*i):(self.number*(i+1))]
