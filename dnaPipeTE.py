@@ -177,15 +177,15 @@ class FastqSamplerToFasta:
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
 		with open(fastq_file, 'r') as fastq_handle :
-			self.sampling_sub(fastq_handle, sample_number)
+			self.sampling_sub(fastq_file, fastq_handle, sample_number)
 
 	def sampling_gz(self, fastq_file, sample_number):
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
 		with gzip.open(fastq_file+".gz", 'rt') as fastq_handle :
-			self.sampling_sub(fastq_handle, sample_number)
+			self.sampling_sub(fastq_file, fastq_handle, sample_number)
 
-	def sampling_sub(self, fastq_handle, sample_number):
+	def sampling_sub(self, fastq_file, fastq_handle, sample_number):
 		i = 0
 		j = self.number*sample_number
 		tag = "/s"+str(sample_number)+"_"
