@@ -327,6 +327,8 @@ class RepeatMasker:
 					if line[9] == "C":
 						line[14] = line[12][1:-1]
 						line[12] = tmp
+					else:
+						line[14] = line[14][1:-1]
 					trinity_out_line = list()
 					trinity_out_line.append(line[4])
 					# size of the dnaPipeTE contig
