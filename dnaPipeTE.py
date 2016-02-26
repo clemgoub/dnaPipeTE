@@ -315,58 +315,69 @@ class RepeatMasker:
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
+		line_number = 0
+		trinity_out = list()
+		with open(self.output_folder+"/Trinity.fasta.out", 'r') as trinity_handle:
+			for line in trinity_handle:
+				line_number += 1
+				if line_number > 3:
+					line = line.split()
+					tmp = line[14]
+					# we swap the start and left column if we are revese
+					if line[9] == "C":
+						line[14] = line[12][1:-1]
+						line[12] = tmp
+					trinity_out_line = list()
+					trinity_out_line.append(line[4])
+					# size of the dnaPipeTE contig
+					trinity_out_line.append(int(line[6]) + int(line[7][1:-1]))
+					# percent of hit on the query
+					trinity_out_line.append(float(int(line[6]) - int(line[5])) / float(int(line[6]) + int(line[7][1:-1])))
+					# ET name
+					trinity_out_line.append(line[10])
+					# class name
+					trinity_out_line.append(line[11])
+					# target size
+					trinity_out_line.append(int(line[13]) + int(line[14]))
+					# query position
+					trinity_out_line.append("["+line[12]+"-"+line[13]+"]")
+					# percent of hit on the target
+					trinity_out_line.append(float(int(line[13]) - int(line[14])) / float(int(line[13]) + int(line[14])))
+					trinity_out_line.append(line[0])
+					trinity_out.append(list(trinity_out_line))
+		print(str(line_number)+" line read, sorting...")
+		trinity_out = sorted(trinity_out, key=lambda x: (x[0], x[8]), reverse=True)
+		prev_contig = ""
+		print("sort done, filtering...")
+		with open(self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 'w') as output, open(self.output_folder+"/Annotation/Best_RM_annot_80", 'w') as output_80_80, open(self.output_folder+"/Annotation/Best_RM_annot_partial", 'w') as output_partial:
 			line_number = 0
-			trinity_out = list()
-			with open(self.output_folder+"/Trinity.fasta.out", 'r') as trinity_handle:
-				for line in trinity_handle:
-					line_number += 1
-					if line_number > 3:
-						line = line.split()
-						tmp = line[14]
-						# we swap the start and left column if we are revese
-						if line[9] == "C":
-							line[14] = line[12][1:-1]
-							line[12] = tmp
-						trinity_out_line = list()
-						trinity_out_line.append(line[4])
-						# size of the dnaPipeTE contig
-						trinity_out_line.append(int(line[6]) + int(line[7][1:-1]))
-						# percent of hit on the query
-						trinity_out_line.append(float(int(line[6]) - int(line[5])) / float(int(line[6]) + int(line[7][1:-1])))
-						# ET name
-						trinity_out_line.append(line[10])
-						# class name
-						trinity_out_line.append(line[11])
-						# target size
-						trinity_out_line.append(int(line[13]) + int(line[14]))
-						# query position
-						trinity_out_line.append("["+line[12]+"-"+line[13]+"]")
-						# percent of hit on the target
-						trinity_out_line.append(float(int(line[13]) - int(line[14])) / float(int(line[13]) + int(line[14])))
-						trinity_out_line.append(line[0])
-						trinity_out.append(list(trinity_out_line))
-				trinity_out = sorted(trinity_out, key=lambda x: (x[0], x[8]), reverse=True)
-				prev_contig = ""
-				with open(self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 'w') as output, open(self.output_folder+"/Annotation/Best_RM_annot_80", 'w') as output_80_80, open(self.output_folder+"/Annotation/Best_RM_annot_partial", 'w') as output_partial:
-					for trinity_out_line in trinity_out:
-						if trinity_out_line[0] != prev_contig:
-							prev_contig = trinity_out_line[0]
-							if float(trinity_out_line[2]) >= float(self.RM_threshold) :
+			line_number_80 = 0
+			line_number_partial = 0
+			for trinity_out_line in trinity_out:
+				if trinity_out_line[0] != prev_contig:
+					prev_contig = trinity_out_line[0]
+					if float(trinity_out_line[2]) >= float(self.RM_threshold) :
+						trinity_out_filtered.append()
+						for i in trinity_out_line[:-1]:
+							output.write(str(i)+"\t")
+						output.write("\n")
+						line_number += 1
+						if float(trinity_out_line[2]) >= 0.80:
+							if float(trinity_out_line[7]) >= 0.80:
 								trinity_out_filtered.append()
 								for i in trinity_out_line[:-1]:
-									output.write(str(i)+"\t")
-								output.write("\n")
-								if float(trinity_out_line[2]) >= 0.80:
-									if float(trinity_out_line[7]) >= 0.80:
-										trinity_out_filtered.append()
-										for i in trinity_out_line[:-1]:
-											output_80_80.write(str(i)+"\t")
-										output_80_80.write("\n")
-									if float(trinity_out_line[7]) < 0.80:
-										trinity_out_filtered.append()
-										for i in trinity_out_line[:-1]:
-											output_partial.write(str(i)+"\t")
-										output_partial.write("\n")
+									output_80_80.write(str(i)+"\t")
+								output_80_80.write("\n")
+								line_number_80 += 1
+							if float(trinity_out_line[7]) < 0.80:
+								trinity_out_filtered.append()
+								for i in trinity_out_line[:-1]:
+									output_partial.write(str(i)+"\t")
+								output_partial.write("\n")
+								line_number_partial += 1
+		print(str(line_number)+" lines in one_RM_hit_per_Trinity_contigs")
+		print(str(line_number_80)+" lines in Best_RM_annot_80")
+		print(str(line_number_partial)+" lines in Best_RM_annot_partial")
 		print("Done")
 
 	def contig_annotation(self):
