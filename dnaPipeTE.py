@@ -529,7 +529,7 @@ Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_siz
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
 RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.cpu, args.output_folder)
-Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, 1, args.output_folder, True)
+Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, 1, args.output_folder, True)
 sample_files_blast = Sampler_blast.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
 Graph(args.output_folder)
