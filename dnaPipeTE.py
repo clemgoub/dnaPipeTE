@@ -348,25 +348,25 @@ class RepeatMasker:
 				trinity_out = sorted(trinity_out, key=lambda x: (x[0], x[8]), True)
 				prev_contig = ""
 				with open(self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 'w') as output, open(self.output_folder+"/Annotation/Best_RM_annot_80", 'w') as output_80_80, open(self.output_folder+"/Annotation/Best_RM_annot_partial", 'w') as output_partial:
-				for trinity_out_line in trinity_out:
-					if trinity_out_line[0] != prev_contig:
-						prev_contig = trinity_out_line[0]
-						if float(trinity_out_line[2]) >= float(self.RM_threshold) :
-							trinity_out_filtered.append()
-							for i in trinity_out_line[:-1]:
-								output.write(str(i)+"\t")
-							output.write("\n")
-							if float(trinity_out_line[2]) >= 0.80:
-								if float(trinity_out_line[7]) >= 0.80:
-									trinity_out_filtered.append()
-									for i in trinity_out_line[:-1]:
-										output_80_80.write(str(i)+"\t")
-									output_80_80.write("\n")
-								if float(trinity_out_line[7]) < 0.80:
-									trinity_out_filtered.append()
-									for i in trinity_out_line[:-1]:
-										output_partial.write(str(i)+"\t")
-									output_partial.write("\n")
+					for trinity_out_line in trinity_out:
+						if trinity_out_line[0] != prev_contig:
+							prev_contig = trinity_out_line[0]
+							if float(trinity_out_line[2]) >= float(self.RM_threshold) :
+								trinity_out_filtered.append()
+								for i in trinity_out_line[:-1]:
+									output.write(str(i)+"\t")
+								output.write("\n")
+								if float(trinity_out_line[2]) >= 0.80:
+									if float(trinity_out_line[7]) >= 0.80:
+										trinity_out_filtered.append()
+										for i in trinity_out_line[:-1]:
+											output_80_80.write(str(i)+"\t")
+										output_80_80.write("\n")
+									if float(trinity_out_line[7]) < 0.80:
+										trinity_out_filtered.append()
+										for i in trinity_out_line[:-1]:
+											output_partial.write(str(i)+"\t")
+										output_partial.write("\n")
 		print("Done")
 
 	def contig_annotation(self):
