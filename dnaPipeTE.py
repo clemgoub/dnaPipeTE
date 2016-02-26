@@ -322,13 +322,13 @@ class RepeatMasker:
 				line_number += 1
 				if line_number > 3:
 					line = line.split()
-					tmp = line[14]
+					tmp = line[13]
 					# we swap the start and left column if we are revese
 					if line[9] == "C":
-						line[14] = line[12][1:-1]
-						line[12] = tmp
+						line[13] = line[11][1:-1]
+						line[11] = tmp
 					else:
-						line[14] = line[14][1:-1]
+						line[13] = line[13][1:-1]
 					trinity_out_line = list()
 					trinity_out_line.append(line[4])
 					# size of the dnaPipeTE contig
@@ -340,11 +340,11 @@ class RepeatMasker:
 					# class name
 					trinity_out_line.append(line[11])
 					# target size
-					trinity_out_line.append(int(line[13]) + int(line[14]))
+					trinity_out_line.append(int(line[12]) + int(line[13]))
 					# query position
-					trinity_out_line.append("["+line[12]+"-"+line[13]+"]")
+					trinity_out_line.append("["+line[11]+"-"+line[12]+"]")
 					# percent of hit on the target
-					trinity_out_line.append(float(int(line[13]) - int(line[14])) / float(int(line[13]) + int(line[14])))
+					trinity_out_line.append(float(int(line[12]) - int(line[13])) / float(int(line[12]) + int(line[13])))
 					trinity_out_line.append(line[0])
 					trinity_out.append(list(trinity_out_line))
 		print(str(line_number)+" line read, sorting...")
