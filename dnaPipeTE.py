@@ -73,7 +73,6 @@ print("Start time: "+time.strftime("%c"))
 
 args = parser.parse_args()
 
-
 class FastqSamplerToFasta:
 	def __init__(self, fastq_files, number, sample_number, output_folder, blast):
 		self.number = int(number)
@@ -89,22 +88,33 @@ class FastqSamplerToFasta:
 			self.paired = False
 		else:
 			self.fastq_R1 = fastq_files[1]
+		self.R1_gz = False
+		self.R2_gz = False
+		if self.fastq_R1[-3:] == ".gz":
+			print("gz compression detected for "+self.fastq_R1)
+			self.R1_gz = True
+			self.fastq_R1 = self.fastq_R1[:-3]
+
+		if self.paired:
+			if self.fastq_R2[-3:] == ".gz":
+				print("gz compression detected for "+self.fastq_R2)
+				self.R2_gz = True
+				self.fastq_R2 = self.fastq_R2[:-3]
+		
 		self.files = list()
 		if not self.test_sampling(blast):
 			self.get_sampled_id(self.fastq_R1)
 			print("sampling "+str(self.sample_number)+" samples of "+str(self.number)+" reads...")
 			for i in range(self.sample_number):
-				if self.fastq_R1[-3:] == ".gz":
-					print("gz compression detected for "+self.fastq_R1)
+				if self.R1_gz:
 					self.sampling_gz(self.fastq_R1, i)
 				else:
 					self.sampling(self.fastq_R1, i)
 				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+str(self.blast_sufix)+".fasta")
 			if self.paired:
 				for i in range(self.sample_number):
-					if self.fastq_R2[-3:] == ".gz":
-						print("gz compression detected for "+self.fastq_R2)
-						self.sampling_gz(self.fastq_R2, i)
+					if self.R2_gz:
+ 						self.sampling_gz(self.fastq_R2, i)
 					else:
 						self.sampling(self.fastq_R2, i)
 					self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+str(self.blast_sufix)+".fasta")
@@ -122,9 +132,8 @@ class FastqSamplerToFasta:
 		print( "number of reads to sample : ", self.number, "\nfastq : ", file_name )
 		sys.stdout.write("counting reads number ...")
 		sys.stdout.flush()
-		if file_name[-3:] == ".gz":
-			print("gz compression detected for "+self.fastq_R1)
-			with gzip.open(file_name, 'r') as file1 :
+		if self.R1_gz:
+			with gzip.open(file_name+".gz, 'r') as file1 :
 				np = sum(1 for line in file1)
 		else:
 			with open(file_name, 'r') as file1 :
@@ -162,12 +171,11 @@ class FastqSamplerToFasta:
 	def sampling_gz(self, fastq_file, sample_number):
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
-		with gzip.open(fastq_file, 'r') as fastq_handle :
+		with gzip.open(fastq_file+".gz", 'r') as fastq_handle :
 			i = 0
 			j = self.number*sample_number
 			tag = "/s"+str(sample_number)+"_"
-			fastq_file_without_gz = self.path_leaf(fastq_file)[:-3]
-			with open(self.output_folder+tag+fastq_file_without_gz+str(self.blast_sufix)+".fasta", 'w') as output :
+			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
 				for line in fastq_handle :
 					if (i-1) % 4 == 0 and (i-1)/4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
 						output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
@@ -179,7 +187,7 @@ class FastqSamplerToFasta:
 					i += 1
 					if j >= len(self.tirages):
 						break
-		sys.stdout.write("\r"+"s_"+fastq_file_without_gz+str(self.blast_sufix)+" done.\n")
+		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
 	def test_sampling(self, blast):
 		sampling_done = True
