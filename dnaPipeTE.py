@@ -133,7 +133,7 @@ class FastqSamplerToFasta:
 		sys.stdout.write("counting reads number ...")
 		sys.stdout.flush()
 		if self.R1_gz:
-			with gzip.open(file_name+".gz, 'r') as file1 :
+			with gzip.open(file_name+".gz", 'r') as file1 :
 				np = sum(1 for line in file1)
 		else:
 			with open(file_name, 'r') as file1 :
