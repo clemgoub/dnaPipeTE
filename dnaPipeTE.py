@@ -31,13 +31,13 @@ import gzip
 config = configparser.ConfigParser()
 if not os.path.isfile('config.ini'):
 	print("'config.ini' file not found, writing default one.")
-	config['DEFAULT'] = {'Trinity': './bin/trinityrnaseq_r2013_08_14/Trinity.pl',
+	config['DEFAULT'] = {'Trinity': os.path.dirname(os.path.realpath(sys.argv[0]))+'./bin/trinityrnaseq_r2013_08_14/Trinity.pl',
 						'Trinity_memory': '10G',
-						'RepeatMasker': './bin/RepeatMasker/RepeatMasker',
+						'RepeatMasker': os.path.dirname(os.path.realpath(sys.argv[0]))+'./bin/RepeatMasker/RepeatMasker',
 						'RepeatMasker_library': '',
-						'TRF': './bin/trf',
-						'Blast_folder': './bin/ncbi-blast-2.2.28+/bin/', 
-						'Parallel': './bin/parallel',
+						'TRF': os.path.dirname(os.path.realpath(sys.argv[0]))+'./bin/trf',
+						'Blast_folder': os.path.dirname(os.path.realpath(sys.argv[0]))+'./bin/ncbi-blast-2.2.28+/bin/', 
+						'Parallel': os.path.dirname(os.path.realpath(sys.argv[0]))+'./bin/parallel',
 						'Sample_size': 500000,
 						'Sample_number': 2}
 	with open('config.ini', 'w') as configfile:
