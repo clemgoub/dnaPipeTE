@@ -30,13 +30,13 @@ import ntpath
 config = configparser.ConfigParser()
 if not os.path.isfile('config.ini'):
 	print("'config.ini' file not found, writing default one.")
-	config['DEFAULT'] = {'Trinity': '/usr/remote/trinityrnaseq_r2013_08_14/Trinity.pl',
+	config['DEFAULT'] = {'Trinity': './bin/trinityrnaseq_r2013_08_14/Trinity.pl',
 						'Trinity_memory': '10G',
-						'RepeatMasker': '/panhome/goubert/RepeatMasker/RepeatMasker',
-						'RepeatMasker_library': '/path_to/RM_library.fasta',
-						'TRF': '/panhome/goubert/trf407b.linux64',
-						'Blast_folder': '/usr/remote/ncbi-blast-2.2.29+/bin/', 
-						'Parallel': '/panhome/goubert/bin/parallel',
+						'RepeatMasker': './bin/RepeatMasker/RepeatMasker',
+						'RepeatMasker_library': '',
+						'TRF': './bin/trf',
+						'Blast_folder': './bin/ncbi-blast-2.2.28+/bin/', 
+						'Parallel': './bin/parallel',
 						'Sample_size': 500000,
 						'Sample_number': 2}
 	with open('config.ini', 'w') as configfile:
@@ -45,19 +45,18 @@ config.read('config.ini')
 
 print( "      _             _____ _         _______ ______                               ")
 print( "     | |           |  __ (_)       |__   __|  ____|                              ")
-print( "   __| |_ __   __ _| |__) | _ __   ___| |  | |__        __|______________                         ")
-print( "  / _` | '_ \ / _` |  ___/ | '_ \ / _ \ |  |  __|      (__|______|_|_|_|_)                         ")
-print( " | (_| | | | | (_| | |   | | |_) |  __/ |  | |____        |                       ")
+print( "   __| |_ __   __ _| |__) | _ __   ___| |  | |__        __|______________        ")
+print( "  / _` | '_ \ / _` |  ___/ | '_ \ / _ \ |  |  __|      (__|______|_|_|_|_)       ")
+print( " | (_| | | | | (_| | |   | | |_) |  __/ |  | |____        |                      ")
 print( "  \__,_|_| |_|\__,_|_|   |_| .__/ \___|_|  |______|                              ")
 print( "                           | |                                                   ")
 print( "                           |_|                                                   ")
-                                                                                                 
-print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements ")
-print( "                              v.b0.4_2015                            ")
-print( "" )
-print( "                               Let's go !!!                              ")
-print( "" )
-                                                                         
+print( "                                                                                 ")
+print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements         ")
+print( "                              v.b0.4_2015                                        ")
+print( "                                                                                 ")
+print( "                               Let's go !!!                                      ")
+print( "                                                                                 ")
 
 parser = argparse.ArgumentParser(prog='dnaPipeTE.py')
 parser.add_argument('-input', action='store', dest='input_file', help='input fastq files (two files for paired data)', nargs='*')
@@ -65,6 +64,7 @@ parser.add_argument('-output', action='store', dest='output_folder', help='outpu
 parser.add_argument('-cpu', action='store', default="1", dest='cpu', help='maximum number of cpu to use')
 parser.add_argument('-sample_size', action='store', default=config['DEFAULT']['Sample_size'], dest='sample_size', help='number of reads to sample')
 parser.add_argument('-sample_number', action='store', default=config['DEFAULT']['Sample_number'], dest='sample_number', help='number of sample to run')
+parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['RepeatMasker_library'], dest='RepeatMasker_library', help='path to Repeatmasker library (if not set, the path from the config file is used. The default library is used by default)')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
 
 print("Start time: "+time.strftime("%c"))
@@ -241,7 +241,10 @@ class RepeatMasker:
 		print("#######################################")
 		print("### REPEATMASKER to anotate contigs ###")
 		print("#######################################\n")
-		repeatmasker = self.RepeatMasker_path+" -pa "+str(self.cpu)+" -s -lib "+self.RM_library+" "+self.output_folder+"/Trinity.fasta"
+		repeatmasker = self.RepeatMasker_path+" -pa "+str(self.cpu)+" -s "
+		if self.RM_library != "":
+			repeatmasker += "-lib "+self.RM_library
+		repeatmasker += +" "+self.output_folder+"/Trinity.fasta"
 		repeatmaskerProcess = subprocess.Popen(str(repeatmasker), shell=True)
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
@@ -468,7 +471,7 @@ class Graph:
 Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.sample_number, args.output_folder, False)
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
-RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
+RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.cpu, args.output_folder)
 Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, 1, args.output_folder, True)
 sample_files_blast = Sampler_blast.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
