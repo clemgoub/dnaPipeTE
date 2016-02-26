@@ -68,6 +68,7 @@ parser.add_argument('-sample_number', action='store', default=config['DEFAULT'][
 parser.add_argument('-genome_size', action='store', default=0, dest='genome_size', help='size of the genome')
 parser.add_argument('-genome_coverage', action='store', default=0.0, dest='genome_coverage', help='coverage of the genome')
 parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['RepeatMasker_library'], dest='RepeatMasker_library', help='path to Repeatmasker library (if not set, the path from the config file is used. The default library is used by default)')
+parser.add_argument('-RM_t', action='store', default=0.0, dest='RM_threshold', help='minimal percentage of query hit on repeat to keep anotation')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
 parser.add_argument('-keep_Trinity_output', action='store_true', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
 
@@ -292,11 +293,12 @@ class Trinity:
 		return trinnity_done
 
 class RepeatMasker:
-	def __init__(self, RepeatMasker_path, RM_library, cpu, output_folder):
+	def __init__(self, RepeatMasker_path, RM_library, cpu, output_folder, RM_threshold):
 		self.RepeatMasker_path = str(RepeatMasker_path)
 		self.RM_library = str(RM_library)
 		self.cpu =  int(cpu)
 		self.output_folder = str(output_folder)
+		self.RM_threshold = float(RM_threshold)
 		if not self.test_RepeatMasker():
 			self.repeatmasker_run()
 			self.contig_annotation()
@@ -313,13 +315,60 @@ class RepeatMasker:
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
-		bestHit = "cat "+self.output_folder+"/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk '{if ($9==\"C\") {print $1\"\\t\"$2\"\\t\"$3\"\\t\"$4\"\\t\"$5\"\\t\"$6\"\\t\"$7\"\\t\"$8\"\\t\"$9\"\\t\"$10\"\\t\"$11\"\\t\"$14\"\\t\"$13\"\\t\"$12\"\\t\"$15} else {print $O}}' | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\" ($7+$8) \"\\t\" ($7-$6)/($7+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" ($13+$14) \"\\t [\" $12 \"-\" $13 \"]\\t\" ($13-$12)/($13+$14))}; prev_query = $5}}' >  "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs"
-		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
-		bestHitProcess.wait()
-		bestHit = "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{ if ($3>=0.8 && $8>=0.8) print $0}' > "+self.output_folder+"/Annotation/Best_RM_annot_80-80 && "
-		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{ if ($3>=0.8 && $8<0.8) print $0}' > "+self.output_folder+"/Annotation/Best_RM_annot_partial"
-		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
-		bestHitProcess.wait()
+			line_number = 0
+			trinity_out = list()
+			with open(self.output_folder+"/Trinity.fasta.out", 'r') as trinity_handle:
+				for line in trinity_handle:
+					line_number += 1
+					if line_number > 3:
+						line = line.split()
+						tmp = line[14]
+						# we swap the start and left column if we are revese
+						if line[9] == "C":
+							line[14] = line[12][1:-1]
+							line[12] = tmp
+						trinity_out_line = list()
+						trinity_out_line.append(line[4])
+						# size of the dnaPipeTE contig
+						trinity_out_line.append(int(line[6]) + int(line[7][1:-1]))
+						# percent of hit on the query
+						trinity_out_line.append(float(int(line[6]) - int(line[5])) / float(int(line[6]) + int(line[7][1:-1])))
+						# ET name
+						trinity_out_line.append(line[10])
+						# class name
+						trinity_out_line.append(line[11])
+						# target size
+						trinity_out_line.append(int(line[13]) + int(line[14]))
+						# query position
+						trinity_out_line.append("["+line[12]+"-"+line[13]+"]")
+						# percent of hit on the target
+						trinity_out_line.append(float(int(line[13]) - int(line[14])) / float(int(line[13]) + int(line[14])))
+						trinity_out_line.append(line[0])
+						trinity_out.append(list(trinity_out_line))
+				trinity_out = sorted(trinity_out, key=lambda x: (x[0], x[8]), True)
+				prev_contig = ""
+				with open(self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 'w') as output and \
+				open(self.output_folder+"/Annotation/Best_RM_annot_80", 'w') as output_80_80 and \
+				open(self.output_folder+"/Annotation/Best_RM_annot_partial", 'w') as output_partial:
+				for trinity_out_line in trinity_out:
+					if trinity_out_line[0] != prev_contig:
+						prev_contig = trinity_out_line[0]
+						if float(trinity_out_line[2]) >= float(self.RM_threshold) :
+							trinity_out_filtered.append()
+							for i in trinity_out_line[:-1]:
+								output.write(str(i)+"\t")
+							output.write("\n")
+							if float(trinity_out_line[2]) >= 0.80:
+								if float(trinity_out_line[7]) >= 0.80:
+									trinity_out_filtered.append()
+									for i in trinity_out_line[:-1]:
+										output_80_80.write(str(i)+"\t")
+									output_80_80.write("\n")
+								if float(trinity_out_line[7]) < 0.80:
+									trinity_out_filtered.append()
+									for i in trinity_out_line[:-1]:
+										output_partial.write(str(i)+"\t")
+									output_partial.write("\n")
 		print("Done")
 
 	def contig_annotation(self):
@@ -528,7 +577,7 @@ class Graph:
 Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, args.sample_number, args.output_folder, False)
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
-RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.cpu, args.output_folder)
+RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.cpu, args.output_folder, args.RM_threshold)
 Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, 1, args.output_folder, True)
 sample_files_blast = Sampler_blast.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
