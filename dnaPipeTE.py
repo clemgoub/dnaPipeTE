@@ -66,6 +66,7 @@ parser.add_argument('-sample_size', action='store', default=config['DEFAULT']['S
 parser.add_argument('-sample_number', action='store', default=config['DEFAULT']['Sample_number'], dest='sample_number', help='number of sample to run')
 parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['RepeatMasker_library'], dest='RepeatMasker_library', help='path to Repeatmasker library (if not set, the path from the config file is used. The default library is used by default)')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
+parser.add_argument('-keep_Trinity_output', action='store', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
 
 print("Start time: "+time.strftime("%c"))
 
@@ -455,17 +456,10 @@ class Graph:
 		graph += "mv "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscape.pdf "+self.output_folder+"/ && "
 		graph += "rm "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/Rplots.pdf &&"
 		graph += "rm "+self.output_folder+"/colors &&"
-		print("Removing Trinity runs files...")
-		graph += "find "+self.output_folder+"/Trinity_run* -delete"
-		print("done")
 		# print(graph)
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
-		print("Finishin time: "+time.strftime("%c"))
-		print("########################")
-		print("#   see you soon !!!   #")
-		print("########################")
 
 #program execution:
 Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.sample_number, args.output_folder, False)
@@ -476,3 +470,12 @@ Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, 1, args.o
 sample_files_blast = Sampler_blast.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
 Graph(args.output_folder)
+
+if args.keep_Trinity_output:
+	print("Removing Trinity runs files...")
+	graph += "find "+str(args.output_folder)+"/Trinity_run* -delete"
+	print("done")
+print("Finishin time: "+time.strftime("%c"))
+print("########################")
+print("#   see you soon !!!   #")
+print("########################")
