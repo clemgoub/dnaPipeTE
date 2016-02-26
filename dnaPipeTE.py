@@ -244,7 +244,7 @@ class RepeatMasker:
 		repeatmasker = self.RepeatMasker_path+" -pa "+str(self.cpu)+" -s "
 		if self.RM_library != "":
 			repeatmasker += "-lib "+self.RM_library
-		repeatmasker += +" "+self.output_folder+"/Trinity.fasta"
+		repeatmasker += " "+self.output_folder+"/Trinity.fasta"
 		repeatmaskerProcess = subprocess.Popen(str(repeatmasker), shell=True)
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
