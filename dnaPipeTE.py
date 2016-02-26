@@ -359,20 +359,17 @@ class RepeatMasker:
 				if trinity_out_line[0] != prev_contig:
 					prev_contig = trinity_out_line[0]
 					if float(trinity_out_line[2]) >= float(self.RM_threshold) :
-						trinity_out_filtered.append()
 						for i in trinity_out_line[:-1]:
 							output.write(str(i)+"\t")
 						output.write("\n")
 						line_number += 1
 						if float(trinity_out_line[2]) >= 0.80:
 							if float(trinity_out_line[7]) >= 0.80:
-								trinity_out_filtered.append()
 								for i in trinity_out_line[:-1]:
 									output_80_80.write(str(i)+"\t")
 								output_80_80.write("\n")
 								line_number_80 += 1
 							if float(trinity_out_line[7]) < 0.80:
-								trinity_out_filtered.append()
 								for i in trinity_out_line[:-1]:
 									output_partial.write(str(i)+"\t")
 								output_partial.write("\n")
