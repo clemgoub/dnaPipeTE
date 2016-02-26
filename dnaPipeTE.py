@@ -322,9 +322,9 @@ class RepeatMasker:
 				line_number += 1
 				if line_number > 3:
 					line = line.split()
-					tmp = line[13]
 					# we swap the start and left column if we are revese
-					if line[9] == "C":
+					if line[8] == "C":
+						tmp = line[13]
 						line[13] = line[11][1:-1]
 						line[11] = tmp
 					else:
@@ -344,7 +344,7 @@ class RepeatMasker:
 					# query position
 					trinity_out_line.append("["+line[11]+"-"+line[12]+"]")
 					# percent of hit on the target
-					trinity_out_line.append(float(int(line[12]) - int(line[13])) / float(int(line[12]) + int(line[13])))
+					trinity_out_line.append(float(int(line[12]) - int(line[11])) / float(int(line[12]) + int(line[13])))
 					trinity_out_line.append(int(line[0]))
 					trinity_out.append(list(trinity_out_line))
 		print(str(line_number)+" line read, sorting...")
