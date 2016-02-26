@@ -345,7 +345,7 @@ class RepeatMasker:
 					trinity_out_line.append("["+line[11]+"-"+line[12]+"]")
 					# percent of hit on the target
 					trinity_out_line.append(float(int(line[12]) - int(line[13])) / float(int(line[12]) + int(line[13])))
-					trinity_out_line.append(line[0])
+					trinity_out_line.append(int(line[0]))
 					trinity_out.append(list(trinity_out_line))
 		print(str(line_number)+" line read, sorting...")
 		trinity_out = sorted(trinity_out, key=lambda x: (x[0], -x[8]))
