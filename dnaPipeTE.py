@@ -155,7 +155,7 @@ class FastqSamplerToFasta:
 						np += 1
 						if np % 2 == 0 and len(line) < size_min:
 							size_min = len(line)
-		else
+		else:
 			if self.R1_gz:
 				with gzip.open(file_name+".gz", 'rt') as file1 :
 					np = sum(1 for line in file1)
