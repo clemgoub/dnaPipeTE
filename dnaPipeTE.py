@@ -336,9 +336,9 @@ class RepeatMasker:
 					# percent of hit on the query
 					trinity_out_line.append(float(int(line[6]) - int(line[5])) / float(int(line[6]) + int(line[7][1:-1])))
 					# ET name
-					trinity_out_line.append(line[10])
+					trinity_out_line.append(line[9])
 					# class name
-					trinity_out_line.append(line[11])
+					trinity_out_line.append(line[10])
 					# target size
 					trinity_out_line.append(int(line[12]) + int(line[13]))
 					# query position
@@ -348,7 +348,7 @@ class RepeatMasker:
 					trinity_out_line.append(line[0])
 					trinity_out.append(list(trinity_out_line))
 		print(str(line_number)+" line read, sorting...")
-		trinity_out = sorted(trinity_out, key=lambda x: (x[0], x[8]), reverse=True)
+		trinity_out = sorted(trinity_out, key=lambda x: (x[0], -x[8]))
 		prev_contig = ""
 		print("sort done, filtering...")
 		with open(self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 'w') as output, open(self.output_folder+"/Annotation/Best_RM_annot_80", 'w') as output_80_80, open(self.output_folder+"/Annotation/Best_RM_annot_partial", 'w') as output_partial:
