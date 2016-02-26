@@ -65,6 +65,8 @@ parser.add_argument('-output', action='store', dest='output_folder', help='outpu
 parser.add_argument('-cpu', action='store', default="1", dest='cpu', help='maximum number of cpu to use')
 parser.add_argument('-sample_size', action='store', default=config['DEFAULT']['Sample_size'], dest='sample_size', help='number of reads to sample')
 parser.add_argument('-sample_number', action='store', default=config['DEFAULT']['Sample_number'], dest='sample_number', help='number of sample to run')
+parser.add_argument('-genome_size', action='store', default=0, dest='genome_size', help='size of the genome')
+parser.add_argument('-genome_coverage', action='store', default=0.0, dest='genome_coverage', help='coverage of the genome')
 parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['RepeatMasker_library'], dest='RepeatMasker_library', help='path to Repeatmasker library (if not set, the path from the config file is used. The default library is used by default)')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
 parser.add_argument('-keep_Trinity_output', action='store_true', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
@@ -74,8 +76,14 @@ print("Start time: "+time.strftime("%c"))
 args = parser.parse_args()
 
 class FastqSamplerToFasta:
-	def __init__(self, fastq_files, number, sample_number, output_folder, blast):
+	def __init__(self, fastq_files, number, genome_size, genome_coverage, sample_number, output_folder, blast):
 		self.number = int(number)
+		self.genome_size = int(genome_size)
+		self.genome_coverage = float(genome_coverage)
+		self.use_coverage = False
+		if self.genome_size != 0 and self.genome_coverage > 0.0:
+			self.use_coverage = True
+			self.genome_base = int(float(self.genome_size) * self.genome_coverage)
 		self.sample_number = int(sample_number)
 		self.output_folder = output_folder
 		if not os.path.exists(self.output_folder):
@@ -132,15 +140,33 @@ class FastqSamplerToFasta:
 		print( "number of reads to sample : ", self.number, "\nfastq : ", file_name )
 		sys.stdout.write("counting reads number ...")
 		sys.stdout.flush()
-		if self.R1_gz:
-			with gzip.open(file_name+".gz", 'rt') as file1 :
-				np = sum(1 for line in file1)
-		else:
-			with open(file_name, 'r') as file1 :
-				np = sum(1 for line in file1)
+		if self.use_coverage:
+			np = 0
+			size_min = 10 ** 30
+			if self.R1_gz:
+				with gzip.open(file_name+".gz", 'rt') as file1 :
+					for line in file1:
+						np += 1
+						if np % 2 == 0 and len(str(line)) < size_min:
+							size_min = len(str(line))
+			else:
+				with open(file_name, 'r') as file1 :
+					for line in file1:
+						np += 1
+						if np % 2 == 0 and len(line) < size_min:
+							size_min = len(line)
+		else
+			if self.R1_gz:
+				with gzip.open(file_name+".gz", 'rt') as file1 :
+					np = sum(1 for line in file1)
+			else:
+				with open(file_name, 'r') as file1 :
+					np = sum(1 for line in file1)
 		np = int((np) / 4)
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
+		if self.use_coverage:
+			self.number = int(float(self.genome_base)/float(self.size_min))
 		tirages = random.sample(range(np), self.number*self.sample_number)
 		for i in range(self.sample_number):
 			tirages_sample = tirages[(self.number*i):(self.number*(i+1))]
@@ -151,42 +177,35 @@ class FastqSamplerToFasta:
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
 		with open(fastq_file, 'r') as fastq_handle :
-			i = 0
-			j = self.number*sample_number
-			tag = "/s"+str(sample_number)+"_"
-			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
-				for line in fastq_handle :
-					if (i-1) % 4 == 0 and (i-1)/4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
-						output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
-					if (i-1)/4 == self.tirages[j]:
-						j += 1 # we get the number of the next line
-						if j % 100 == 0:
-							sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
-							sys.stdout.flush()
-					i += 1
-					if j >= len(self.tirages):
-						break
-		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
+			self.sampling_sub(fastq_handle, sample_number)
 
 	def sampling_gz(self, fastq_file, sample_number):
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
 		with gzip.open(fastq_file+".gz", 'rt') as fastq_handle :
-			i = 0
-			j = self.number*sample_number
-			tag = "/s"+str(sample_number)+"_"
-			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
-				for line in fastq_handle :
-					if (i-1) % 4 == 0 and (i-1)/4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
-						output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
-					if (i-1)/4 == self.tirages[j]:
-						j += 1 # we get the number of the next line
-						if j % 100 == 0:
-							sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
-							sys.stdout.flush()
-					i += 1
-					if j >= len(self.tirages):
-						break
+			self.sampling_sub(fastq_handle, sample_number)
+
+	def sampling_sub(self, fastq_handle, sample_number):
+		i = 0
+		j = self.number*sample_number
+		tag = "/s"+str(sample_number)+"_"
+		with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
+			base_sampled = 0
+			for line in fastq_handle :
+				if (i-1) % 4 == 0 and (i-1)/4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
+					output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
+					if self.use_coverage:
+						base_sampled += len(str(line))
+				if (i-1)/4 == self.tirages[j]:
+					j += 1 # we get the number of the next line
+					if j % 100 == 0:
+						sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
+						sys.stdout.flush()
+				i += 1
+				if self.use_coverage and base_sampled >= self.genome_base:
+					break
+				if j >= len(self.tirages):
+					break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
 	def test_sampling(self, blast):
@@ -506,7 +525,7 @@ class Graph:
 		print("Done")
 
 #program execution:
-Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.sample_number, args.output_folder, False)
+Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, args.sample_number, args.output_folder, False)
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
 RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.cpu, args.output_folder)
