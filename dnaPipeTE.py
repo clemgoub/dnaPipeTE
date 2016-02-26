@@ -473,7 +473,9 @@ Graph(args.output_folder)
 
 if args.keep_Trinity_output:
 	print("Removing Trinity runs files...")
-	graph += "find "+str(args.output_folder)+"/Trinity_run* -delete"
+	cleaning = "find "+str(args.output_folder)+"/Trinity_run* -delete"
+	cleaningProcess = subprocess.Popen(str(cleaning), shell=True)
+	cleaningProcess.wait()
 	print("done")
 print("Finishin time: "+time.strftime("%c"))
 print("########################")
