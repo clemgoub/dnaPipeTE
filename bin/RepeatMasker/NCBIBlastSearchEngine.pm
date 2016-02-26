@@ -470,7 +470,7 @@ sub getParameters {
   #       is a MT version of rmblastn?  Also a good way
   #       to know if we should call with threads turned
   #       on?
-  $parameters .= " -num_threads 4 ";
+  $parameters .= " -num_threads 1 ";
 
   if ( defined( $value = $this->getMatrix() ) ) {
 
