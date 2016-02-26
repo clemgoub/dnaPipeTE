@@ -66,7 +66,7 @@ parser.add_argument('-sample_size', action='store', default=config['DEFAULT']['S
 parser.add_argument('-sample_number', action='store', default=config['DEFAULT']['Sample_number'], dest='sample_number', help='number of sample to run')
 parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['RepeatMasker_library'], dest='RepeatMasker_library', help='path to Repeatmasker library (if not set, the path from the config file is used. The default library is used by default)')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
-parser.add_argument('-keep_Trinity_output', action='store', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
+parser.add_argument('-keep_Trinity_output', action='store_true', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
 
 print("Start time: "+time.strftime("%c"))
 
