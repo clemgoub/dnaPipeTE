@@ -515,7 +515,7 @@ sample_files_blast = Sampler_blast.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
 Graph(args.output_folder)
 
-if args.keep_Trinity_output:
+if not args.keep_Trinity_output:
 	print("Removing Trinity runs files...")
 	cleaning = "find "+str(args.output_folder)+"/Trinity_run* -delete"
 	cleaningProcess = subprocess.Popen(str(cleaning), shell=True)
