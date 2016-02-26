@@ -345,7 +345,7 @@ class RepeatMasker:
 						trinity_out_line.append(float(int(line[13]) - int(line[14])) / float(int(line[13]) + int(line[14])))
 						trinity_out_line.append(line[0])
 						trinity_out.append(list(trinity_out_line))
-				trinity_out = sorted(trinity_out, key=lambda x: (x[0], x[8]), True)
+				trinity_out = sorted(trinity_out, key=lambda x: (x[0], x[8]), reverse=True)
 				prev_contig = ""
 				with open(self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 'w') as output, open(self.output_folder+"/Annotation/Best_RM_annot_80", 'w') as output_80_80, open(self.output_folder+"/Annotation/Best_RM_annot_partial", 'w') as output_partial:
 					for trinity_out_line in trinity_out:
