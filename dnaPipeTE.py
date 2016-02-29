@@ -39,25 +39,61 @@ if not os.path.isfile('config.ini'):
 						'Blast_folder': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/ncbi-blast-2.2.28+/bin/', 
 						'Parallel': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/parallel',
 						'Sample_size': 500000,
+						'RM_species' : "All",
 						'Sample_number': 2}
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
 config.read('config.ini')
 
-print( "      _             _____ _         _______ ______                               ")
-print( "     | |           |  __ (_)       |__   __|  ____|                              ")
-print( "   __| |_ __   __ _| |__) | _ __   ___| |  | |__        __|______________        ")
-print( "  / _` | '_ \ / _` |  ___/ | '_ \ / _ \ |  |  __|      (__|______|_|_|_|_)       ")
-print( " | (_| | | | | (_| | |   | | |_) |  __/ |  | |____        |                      ")
-print( "  \__,_|_| |_|\__,_|_|   |_| .__/ \___|_|  |______|                              ")
-print( "                           | |                                                   ")
-print( "                           |_|                                                   ")
+print( "                  _             _____ _         _______ ______                   ")
+print( "                 | |           |  __ (_)       |__   __|  ____|                  ")
+print( "               __| |_ __   __ _| |__) | _ __   ___| |  | |__                     ")
+print( "              / _` | '_ \ / _` |  ___/ | '_ \ / _ \ |  |  __|                    ")
+print( "             | (_| | | | | (_| | |   | | |_) |  __/ |  | |____                   ")
+print( "              \__,_|_| |_|\__,_|_|   |_| .__/ \___|_|  |______|                  ")
+print( "                                       | |                                       ")
+print( "                                       |_|                                       ")
 print( "                                                                                 ")
 print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements         ")
-print( "                              v.b0.4_2015                                        ")
+print( "                              v.1.1_02-2016                                      ")
 print( "                                                                                 ")
-print( "                               Let's go !!!                                      ")
-print( "                                                                                 ")
+print( "                                                                                                                                                                       ")                                          
+print( "   	                                                        ") 
+print( "                                                 :@@@@'     ")
+print( "                                               ,@@@@@@@@;   ")
+print( "                                              +@@@@@@@@@@,  ")
+print( "                                            .@@@@@@@@@@@@#  ")
+print( "                                    +@#.   '@@@@@@@@@@@@@#  ")
+print( "                                   #@@@@+`@@@@@@@@@@@@@@@,  ")
+print( "                                   '@@@@@@@@@@@@@@@@@@@@'   ")
+print( "                                    :@@@@@@@@@@@@@@@@@@.    ")
+print( "                                     :@@@@@@@@@@@@@@@+      ")
+print( "                                    #@@@@@@@@@;@@@@@,       ")
+print( "                                  ,@@@#`.@@@@@@#,@#         ")
+print( "                                 +@@@:    +@@@@@@,          ")
+print( "                               .@@@@       #@@@@@@#         ")
+print( "                              '@@@;       '@@@@@@@@@        ")
+print( "                            `@@@@`      `@@@@`:@@@@@        ")
+print( "                           ;@@@'       ;@@@'    +@+         ")
+print( "                          @@@@.       @@@@.                 ")
+print( "                        :@@@#       :@@@#                   ")
+print( "                       #@@@,       #@@@,                    ")
+print( "                     ,@@@#`@@'   ,@@@#                      ")
+print( "                    +@@@:'@@@@@:+@@@:                       ")
+print( "                  .@@@@`@@@@@@@@@@@                         ")
+print( "                 '@@@;:@@@@@@@@@@;                          ")
+print( "                #@@@`#@@@@@@@@@@`                           ")
+print( "               ,@@@;@@@@@@@@@@+                             ")
+print( "               #@@@@@@@@@@@@@.                              ")
+print( "               @@@@@@@@@@@@#                                ")
+print( "              .@@@@@@@@@@@,                                 ")
+print( "             +@@@@@@@@@@#                                   ")
+print( "             @@@@@@#+;.                                     ")
+print( "              +@@;                                          ")                                                
+print( "                                                            ")   
+print( "           Let's go !!!                                     ")
+print( "                                                            ")                                   
+                                             
 
 parser = argparse.ArgumentParser(prog='dnaPipeTE.py')
 parser.add_argument('-input', action='store', dest='input_file', help='input fastq files (two files for paired data)', nargs='*')
@@ -68,6 +104,7 @@ parser.add_argument('-sample_number', action='store', default=config['DEFAULT'][
 parser.add_argument('-genome_size', action='store', default=0, dest='genome_size', help='size of the genome')
 parser.add_argument('-genome_coverage', action='store', default=0.0, dest='genome_coverage', help='coverage of the genome')
 parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['RepeatMasker_library'], dest='RepeatMasker_library', help='path to Repeatmasker library (if not set, the path from the config file is used. The default library is used by default)')
+parser.add_argument('-species', action='store', default=config['DEFAULT']['RM_species'], dest='RM_species', help='default RepeatMasker library to use. Must be a valid NCBI for species or clade ex: homo, drosophila, "ciona savignyi". Default All is used')
 parser.add_argument('-RM_t', action='store', default=0.0, dest='RM_threshold', help='minimal percentage of query hit on repeat to keep anotation')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
 parser.add_argument('-keep_Trinity_output', action='store_true', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
@@ -293,12 +330,13 @@ class Trinity:
 		return trinnity_done
 
 class RepeatMasker:
-	def __init__(self, RepeatMasker_path, RM_library, cpu, output_folder, RM_threshold):
+	def __init__(self, RepeatMasker_path, RM_library, RM_species, cpu, output_folder, RM_threshold):
 		self.RepeatMasker_path = str(RepeatMasker_path)
 		self.RM_library = str(RM_library)
 		self.cpu =  int(cpu)
 		self.output_folder = str(output_folder)
 		self.RM_threshold = float(RM_threshold)
+		self.RM_species = str(RM_species)
 		if not self.test_RepeatMasker():
 			self.repeatmasker_run()
 			self.contig_annotation()
@@ -310,6 +348,8 @@ class RepeatMasker:
 		repeatmasker = self.RepeatMasker_path+" -pa "+str(self.cpu)+" -s "
 		if self.RM_library != "":
 			repeatmasker += "-lib "+self.RM_library
+		else:
+			repeatmasker += "-species "+self.RM_species
 		repeatmasker += " "+self.output_folder+"/Trinity.fasta"
 		repeatmaskerProcess = subprocess.Popen(str(repeatmasker), shell=True)
 		repeatmaskerProcess.wait()
@@ -585,7 +625,7 @@ class Graph:
 Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, args.sample_number, args.output_folder, False)
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
-RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.cpu, args.output_folder, args.RM_threshold)
+RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.RM_species, args.cpu, args.output_folder, args.RM_threshold)
 Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, 1, args.output_folder, True)
 sample_files_blast = Sampler_blast.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
