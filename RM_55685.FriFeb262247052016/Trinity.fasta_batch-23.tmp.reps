@@ -1,0 +1,105 @@
+226 22.32 0.00 6.35 comp503_c0_seq45 126 192 (558) L1P4a_5end#LINE/L1 1485 1547 (1049) m_b23s551i4
+
+  comp503_c0_se        126 CAGACACAGAGGGCACCCAAATCTGGATGGACAAAGGATCCCGTCGGAAT 175
+                                 i   ivv  ---i           -   i i v i i   ii  
+  L1P4a_5end#LI       1485 CAGACATAGAATTCA---GAATCTGGATGG-CAAGGAAGCTCATCGAGAT 1530
+
+  comp503_c0_se        176 TCGGGAGAAAGTTGCAA 192
+                             i           v  
+  L1P4a_5end#LI       1531 TCAGGAGAAAGTTGAAA 1547
+
+Matrix = 20p43g.matrix
+Kimura (with divCpGMod) = 27.37
+Transitions / transversions = 2.50 (10/4)
+Gap_init rate = 0.06 (4 / 66), avg. gap size = 1.00 (4 / 4)
+
+226 22.32 0.00 6.35 comp503_c0_seq18 1111 1177 (558) L1P4a_5end#LINE/L1 1485 1547 (1049) m_b23s551i0
+
+  comp503_c0_se       1111 CAGACACAGAGGGCACCCAAATCTGGATGGACAAAGGATCCCGTCGGAAT 1160
+                                 i   ivv  ---i           -   i i v i i   ii  
+  L1P4a_5end#LI       1485 CAGACATAGAATTCA---GAATCTGGATGG-CAAGGAAGCTCATCGAGAT 1530
+
+  comp503_c0_se       1161 TCGGGAGAAAGTTGCAA 1177
+                             i           v  
+  L1P4a_5end#LI       1531 TCAGGAGAAAGTTGAAA 1547
+
+Matrix = 20p43g.matrix
+Kimura (with divCpGMod) = 27.37
+Transitions / transversions = 2.50 (10/4)
+Gap_init rate = 0.06 (4 / 66), avg. gap size = 1.00 (4 / 4)
+
+226 22.32 0.00 6.35 comp503_c0_seq53 1489 1555 (558) L1P4a_5end#LINE/L1 1485 1547 (1049) m_b23s551i6
+
+  comp503_c0_se       1489 CAGACACAGAGGGCACCCAAATCTGGATGGACAAAGGATCCCGTCGGAAT 1538
+                                 i   ivv  ---i           -   i i v i i   ii  
+  L1P4a_5end#LI       1485 CAGACATAGAATTCA---GAATCTGGATGG-CAAGGAAGCTCATCGAGAT 1530
+
+  comp503_c0_se       1539 TCGGGAGAAAGTTGCAA 1555
+                             i           v  
+  L1P4a_5end#LI       1531 TCAGGAGAAAGTTGAAA 1547
+
+Matrix = 20p43g.matrix
+Kimura (with divCpGMod) = 27.37
+Transitions / transversions = 2.50 (10/4)
+Gap_init rate = 0.06 (4 / 66), avg. gap size = 1.00 (4 / 4)
+
+226 22.32 0.00 6.35 comp503_c0_seq21 2704 2770 (558) L1P4a_5end#LINE/L1 1485 1547 (1049) m_b23s551i1
+
+  comp503_c0_se       2704 CAGACACAGAGGGCACCCAAATCTGGATGGACAAAGGATCCCGTCGGAAT 2753
+                                 i   ivv  ---i           -   i i v i i   ii  
+  L1P4a_5end#LI       1485 CAGACATAGAATTCA---GAATCTGGATGG-CAAGGAAGCTCATCGAGAT 1530
+
+  comp503_c0_se       2754 TCGGGAGAAAGTTGCAA 2770
+                             i           v  
+  L1P4a_5end#LI       1531 TCAGGAGAAAGTTGAAA 1547
+
+Matrix = 20p43g.matrix
+Kimura (with divCpGMod) = 27.37
+Transitions / transversions = 2.50 (10/4)
+Gap_init rate = 0.06 (4 / 66), avg. gap size = 1.00 (4 / 4)
+
+226 22.32 0.00 6.35 comp503_c0_seq52 2806 2872 (558) L1P4a_5end#LINE/L1 1485 1547 (1049) m_b23s551i5
+
+  comp503_c0_se       2806 CAGACACAGAGGGCACCCAAATCTGGATGGACAAAGGATCCCGTCGGAAT 2855
+                                 i   ivv  ---i           -   i i v i i   ii  
+  L1P4a_5end#LI       1485 CAGACATAGAATTCA---GAATCTGGATGG-CAAGGAAGCTCATCGAGAT 1530
+
+  comp503_c0_se       2856 TCGGGAGAAAGTTGCAA 2872
+                             i           v  
+  L1P4a_5end#LI       1531 TCAGGAGAAAGTTGAAA 1547
+
+Matrix = 20p43g.matrix
+Kimura (with divCpGMod) = 27.37
+Transitions / transversions = 2.50 (10/4)
+Gap_init rate = 0.06 (4 / 66), avg. gap size = 1.00 (4 / 4)
+
+226 22.32 0.00 6.35 comp503_c0_seq25 3294 3360 (558) L1P4a_5end#LINE/L1 1485 1547 (1049) m_b23s551i2
+
+  comp503_c0_se       3294 CAGACACAGAGGGCACCCAAATCTGGATGGACAAAGGATCCCGTCGGAAT 3343
+                                 i   ivv  ---i           -   i i v i i   ii  
+  L1P4a_5end#LI       1485 CAGACATAGAATTCA---GAATCTGGATGG-CAAGGAAGCTCATCGAGAT 1530
+
+  comp503_c0_se       3344 TCGGGAGAAAGTTGCAA 3360
+                             i           v  
+  L1P4a_5end#LI       1531 TCAGGAGAAAGTTGAAA 1547
+
+Matrix = 20p43g.matrix
+Kimura (with divCpGMod) = 27.37
+Transitions / transversions = 2.50 (10/4)
+Gap_init rate = 0.06 (4 / 66), avg. gap size = 1.00 (4 / 4)
+
+226 22.32 0.00 6.35 comp503_c0_seq36 3403 3469 (558) L1P4a_5end#LINE/L1 1485 1547 (1049) m_b23s551i3
+
+  comp503_c0_se       3403 CAGACACAGAGGGCACCCAAATCTGGATGGACAAAGGATCCCGTCGGAAT 3452
+                                 i   ivv  ---i           -   i i v i i   ii  
+  L1P4a_5end#LI       1485 CAGACATAGAATTCA---GAATCTGGATGG-CAAGGAAGCTCATCGAGAT 1530
+
+  comp503_c0_se       3453 TCGGGAGAAAGTTGCAA 3469
+                             i           v  
+  L1P4a_5end#LI       1531 TCAGGAGAAAGTTGAAA 1547
+
+Matrix = 20p43g.matrix
+Kimura (with divCpGMod) = 27.37
+Transitions / transversions = 2.50 (10/4)
+Gap_init rate = 0.06 (4 / 66), avg. gap size = 1.00 (4 / 4)
+
