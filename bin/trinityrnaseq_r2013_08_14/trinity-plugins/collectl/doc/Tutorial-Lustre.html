@@ -1,0 +1,227 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Tutorial - Lustre</title>
+</head>
+
+<body>
+
+<body>
+<center>
+<h1>Tutorial - Lustre</h1>
+</center>
+<p>
+<h3>Introduction</h3>
+This tutorial is intended to help you get started monitoring a system on which the
+<a href=http://wiki.lustre.org>lustre</a> filesystem has been installed.  This is <i>not</i>
+intended to be a tutorial on how to use such a filesystem.  In terms of the basics,
+there's really not much to say other then tell collectl to monitor lustre by
+specifying an <i>l</i> with <i>-s</i> along with any other subsystems you may want to monitor.
+<p>
+As you should be aware of by now, collectl will try to display everything you've
+selected in <i>brief</i> format if it can, writing all your data out on a single
+line for each sampling interval.  
+This can get quite wide depending on how many subsystems you choose to monitor and
+while you can cerainly specify <i>collectl -s+l</i> to add lustre to the default 
+subsystems, the output width is too cumbersome for this tutorial.
+Therfore I'll use some other subsystems and switches in the examples
+to mix things up, showing that there are a lot of possible combinations.  In this 
+first example, we see what happens when you run collectl on a lustre client and
+request cpu and memory data along with lustre.
+
+<div class=terminal-wide14><pre>
+$ collectl -scml
+#<--------CPU--------><-----------Memory----------><-------Lustre Client------>
+#cpu sys inter  ctxsw free buff cach inac slab  map  Reads KBRead Writes KBWrite
+   0   0   101     26   3G   6M  29M  12M  43M  65M      0      0      0       0
+</pre></div>
+<p>
+Collectl is actually very intelligent about dealing with lustre because if you
+were to run the identical command on an OST, it would recognize that too and 
+change what it shows accordingly as you can see below.
+
+<div class=terminal-wide14><pre>
+$ collectl -scdl
+#<--------CPU--------><-----------Disks-----------><--------Lustre OST------->
+#cpu sys inter  ctxsw KBRead  Reads  KBWrit Writes KBRead  Reads KBWrit Writes
+   0   0   100     28      0      0       0      0      0      0      0      0
+</pre></div>
+
+In fact, if you're also running a client on an OST it will show both!
+I've also included time stamps to make the output a little more intersting.
+
+<div class=terminal-wide14><pre>
+$ collectl -scl -oT
+#         <--------CPU--------><--------Lustre OST-------><-------Lustre Client------>
+#Time     cpu sys inter  ctxsw KBRead  Reads KBWrit Writes  Reads KBRead Writes KBWrite
+14:35:32    0   0   103     24      0      0      0      0      0      0      0       0
+14:35:33    0   0   123     53      0      0      0      0      0      0      0       0
+</pre></div>
+
+As expected, you can run collectl on a system that has any combination of MDS, OST and 
+client services and it will show you what you want to see.  For more detail on some of
+the more advanced concepts beyond the scope of this tutorial you can read more about
+how collectl deals with Lustre <a href=Lustre.html>here</a>.
+<p>
+And finally, don't forget any of this data can be written to a file for continuous 
+logging, played back later and even converted to a format suitable for plotting.
+In fact collectl is configured to monitor lustre by default when run as a daemon
+so all you need to do to begin collecting the basic data shown above is
+<i>service collectl start</i>.
+<p>
+<h3>Beyond the Basics</h3>
+For many users of collectl, you are now sufficiently equipped to tackle most lustre
+monitoring tasks, but for those more exotic situations there's so much more you can
+do.  
+<p><B>CLIENTS</b><p>
+Let's start off by looking more closely at client data.  As with all other collectl
+data, one can switch between summary and detail data by simply entering an 
+upper case <i>L</i> instead of a lower case one as I've done below.  
+The actual content of what is
+displayed will depend on whether you are on a client, OSS (there is currently no 
+detail data for an MDS), but as you can see for clients, this data is broken down
+by filesystem and just to make the display a little more interesting I decided to
+show the timestamps in milli-seconds.  Naturally if there is only one filesystem, 
+the data with match that displayed in summary mode.
+
+<div class=terminal-wide14><pre>
+$ collectl -sL -oTm
+# LUSTRE CLIENT DETAIL
+#            Filsys   Reads ReadKB  Writes WriteKB
+15:10:06.009 spfs1       0      0       0       0
+15:10:06.009 spfs2       0      0       0       0
+</pre></div>
+
+Just to take it one step futher, it turns out that lustre actually tracks client I/O by
+individual OSTs and sometimes that is more interesting, so there is a special option
+for lustre clients, <i>--lustopts O</i>.
+
+<div class=terminal-wide14><pre>
+$ collectl -sL --lustopts O -oTm
+# LUSTRE CLIENT DETAIL
+#            Filsys  Ost      Reads ReadKB  Writes WriteKB
+15:19:17.007 spfs1  OST0000      0      0       0       0
+15:19:17.007 spfs1  OST0001      0      0       0       0
+15:19:17.007 spfs2  OST0000      0      0       0       0
+15:19:17.007 spfs2  OST0001      0      0       0       0
+</pre></div>
+
+So what else can we look at?  Lots! Lustre tracks <i>readahead</i> data which you can
+show in brief format like this by using the <i>R</i> option noting this time we're 
+also requesting date/time stamps be included.  Here we see the cache hits/misses
+added to the brief display for the client.
+
+<div class=terminal-wide14><pre>
+$ collectl -sl --lustopts R -oD
+#                  <-------------Lustre Client-------------->
+#Date    Time       Reads KBRead Writes KBWrite   Hits Misses
+20080319 15:20:12       0      0      0       0      0      0
+20080319 15:20:13       0      0      0       0      0      0
+</pre></div>
+
+or you can look at it in verbose format like this:
+
+<div class=terminal-wide14><pre>
+$ collectl -sl --lustopts R --verbose
+# LUSTRE CLIENT SUMMARY: READAHEAD
+# Reads ReadKB  Writes WriteKB  Pend  Hits Misses NotCon MisWin LckFal  Discrd ZFile ZerWin RA2Eof HitMax
+      0      0       0       0     0     0      0      0      0      0      0      0      0      0      0
+      0      0       0       0     0     0      0      0      0      0      0      0      0      0      0
+</pre></div>
+
+Lustre also tracks client metadata, which you can request by specifying <i>--lustopts M</i> and 
+BRW stats which are selected by <i>--lustopts B</i>.  However both are so wide they only 
+have a verbose form and the following shows both being displayed at the same time.
+
+<div class=terminal-wide14><pre>
+$ collectl -sl --lustopts BM
+# LUSTRE CLIENT SUMMARY: RPC-BUFFERS (pages) METADATA
+#Rds  RdK   1P   2P   4P   8P  16P  32P  64P 128P 256P Wrts WrtK   1P   2P   4P   8P  16P  32P  64P 128P 256P
+   0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+# Reads ReadKB  Writes WriteKB  Open Close GAttr SAttr  Seek Fsynk DrtHit DrtMis
+      0      0       0       0     0     0     0     0     0     0      0      0
+</pre></div>
+
+And if that's not enough, these even have a detailed mode of display and you can look 
+at them by filesystem or OST.  You can specify any combinations of B,M and R with --lustopts
+to show the associated data in both summary or detail formats, though only <i>readahead</i>
+appears in the brief display.  All others will force verbose format.
+
+<p><b>Object Storage Server</b><p>
+If you haven't figured it out yet, it's also possible to display OST level information
+on an OSS by simply using the uppercase subsystem specification as you can see here,
+noting just to be different I've chosen a second form of the date/timestamp.
+
+<div class=terminal-wide14><pre>
+$ collectl -sL -od
+# LUSTRE FILESYSTEM SINGLE OST STATISTICS
+#              Ost            Read Ops   Read KB      Write Ops   Write KB
+03/19 15:32:14 spfs1-OST0000        0         0              0          0
+03/19 15:32:14 spfs2-OST0000        0         0              0          0
+03/19 15:32:15 spfs1-OST0000        0         0              0          0
+03/19 15:32:15 spfs2-OST0000        0         0              0          0
+</pre></div>
+
+You can also show BRW stats as both summary and detail data as well and since they
+look identical to the way they're displayed for a client, I won't bother repeating 
+those forms here.
+
+<p><b>Metadata Server</b><p>
+As mentioned earlier, there is no detail data for an MDS nor are there any other
+types of data other than that which can be displayed in summary mode.
+<p>
+<h3>Summary</h3> 
+As you have seen, there is a wealth of data here and often you may not even know what
+you want to look for.  When such is the case, just collect as much as you can and save
+it in a file.  Then you can play it back later and display it in multiple formats.
+<p>
+I just want to close with an example of a problem with readaheads and Lustre 1.4
+which demonstrates the power of a tool
+like collectl that can show multiple types of data at once because I know a lot of 
+people may still not be convinced.  Consider the following sample which was collected while
+doing random 32KB reads of a large file.  See anything wrong?  Do you know why the
+network bandwidth is so much higher than the lustre client read rate?  How long would it
+have taken to even realize there is a problem?
+
+<div class=terminal-wide14><pre>
+$ collectl -snl -oT
+#         <----------Network----------><-------------Lustre Client-------------->
+#Time     netKBi pkt-in netKBo pkt-out  Reads KBRead Writes KBWrite   Hits Misses
+08:14:18   41776  28310   1065   14786     50    200      0       0     30     20
+08:14:19   38328  25987   1032   14078     62    248      0       0     35     19
+08:14:20   44763  30337   1167   16114     58    232      0       0     30     20
+08:14:21   43666  29596   1137   15632     46    184      0       0     30     16
+08:14:22   33777  22905    891   12191     58    232      0       0     35     23
+</pre></div>
+
+It turned out the old algorithm triggered a readahead after 2 consecutive pages were read
+and every 32KB read (which is 8 pages)
+resulted in 1MB being read over the network, loaded in to cache and was then discarded!  
+If the value of <i>max_read_ahead_mb</i> is set to 0 for the associated filesystem on
+<i>each</i> client involved, you see 2 things - the network rate drops to track the 
+client read rate and the <i>misses</i> goes to zero.
+
+<div class=terminal-wide14><pre>
+$ collectl -snl -oT
+#         <----------Network----------><-------------Lustre Client-------------->
+#Time     netKBi pkt-in netKBo pkt-out  Reads KBRead Writes KBWrite   Hits Misses
+08:21:22       0      3      0       3     59    236      0       0      0      0
+08:21:23     317    335     58     298     91    364      0       0      0      0
+08:21:24     442    457     77     388    107    428      0       0      0      0
+08:21:25     442    457     77     383     97    388      0       0      0      0
+08:21:26     432    446     75     373     89    356      0       0      0      0
+</pre></div>
+
+<i>Caution - changing the value of the readable variable in /proc to 0 will eliminate
+all readahead for </i>all readers<i> meaning any applications that do sequential
+reads could have significant performance problems.  In other words, this is <i>not</i> a
+recommendation to turn off readahead but rather to be aware of what it does and if you do
+choose to turn it off to be aware of the consequences</i>
+<p>
+<i><b>Note: This readahead algorithm has changed with V1.6 and lustre no longer triggers readahead
+on the third page read but rather on the third sequential read.</b></i>
+
+<table width=100%><tr><td align=right><i>updated Mar 25, 2010</i></td></tr></colgroup></table>
+
+</body>
+</html>

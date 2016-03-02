@@ -26,38 +26,74 @@ import time
 import sys
 import random
 import ntpath
+import gzip
 
 config = configparser.ConfigParser()
 if not os.path.isfile('config.ini'):
 	print("'config.ini' file not found, writing default one.")
-	config['DEFAULT'] = {'Trinity': '/usr/remote/trinityrnaseq_r2013_08_14/Trinity.pl',
+	config['DEFAULT'] = {'Trinity': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/trinityrnaseq_r2013_08_14/Trinity.pl',
 						'Trinity_memory': '10G',
-						'RepeatMasker': '/panhome/goubert/RepeatMasker/RepeatMasker',
-						'RepeatMasker_library': '/path_to/RM_library.fasta',
-						'TRF': '/panhome/goubert/trf407b.linux64',
-						'Blast_folder': '/usr/remote/ncbi-blast-2.2.29+/bin/', 
-						'Parallel': '/panhome/goubert/bin/parallel',
+						'RepeatMasker': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/RepeatMasker/RepeatMasker',
+						'RepeatMasker_library': '',
+						'TRF': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/trf',
+						'Blast_folder': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/ncbi-blast-2.2.28+/bin/', 
+						'Parallel': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/parallel',
 						'Sample_size': 500000,
+						'RM_species' : "All",
 						'Sample_number': 2}
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
 config.read('config.ini')
 
-print( "      _             _____ _         _______ ______                               ")
-print( "     | |           |  __ (_)       |__   __|  ____|                              ")
-print( "   __| |_ __   __ _| |__) | _ __   ___| |  | |__        __|______________                         ")
-print( "  / _` | '_ \ / _` |  ___/ | '_ \ / _ \ |  |  __|      (__|______|_|_|_|_)                         ")
-print( " | (_| | | | | (_| | |   | | |_) |  __/ |  | |____        |                       ")
-print( "  \__,_|_| |_|\__,_|_|   |_| .__/ \___|_|  |______|                              ")
-print( "                           | |                                                   ")
-print( "                           |_|                                                   ")
-                                                                                                 
-print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements ")
-print( "                              v.b0.3_20141029                            ")
-print( "" )
-print( "                               Let's go !!!                              ")
-print( "" )
-                                                                         
+print( "                  _             _____ _         _______ ______                   ")
+print( "                 | |           |  __ (_)       |__   __|  ____|                  ")
+print( "               __| |_ __   __ _| |__) | _ __   ___| |  | |__                     ")
+print( "              / _` | '_ \ / _` |  ___/ | '_ \ / _ \ |  |  __|                    ")
+print( "             | (_| | | | | (_| | |   | | |_) |  __/ |  | |____                   ")
+print( "              \__,_|_| |_|\__,_|_|   |_| .__/ \___|_|  |______|                  ")
+print( "                                       | |                                       ")
+print( "                                       |_|                                       ")
+print( "                                                                                 ")
+print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements         ")
+print( "                              v.1.1_02-2016                                      ")
+print( "                                                                                 ")
+print( "                                                                                                                                                                       ")                                          
+print( "   	                                                        ") 
+print( "                                                 :@@@@'     ")
+print( "                                               ,@@@@@@@@;   ")
+print( "                                              +@@@@@@@@@@,  ")
+print( "                                            .@@@@@@@@@@@@#  ")
+print( "                                    +@#.   '@@@@@@@@@@@@@#  ")
+print( "                                   #@@@@+`@@@@@@@@@@@@@@@,  ")
+print( "                                   '@@@@@@@@@@@@@@@@@@@@'   ")
+print( "                                    :@@@@@@@@@@@@@@@@@@.    ")
+print( "                                     :@@@@@@@@@@@@@@@+      ")
+print( "                                    #@@@@@@@@@;@@@@@,       ")
+print( "                                  ,@@@#`.@@@@@@#,@#         ")
+print( "                                 +@@@:    +@@@@@@,          ")
+print( "                               .@@@@       #@@@@@@#         ")
+print( "                              '@@@;       '@@@@@@@@@        ")
+print( "                            `@@@@`      `@@@@`:@@@@@        ")
+print( "                           ;@@@'       ;@@@'    +@+         ")
+print( "                          @@@@.       @@@@.                 ")
+print( "                        :@@@#       :@@@#                   ")
+print( "                       #@@@,       #@@@,                    ")
+print( "                     ,@@@#`@@'   ,@@@#                      ")
+print( "                    +@@@:'@@@@@:+@@@:                       ")
+print( "                  .@@@@`@@@@@@@@@@@                         ")
+print( "                 '@@@;:@@@@@@@@@@;                          ")
+print( "                #@@@`#@@@@@@@@@@`                           ")
+print( "               ,@@@;@@@@@@@@@@+                             ")
+print( "               #@@@@@@@@@@@@@.                              ")
+print( "               @@@@@@@@@@@@#                                ")
+print( "              .@@@@@@@@@@@,                                 ")
+print( "             +@@@@@@@@@@#                                   ")
+print( "             @@@@@@#+;.                                     ")
+print( "              +@@;                                          ")                                                
+print( "                                                            ")   
+print( "           Let's go !!!                                     ")
+print( "                                                            ")                                   
+                                             
 
 parser = argparse.ArgumentParser(prog='dnaPipeTE.py')
 parser.add_argument('-input', action='store', dest='input_file', help='input fastq files (two files for paired data)', nargs='*')
@@ -65,16 +101,27 @@ parser.add_argument('-output', action='store', dest='output_folder', help='outpu
 parser.add_argument('-cpu', action='store', default="1", dest='cpu', help='maximum number of cpu to use')
 parser.add_argument('-sample_size', action='store', default=config['DEFAULT']['Sample_size'], dest='sample_size', help='number of reads to sample')
 parser.add_argument('-sample_number', action='store', default=config['DEFAULT']['Sample_number'], dest='sample_number', help='number of sample to run')
+parser.add_argument('-genome_size', action='store', default=0, dest='genome_size', help='size of the genome')
+parser.add_argument('-genome_coverage', action='store', default=0.0, dest='genome_coverage', help='coverage of the genome')
+parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['RepeatMasker_library'], dest='RepeatMasker_library', help='path to Repeatmasker library (if not set, the path from the config file is used. The default library is used by default)')
+parser.add_argument('-species', action='store', default=config['DEFAULT']['RM_species'], dest='RM_species', help='default RepeatMasker library to use. Must be a valid NCBI for species or clade ex: homo, drosophila, "ciona savignyi". Default All is used')
+parser.add_argument('-RM_t', action='store', default=0.0, dest='RM_threshold', help='minimal percentage of query hit on repeat to keep anotation')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
+parser.add_argument('-keep_Trinity_output', action='store_true', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
 
 print("Start time: "+time.strftime("%c"))
 
 args = parser.parse_args()
 
-
 class FastqSamplerToFasta:
-	def __init__(self, fastq_files, number, sample_number, output_folder, blast):
+	def __init__(self, fastq_files, number, genome_size, genome_coverage, sample_number, output_folder, blast):
 		self.number = int(number)
+		self.genome_size = int(genome_size)
+		self.genome_coverage = float(genome_coverage)
+		self.use_coverage = False
+		if self.genome_size != 0 and self.genome_coverage > 0.0:
+			self.use_coverage = True
+			self.genome_base = int(float(self.genome_size) * self.genome_coverage)
 		self.sample_number = int(sample_number)
 		self.output_folder = output_folder
 		if not os.path.exists(self.output_folder):
@@ -87,16 +134,35 @@ class FastqSamplerToFasta:
 			self.paired = False
 		else:
 			self.fastq_R1 = fastq_files[1]
+		self.R1_gz = False
+		self.R2_gz = False
+		if self.fastq_R1[-3:] == ".gz":
+			print("gz compression detected for "+self.fastq_R1)
+			self.R1_gz = True
+			self.fastq_R1 = self.fastq_R1[:-3]
+
+		if self.paired:
+			if self.fastq_R2[-3:] == ".gz":
+				print("gz compression detected for "+self.fastq_R2)
+				self.R2_gz = True
+				self.fastq_R2 = self.fastq_R2[:-3]
+		
 		self.files = list()
 		if not self.test_sampling(blast):
 			self.get_sampled_id(self.fastq_R1)
 			print("sampling "+str(self.sample_number)+" samples of "+str(self.number)+" reads...")
 			for i in range(self.sample_number):
-				self.sampling(self.fastq_R1, i)
+				if self.R1_gz:
+					self.sampling_gz(self.fastq_R1, i)
+				else:
+					self.sampling(self.fastq_R1, i)
 				self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R1)+str(self.blast_sufix)+".fasta")
 			if self.paired:
 				for i in range(self.sample_number):
-					self.sampling(self.fastq_R2, i)
+					if self.R2_gz:
+ 						self.sampling_gz(self.fastq_R2, i)
+					else:
+						self.sampling(self.fastq_R2, i)
 					self.files.append("s"+str(i)+"_"+self.path_leaf(self.fastq_R2)+str(self.blast_sufix)+".fasta")
 	
 	def result(self):
@@ -112,11 +178,33 @@ class FastqSamplerToFasta:
 		print( "number of reads to sample : ", self.number, "\nfastq : ", file_name )
 		sys.stdout.write("counting reads number ...")
 		sys.stdout.flush()
-		with open(file_name, 'r') as file1 :
-			np = sum(1 for line in file1)
+		if self.use_coverage:
+			np = 0
+			size_min = 10 ** 30
+			if self.R1_gz:
+				with gzip.open(file_name+".gz", 'rt') as file1 :
+					for line in file1:
+						np += 1
+						if np % 2 == 0 and len(str(line)) < size_min:
+							size_min = len(str(line))
+			else:
+				with open(file_name, 'r') as file1 :
+					for line in file1:
+						np += 1
+						if np % 2 == 0 and len(line) < size_min:
+							size_min = len(line)
+		else:
+			if self.R1_gz:
+				with gzip.open(file_name+".gz", 'rt') as file1 :
+					np = sum(1 for line in file1)
+			else:
+				with open(file_name, 'r') as file1 :
+					np = sum(1 for line in file1)
 		np = int((np) / 4)
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
+		if self.use_coverage:
+			self.number = int(float(self.genome_base)/float(size_min))
 		tirages = random.sample(range(np), self.number*self.sample_number)
 		for i in range(self.sample_number):
 			tirages_sample = tirages[(self.number*i):(self.number*(i+1))]
@@ -127,21 +215,35 @@ class FastqSamplerToFasta:
 		sys.stdout.write(str(0)+"/"+str(self.number))
 		sys.stdout.flush()
 		with open(fastq_file, 'r') as fastq_handle :
-			i = 0
-			j = self.number*sample_number
-			tag = "/s"+str(sample_number)+"_"
-			with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
-				for line in fastq_handle :
-					if (i-1) % 4 == 0 and (i-1)/4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
-						output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
-					if (i-1)/4 == self.tirages[j]:
-						j += 1 # we get the number of the next line
-						if j % 100 == 0:
-							sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
-							sys.stdout.flush()
-					i += 1
-					if j >= len(self.tirages):
-						break
+			self.sampling_sub(fastq_file, fastq_handle, sample_number)
+
+	def sampling_gz(self, fastq_file, sample_number):
+		sys.stdout.write(str(0)+"/"+str(self.number))
+		sys.stdout.flush()
+		with gzip.open(fastq_file+".gz", 'rt') as fastq_handle :
+			self.sampling_sub(fastq_file, fastq_handle, sample_number)
+
+	def sampling_sub(self, fastq_file, fastq_handle, sample_number):
+		i = 0
+		j = self.number*sample_number
+		tag = "/s"+str(sample_number)+"_"
+		with open(self.output_folder+tag+self.path_leaf(fastq_file)+str(self.blast_sufix)+".fasta", 'w') as output :
+			base_sampled = 0
+			for line in fastq_handle :
+				if (i-1) % 4 == 0 and (i-1)/4 == self.tirages[j]: # if we are at the sequence line in fastq of the read number self.tirages[j]
+					output.write(">"+str(j+sample_number*self.number)+"\n"+str(line)) # we write the fasta sequence corresponding
+					if self.use_coverage:
+						base_sampled += len(str(line))
+				if (i-1)/4 == self.tirages[j]:
+					j += 1 # we get the number of the next line
+					if j % 100 == 0:
+						sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
+						sys.stdout.flush()
+				i += 1
+				if self.use_coverage and base_sampled >= self.genome_base:
+					break
+				if j >= len(self.tirages):
+					break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
 	def test_sampling(self, blast):
@@ -228,11 +330,13 @@ class Trinity:
 		return trinnity_done
 
 class RepeatMasker:
-	def __init__(self, RepeatMasker_path, RM_library, cpu, output_folder):
+	def __init__(self, RepeatMasker_path, RM_library, RM_species, cpu, output_folder, RM_threshold):
 		self.RepeatMasker_path = str(RepeatMasker_path)
 		self.RM_library = str(RM_library)
 		self.cpu =  int(cpu)
 		self.output_folder = str(output_folder)
+		self.RM_threshold = float(RM_threshold)
+		self.RM_species = str(RM_species)
 		if not self.test_RepeatMasker():
 			self.repeatmasker_run()
 			self.contig_annotation()
@@ -241,18 +345,78 @@ class RepeatMasker:
 		print("#######################################")
 		print("### REPEATMASKER to anotate contigs ###")
 		print("#######################################\n")
-		repeatmasker = self.RepeatMasker_path+" -pa "+str(self.cpu)+" -s -lib "+self.RM_library+" "+self.output_folder+"/Trinity.fasta"
+		repeatmasker = self.RepeatMasker_path+" -pa "+str(self.cpu)+" -s "
+		if self.RM_library != "":
+			repeatmasker += "-lib "+self.RM_library
+		else:
+			repeatmasker += "-species "+self.RM_species
+		repeatmasker += " "+self.output_folder+"/Trinity.fasta"
 		repeatmaskerProcess = subprocess.Popen(str(repeatmasker), shell=True)
 		repeatmaskerProcess.wait()
 		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
-		bestHit = "cat "+self.output_folder+"/Trinity.fasta.out | sed 's/(//g' | sed 's/)//g' | sort -k 5,5 -k 1,1nr | awk '{if ($9==\"C\") {print $1\"\\t\"$2\"\\t\"$3\"\\t\"$4\"\\t\"$5\"\\t\"$6\"\\t\"$7\"\\t\"$8\"\\t\"$9\"\\t\"$10\"\\t\"$11\"\\t\"$14\"\\t\"$13\"\\t\"$12\"\\t\"$15} else {print $O}}' | awk 'BEGIN {prev_query = \"\"} {if($5 != prev_query) {{print($5 \"\\t\" ($7+$8) \"\\t\" ($7-$6)/($7+$8) \"\\t\"$10 \"\\t\" $11 \"\\t\" ($13+$14) \"\\t [\" $12 \"-\" $13 \"]\\t\" ($13-$12)/($13+$14))}; prev_query = $5}}' >  "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs"
-		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
-		bestHitProcess.wait()
-		bestHit = "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{ if ($3>=0.8 && $8>=0.8) print $0}' > "+self.output_folder+"/Annotation/Best_RM_annot_80-80 && "
-		bestHit += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{ if ($3>=0.8 && $8<0.8) print $0}' > "+self.output_folder+"/Annotation/Best_RM_annot_partial"
-		bestHitProcess = subprocess.Popen(str(bestHit), shell=True)
-		bestHitProcess.wait()
+		line_number = 0
+		trinity_out = list()
+		with open(self.output_folder+"/Trinity.fasta.out", 'r') as trinity_handle:
+			for line in trinity_handle:
+				line_number += 1
+				if line_number > 3:
+					line = line.split()
+					# we swap the start and left column if we are revese
+					if line[8] == "C":
+						tmp = line[13]
+						line[13] = line[11][1:-1]
+						line[11] = tmp
+					else:
+						line[13] = line[13][1:-1]
+					trinity_out_line = list()
+					trinity_out_line.append(line[4])
+					# size of the dnaPipeTE contig
+					trinity_out_line.append(int(line[6]) + int(line[7][1:-1]))
+					# percent of hit on the query
+					trinity_out_line.append(float(int(line[6]) - int(line[5])) / float(int(line[6]) + int(line[7][1:-1])))
+					# ET name
+					trinity_out_line.append(line[9])
+					# class name
+					trinity_out_line.append(line[10])
+					# target size
+					trinity_out_line.append(int(line[12]) + int(line[13]))
+					# query position
+					trinity_out_line.append("["+line[11]+"-"+line[12]+"]")
+					# percent of hit on the target
+					trinity_out_line.append(float(int(line[12]) - int(line[11])) / float(int(line[12]) + int(line[13])))
+					trinity_out_line.append(int(line[0]))
+					trinity_out.append(list(trinity_out_line))
+		print(str(line_number)+" line read, sorting...")
+		trinity_out = sorted(trinity_out, key=lambda x: (x[0], -x[8]))
+		prev_contig = ""
+		print("sort done, filtering...")
+		with open(self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 'w') as output, open(self.output_folder+"/Annotation/Best_RM_annot_80", 'w') as output_80_80, open(self.output_folder+"/Annotation/Best_RM_annot_partial", 'w') as output_partial:
+			line_number = 0
+			line_number_80 = 0
+			line_number_partial = 0
+			for trinity_out_line in trinity_out:
+				if trinity_out_line[0] != prev_contig:
+					prev_contig = trinity_out_line[0]
+					if float(trinity_out_line[2]) >= float(self.RM_threshold) :
+						for i in trinity_out_line[:-1]:
+							output.write(str(i)+"\t")
+						output.write("\n")
+						line_number += 1
+						if float(trinity_out_line[2]) >= 0.80:
+							if float(trinity_out_line[7]) >= 0.80:
+								for i in trinity_out_line[:-1]:
+									output_80_80.write(str(i)+"\t")
+								output_80_80.write("\n")
+								line_number_80 += 1
+							if float(trinity_out_line[7]) < 0.80:
+								for i in trinity_out_line[:-1]:
+									output_partial.write(str(i)+"\t")
+								output_partial.write("\n")
+								line_number_partial += 1
+		print(str(line_number)+" lines in one_RM_hit_per_Trinity_contigs")
+		print(str(line_number_80)+" lines in Best_RM_annot_80")
+		print(str(line_number_partial)+" lines in Best_RM_annot_partial")
 		print("Done")
 
 	def contig_annotation(self):
@@ -456,17 +620,24 @@ class Graph:
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
-		print("Finishin time: "+time.strftime("%c"))
-		print("########################")
-		print("#   see you soon !!!   #")
-		print("########################")
 
 #program execution:
-Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.sample_number, args.output_folder, False)
+Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, args.sample_number, args.output_folder, False)
 sample_files = Sampler.result()
 Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
-RepeatMasker(config['DEFAULT']['RepeatMasker'], config['DEFAULT']['RepeatMasker_library'], args.cpu, args.output_folder)
-Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, 1, args.output_folder, True)
+RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.RM_species, args.cpu, args.output_folder, args.RM_threshold)
+Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, 1, args.output_folder, True)
 sample_files_blast = Sampler_blast.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
 Graph(args.output_folder)
+
+if not args.keep_Trinity_output:
+	print("Removing Trinity runs files...")
+	cleaning = "find "+str(args.output_folder)+"/Trinity_run* -delete"
+	cleaningProcess = subprocess.Popen(str(cleaning), shell=True)
+	cleaningProcess.wait()
+	print("done")
+print("Finishin time: "+time.strftime("%c"))
+print("########################")
+print("#   see you soon !!!   #")
+print("########################")

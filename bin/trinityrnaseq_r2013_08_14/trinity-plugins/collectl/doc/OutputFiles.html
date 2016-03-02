@@ -1,0 +1,51 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Output Files</title>
+</head>
+
+<body>
+<center><h1>Output Files</h1></center>
+<p>
+<h3>Raw Data</h3>
+All raw data is recorded in a single compressed file with the extension
+<i>raw.gz</i> if the perl compression library has been installed.  If that
+library is not there it will be written to a non-compressed file with the
+extension <i>raw</i>.  The only exception to this rule is the <i>process</i>
+raw file which can be useful on systems with a large number of processes 
+(see the description of <i>--tworaw</i>) and which has the extension <i>rawp</i>.
+<p>
+<h3>Plot Data</h3>
+There are actually 2 main types of plot data - <i>summary</i> and <i>detail</i>.
+Summary plot data, for those subsystems selected with lower case letters,
+is always stored in a single file, one line per time period,
+with the extension <i>tab</i>.  The primary reason for this is that the data for
+each subsystem is of a fixed length and there is really no benefit in
+separating it into multiple files.
+<p>
+Detail plot data, which is typically for devices for which there can be multiple 
+instances such as CPUs, is recorded in one file per detail type with an extension
+that reflects the type of data stored in that file.
+Each line contains instance data of a fixed number of
+fields for that particular device.  Although TCP do not have instance data,
+it does have a detail component and is also written to its own detail file.
+Process and Slab data are also treated like detail data because they too require
+multiple lines per monitoring period.
+<p>
+<h3>Exception Data</h3>
+Exception data is written to a file in the same format as detail data with an
+<i>X</i> appended to its name.  Since exception data is not of a known format
+across the entire device as is detail data, it cannot be written as a single
+line, but rather is written as one line per device.  Each line is prefaced with
+a date/time stamp and the number of the device (0 based).
+<p>
+<h3>Collectl Messages</h3>
+Periodically collectl logs various types of messages to its own message log to avoid
+situations in which an unexpected situation or a collectl bug might causes the
+flooding of /var/log/mesasages.  However, the more serious messages are written to
+both as described <a href=Messages.html>here.</a>
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

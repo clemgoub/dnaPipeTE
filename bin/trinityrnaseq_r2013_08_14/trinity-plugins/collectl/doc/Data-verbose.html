@@ -1,0 +1,813 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Verbose Data</title>
+</head>
+
+<body>
+<center><h1>Verbose Data</h1></center>
+<p>
+
+Data is reported in this form when either --verbose is used OR if there is at least one
+type of data requested that doesn't have a brief form such as any detail data or 
+ionodes, processes or slabs.  Specifying some of the lustre output options with --lustopts
+such as B, D and M will also force verbose format.
+
+<h3>Buddy (Memory Fragmentation) Data, <i>collectl -sb</i></h3>
+<p>
+<div class=terminal-wide14><pre>
+# MEMORY FRAGMENTATION SUMMARY (4K pages)
+#     1Pg    2Pgs    4Pgs    8Pgs   16Pgs   32Pgs   64Pgs  128Pgs  256Pgs  512Pgs 1024Pgs
+</pre></div>
+
+This table shows the total number of memory fragments by pagesize in increasing powers of 2 for 
+all the memory types.
+<p>
+<p><h3>CPU, <i>collectl -sc</i></h3>
+
+<div class=terminal-wide14>
+<pre>
+# CPU SUMMARY (INTR, CTXSW & PROC /sec)
+# USER  NICE   SYS  WAIT   IRQ  SOFT STEAL  IDLE  INTR  CTXSW  PROC  RUNQ   RUN   AVG1  AVG5 AVG15 RunT BlkT
+</pre>
+</div>
+
+These are the percentage of time the system in running is one of the modes, noting that
+these are averaged across all CPUs.  While User and Sys modes are self-eplanitory, the others
+may not be:
+<p>
+<table>
+<tr valign=top><td><b>User</b></td>
+<td>Time spent in User mode, not including time spend in "nice" mode.</td></tr>
+
+<tr valign=top><td><b>Nice</b></td>
+<td>Time spent in Nice mode, that is lower priority as adjusted by 
+the nice command and have the "N" status flag set when examined with "ps".</td></tr>
+
+<tr valign=top><td><b>Sys</b></td>
+<td>This is time spent in "pure" system time.</td></tr>
+
+<tr valign=top><td><b>Wait</b></td>
+<td>Also known as "iowait", this is the time the CPU was idle during an 
+outstanding disk I/O request.  This is not considered to be part of the total or 
+system times reported in brief mode.</td></tr>
+
+<tr valign=top><td><b>Irq</b></td>
+<td>Time spent processing interrupts and also considered to be part of 
+the summary system time reported in "brief" mode.</td></tr>
+
+<tr valign=top><td><b>Soft</b></td>
+<td>Time spent processing soft interrupts and also considered to be part 
+of the summary system time reported in "brief" mode.</td></tr>
+
+<tr valign=top><td><b>Steal</b></td>
+<td>Time spend in involuntary wait state while the hypervisor was servicing 
+another virtual processor.</td></tr>
+</table>
+
+<p>
+This next set of fields apply to processes
+<p>
+<table>
+<tr><td><b>Proc</b></td><td>Process creations/sec.</li></td></tr>
+<tr><td><b>Runq</b></td><td>Number of processes in the run queue.</li></td></tr>
+<tr><td><b>Run</b></td><td>Number of processes in the run state.</li></td></tr>
+<tr><td><b>Avg1, Avg5, Avg15</b></td><td>Load average over the last 1,5 and 15 minutes.</td></tr>
+<tr><td><b>RunT</b></td><td>Total number of process in the run state, not counting collectl itself</td></tr>
+<tr><td><b>BlkT</b></td><td>Total number of process blocked, waiting on I/O</td></tr>
+</table>
+
+<p><h3>Disks, <i>collectl -sd</i></h3>
+<p>
+If you specify filtering with <i>--dskfilt</i>, the disks that match the pattern(s)
+will either be included or excluded from the the summary data.  However, the data will
+<i>still</i> be collected so if recorded to a file can later be viewed.
+
+<div class=terminal-wide14>
+<pre>
+# DISK SUMMARY (/sec)
+#KBRead RMerged  Reads SizeKB   KBWrit WMerged Writes SizeKB
+</div></pre>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB read/sec</td></tr>
+<tr valign=top><td><b>RMerged</b></td><td>Read requests merged per second when being dequeued.</td></tr>
+<tr><td><b>Reads</b></td><td>Number of reads/sec</td></tr>
+<tr><td><b>SizeKB</b></td><td>Average read size in KB</td></tr>
+<tr><td><b>KBWrite<b></td><td>KB written/sec</td></tr>
+<tr valign=top><td><b>WMerged</b></td>
+<td>Write requests merged per second when being dequeued.</tr></tr>
+<tr><td><b>Writes</b></td><td>Number of writes/sec</td></tr>
+<tr><td><b>SizeKB</b></td><td>Average write size in KB</td></tr>
+</table>
+
+<p><h3>Inodes/Filesystem, <i>collectl -si</i></h3>
+
+<div class=terminal-wide14>
+<pre>
+# INODE SUMMARY
+#    Dentries      File Handles    Inodes
+# Number  Unused   Alloc   % Max   Number
+   40585   39442     576    0.17    38348
+</pre></div>
+
+<table>
+<tr><td colspan=2>DCache</td></tr>
+<tr><td><b>Dentries Number</b></td><td>Number of entries in directory cache</td</tr>
+<tr><td><b>Dentried Unused</b></td><td>Number of unused entries in directory cache</td</tr>
+<tr><td><b>Handles Alloc</b></td><td>Number of allocated file handles</td></tr>
+<tr><td><b>handles % Max</b></td><td>Percentage of maximum available file handles</td></tr>
+<tr><td><b>Inodes Number</b></td><td>Number of inodes in use</td></tr>
+</table>
+
+<p><i>NOTE - as of this writing I'm baffled by the dentry unused field.  No matter how 
+many files and/or directories I create, this number goes up!  Sholdn't it go down?</i>
+
+<p><h3>Infiniband, <i>collectl -sx</i></h3>
+
+<div class=terminal-wide14>
+<pre>
+# INFINIBAND SUMMARY (/sec)
+#  KBIn   PktIn  SizeIn   KBOut  PktOut SizeOut  Errors
+</pre></div>
+<table>
+<tr><td><b>KBIn</b></td><td>KB received/sec.</td></tr>
+<tr><td><b>PktIn</b></td><td>Packets received/sec.</td></tr>
+<tr><td><b>SizeIn</b></td><td>Average incoming packet size in KB</td></tr>
+<tr><td><b>KBOut</b></td><td>KB transmitted/sec.</td></tr>
+<tr><td><b>PktOut</b></td><td>Packets transmitted/sec.</td></tr>
+<tr><td><b>SizeOut</b></td><td>Average outgoing packet size in KB</td></tr>
+<tr valign=top><td><b>Errs</b></td><td>Count of current errors.  Since these
+are typically infrequent, it is felt that reporting them as a rate would result
+in either not seeing them OR round-off hiding their values.</td></tr>
+</table>
+
+<p><h3>Lustre</h3>
+
+<p><b>Lustre Client</b>, <i>collectl -sl</i>
+<p>There are several formats here controlled by the --lustopts switch.  There is 
+also detail data for these available as well.  Specifying -sL results in 
+data broken out by the file system and --lustopts O further breaks it out by OST.
+Also note the average read/write sizes are only reported when --lustopts is <i>not</i> specified.
+
+<div class=terminal-wide14>
+<pre>
+# LUSTRE CLIENT SUMMARY
+# KBRead  Reads SizeKB  KBWrite Writes SizeKB
+</pre></div>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB/sec delivered to the client.</td></tr>
+<tr><td valign=top><b>Reads</b></td><td>Reads/sec delivered to the client,
+not necessarily from the lustre storage servers.</td></tr>
+<tr><td><b>SizeKB</b></td><td>Average read size in KB</td></tr>
+<tr><td><b>KBWrite</b></td><td>KB Writes/sec delievered to the storage servers.</td></tr>
+<tr><td><b>Writes</b></td><td>Writes/sec delievered to the storage servers.</td></tr>
+<tr><td><b>SizeKB</b></td><td>Average write size in KB</td></tr>
+</table>
+
+<div class=terminal-wide14>
+<pre>
+# LUSTRE CLIENT SUMMARY: METADATA
+# KBRead  Reads KBWrite Writes  Open Close GAttr SAttr  Seek Fsynk DrtHit DrtMis
+</pre></div>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB/sec delivered to the client.</td></tr>
+<tr><td valign=top><b>Reads</b></td><td>Reads/sec delivered to the client,
+not necessarily from the lustre storage servers.</td></tr>
+<tr><td><b>KBWrite</b></td><td>KB Writes/sec delievered to the storage servers.</td></tr>
+<tr><td><b>Writes</b></td><td>Writes/sec delievered to the storage servers.</td></tr>
+<tr><td><b>Open</b></td><td>File opens/sec</td></tr>
+<tr><td><b>Close</b></td><td>File closes/sec</td></tr>
+<tr><td><b>GAttr</b></td><td>getattrs/sec</td></tr>
+<tr><td><b>Seek</b></td><td>seeks/sec</td></tr>
+<tr><td><b>Fsync</b></td><td>fsyncs/sec</td></tr>
+<tr><td><b>DrtHit</b></td><td>dirty hits/sec</td></tr>
+<tr><td><b>DrtMis</b></td><td>dirty misses/sec</td></tr>
+</table>
+
+<div class=terminal-wide14>
+<pre>
+# LUSTRE CLIENT SUMMARY: READAHEAD
+# KBRead  Reads KBWrite Writes  Pend  Hits Misses NotCon MisWin FalGrb LckFal  Discrd ZFile ZerWin RA2Eof HitMax  Wrong
+</pre></div>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB/sec delivered to the client.</td></tr>
+<tr><td valign=top><b>Reads</b></td><td>Reads/sec delivered to the client,
+not necessarily from the lustre storage servers.</td></tr>
+<tr><td><b>KBWrite</b></td><td>KB Writes/sec delievered to the storage servers.</td></tr>
+<tr><td><b>Writes</b></td><td>Writes/sec delievered to the storage servers.</td></tr>
+<tr><td><b>Pend</b></td><td>Pending issued pages</td></tr>
+<tr><td><b>Hits</b></td><td>prefetch cache hits</td></tr>
+<tr><td><b>Misses</b></td><td>prefetch cache misses</td></tr>
+<tr><td><b>NotCon</b></td><td>The current pages read that were not consecutive with the previous ones./td></tr>
+<tr><td><b>MisWin</b></td><td>Miss inside window.  The pages that were expected to be in the 
+                              prefetch cache but weren't.  They were probably
+                              reclaimed due to memory pressure</td></tr>
+<tr><td><b>LckFal</b></td><td>Failed grab_cache_pages.  Tried to prefetch page but it was locked.</td></tr>
+<tr><td><b>Discrd</b></td><td>Read but discarded.  Prefetched pages (but not read by applicatin)
+                              have been discarded either becuase of memory pressure or lock
+                              revocation.</td></tr>
+<tr><td><b>ZFile</b></td><td>Zero length file.</td></tr>
+<tr><td><b>ZerWin</b></td><td>Zero size window.</td></tr>
+<tr><td><b>RA2Eof</b></td><td>Read ahead to end of file</td></tr>
+<tr><td><b>HitMax</b></td><td>Hit maximum readahead issue.  The read-ahead window has grown to the
+                              maximum specified by <i>max_read_ahead_mb</i></td></tr>
+</table>
+
+<div class=terminal-wide14>
+<pre>
+# LUSTRE CLIENT SUMMARY: RPC-BUFFERS (pages)
+#RdK  Rds   1K   2K   ...  WrtK Wrts   1K   2K   ...
+</pre></div>
+
+This display shows the size of rpc buffer distribution buckets in K-pages.  You can find the 
+page size for you system in the header (<i>collectl --showheader</i>).
+<p>
+<table>
+<tr><td valign=top><b>RdK</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Rds</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of pages of of this size read</td></tr>
+<tr><td valign=top><b>WrtK</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Wrts</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of pages of of this size written</td></tr>
+</table>
+
+<p><b>Lustre Meta-Data Server</b>, <i>collectl -sl</i>
+<p>As of Lustre 1.6.5, the data reported for the MDS had changed, breaking out the <i>Reint</i>
+data into 5 individual buckets which are the last 5 fields described below.  For earlier
+versions those 5 fields will be replaced by a single one named <i>Reint</i>.
+
+<div class=terminal-wide14>
+<pre>
+# LUSTRE MDS SUMMARY
+#Getattr GttrLck  StatFS    Sync  Gxattr  Sxattr Connect Disconn Create   Link Setattr Rename Unlink
+</pre></div>
+
+<table>
+<tr><td valign=top><b>Getattr</b></td><td>Number of getattr calls, for example <i>lfs osts</i>.
+Note that this counter is <i>not</i> incremented as the result of <i>ls</i> - see <i>Gxattr</i></td></tr>
+<tr><td><b>GttrLck</b></td><td>These are getattrs that also return a lock on the file</td></tr>
+<tr><td valign=top><b>StatFS</b></td><td>Number of stat calls, for example <i>df</i> or <i>lfs df</i>.
+Note that lustre caches data for up to a second so many calls within a second may only show
+up as a single <i>statfs</i></td></tr>
+<tr><td><b>Sync</b></td><td>Number of sync calls</td></tr>
+<tr><td valign=top><b>Gxattr</b></td><td>Extended attribute get operations, for example <i>getfattr</i>, 
+<i>getfacl</i> or even <i>ls.</i>  Note that the MDS must have been mounted with <i>-o acl</i> 
+for this counter to be enabled.</td></tr>
+<tr><td><b>Sxattr</b></td><td>Extended attribute set operations, for example <i>setfattr</i> or <i>setfacl</i></td></tr>
+<tr><td><b>Connect</b></td><td>Client mount operations</td></tr>
+<tr><td><b>Disconn</b></td><td>Client umount operations</td></tr>
+<tr><td><b>Create</b></td><td>Count of mknod and mkdir operations, also used by NFS servers internally when creating files</td></tr>
+<tr><td><b>Link</b></td><td>Hard and symbolic links, for example <i>ln</i></td></tr>
+<tr><td><b>Setattr</b></td><td>All operations that modify inode attributes including chmod, chown, touch, etc</td></tr>
+<tr><td><b>Rename</b></td><td>File and directory renames, for example <i>mv</i></td></tr>
+<tr><td><b>Unlink</b></td><td>File/directory removals, for example <i>rm</i> or <i>rmdir</i></td></tr>
+</table>
+<p>
+The following display is very similar the the RPC buffers in that the sizes of different size
+I/O requests are reported.  In this case there are requests sent to the disk driver.
+Note that this report is only available for HP's SFS.
+
+<div class=terminal-wide14>
+<pre>
+# LUSTRE DISK BLOCK LEVEL SUMMARY
+#Rds  RdK 0.5K   1K   ...  Wrts WrtK 0.5K   1K   ...
+</pre></div>
+
+<table>
+<tr><td valign=top><b>Rds</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>RdK</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of blocks of of this size read</td></tr>
+<tr><td valign=top><b>Wrts</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>WrtK</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of blocks of of this size written</td></tr>
+</table>
+
+<p><b>Lustre Object Storage Server</b>, <i>collectl -sl</i>
+<div class=terminal-wide14>
+<pre>
+# LUSTRE OST SUMMARY
+# KBRead   Reads  SizeKB KBWrite  Writes  SizeKB
+</pre></div>
+
+<table>
+<tr><td><b>KBRead</b></td><td>KB/sec read</td></tr>
+<tr><td><b>Reads</b></td><td>Reads/sec</td></tr>
+<tr><td><b>SizeKB</b></td><td>Average read size in KB</td></tr>
+<tr><td><b>KBWrite</b></td><td>KB/sec written</td></tr>
+<tr><td><b>Writes</b></td><td>Writes/sec</li>
+<tr><td><b>SizeKB</b></td><td>Average write size in KB</td></tr>
+</table>
+
+<p><b>Lustre Object Storage Server</b>, <i>collectl -sl --lustopts B</i>
+<p>
+As with client data, when you only get read/write average sizes when
+--lustopt is <i>not</i> specified.
+<div class=terminal-wide14>
+<pre>
+# LUSTRE OST SUMMARY
+#<--------reads-----------|----writes-----------------
+#RdK  Rds   1K   2K   ...  WrtK Wrts   1K   2K   ....
+</pre></div>
+
+<table>
+<tr><td valign=top><b>RdK</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Rds</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of pages of of this size read</td></tr>
+<tr><td valign=top><b>WrtK</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Wrts</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of pages of of this size written</td></tr>
+</table>
+
+<p><b>Lustre Object Storage Server</b>, <i>collectl -sl --lustopts D</i>
+
+<div class=terminal-wide14>
+<pre>
+# LUSTRE DISK BLOCK LEVEL SUMMARY
+#RdK  Rds 0.5K   1K   ...   WrtK Wrts 0.5K   1K   ...
+</pre></div>
+
+<table>
+<tr><td valign=top><b>RdK</b></td><td>KBs read/sec</td></tr>
+<tr><td valign=top><b>Rds</b></td><td>Reads/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of blocks of of this size read</td></tr>
+<tr><td valign=top><b>WrtK</b></td><td>KBs written/sec</td></tr>
+<tr><td valign=top><b>Wrts</b></td><td>Writes/sec</td></tr>
+<tr><td valign=top><b>nK</b></td><td>Number of blocks of of this size written</td></tr>
+</table>
+
+<p><h3>Memory, <i>collectl -sm</i></h3>
+
+<div class=terminal-wide14>
+<pre>
+# MEMORY SUMMARY
+#<-------------------------------Physical Memory-------------------------------------><-----------Swap------------><-------Paging------>
+#   Total    Used    Free    Buff  Cached    Slab  Mapped    Anon  Commit Locked Inact Total  Used  Free   In  Out Fault MajFt   In  Out
+</pre></div>
+
+<table>
+<tr><td><b>Total</b></td>
+<td>Total physical memory</td></tr>
+
+<tr valign=top><td><b>Used</b></td>
+<td>Used physical memory.  This does not include memory used by the kernel itself.</td></tr>
+
+<tr valign=top><td><b>Free</b></td>
+<td>Unallocated memory</td></tr>
+
+<tr valign=top><td><b>Buff</b></td>
+<td>Memory used for system buffers</td></tr>
+
+<tr valign=top><td><b>Cached</b></td>
+<td>Memory used for caching data beween the kernel and disk, noting direct I/O does not use the cache</td></tr>
+
+<tr valign=top><td><b>Slab</b></td>
+<td>Memory used for slabs, see <i>collectl -sY</i></td></tr>
+
+<tr valign=top><td><b>Mapped</b></td>
+<td>Memory mapped by processes</td></tr>
+
+<tr valign=top><td><b>Anon</b></td>
+<td>Anonymous memory.  <i>NOTE - this </i>is included<i> with mapped memory in brief format</i></td></tr>
+
+<tr valign=top><td><b>Commit</b></td>
+<td>Accorting to RedHat: <i>"An estimate of how much RAM you would need to make a 99.99% guarantee
+that there never is OOM (out of memory) for this workload."</i></td></tr>
+
+<tr valign=top><td><b>Locked</b></td>
+<td>Locked Memory</td>
+
+<tr valign=top><td><b>Inactive</b></td>
+<td>Inactive pages.  On ealier kernels this number is the sum of the clean, dirty
+and laundry pages.</td></tr>
+
+<tr><td><b>Swap Total</b></td>
+<td>Total Swap</td></tr>
+
+<tr><td><b>Swap Used</b></td>
+<td>Used Swap</td></tr>
+
+<tr><td><b>Swap Free</b></td>
+<td>Free Swap</td></tr>
+
+<tr><td><b>Swap In</b></td>
+<td>Pages swapped in/sec</td></tr>
+
+<tr><td><b>Swap Out</b></td>
+<td>Pages swapped out/sec</td></tr>
+
+<tr><td><b>Fault</b></td>
+<td>Page faults/sec resolved by not going to disk</td></tr>
+
+<tr><td><b>MajFt</b></td>
+<td>These page faults are resolved by going to disk</td></tr>
+
+<tr><td><b>Paging In</b></td>
+<td>Total number of pages read by block devices</td></tr>
+
+<tr><td><b>Paging Out</b></td>
+<td>Total number of pages written by block devices</td></tr>
+</table>
+<p>
+<center><b><i>Notes</i></b></center>
+If you include <i>--memopts R</i>, memory and swap values wil be displayed as changes/sec between intervals 
+rather than absolute values in addition to page fault information, which is already displayed as rates.
+This switch will also honor -on in that the values will not be normalized to a rate but rather displayed 
+as changes in size per interval.
+<p>
+If you include <i>--memopts</i> with P or V, collectl will only display Physical or Virtual memory.
+The default is PV and will display both.
+
+<p><h3>Memory, <i>collectl -sm --memopts ps</i></h3>
+<p>
+The p and s options allow you to display data about page and/or steal and scan information.  If you want this data combined with
+the standard physical or virtual data you must explicitly request them as well.  The columns show how the memory is allocated
+for the respective sections.
+
+<div class=terminal-wide14>
+<pre>
+# MEMORY SUMMARY
+#<---Other---|-------Page Alloc------|------Page Refill-----><------Page Steal-------|-------Scan KSwap------|------Scan Direct----->
+#  Free Activ   Dma Dma32  Norm  Move   Dma Dma32  Norm  Move   Dma Dma32  Norm  Move   Dma Dma32  Norm  Move   Dma Dma32  Norm  Move
+    14M  136K     2    69   13M     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0
+</pre></div>
+
+<p><h3>Network, <i>collectl -sn</i></h3>
+<p>
+
+The entries for error counts in the following are actually the total of several
+types of errors.  To get individual error counts, you must either include <i>--netopts e</i>
+or report details on individual interfaces in plot format by specifying -P.  
+Transmission errors are categorized by errors, dropped, fifo, collisions and carrier.
+Receive errors are broken out for errors, dropped, fifo and framing errors.
+<p>
+If you specify filtering with <i>--netfilt</i>, the names that match the pattern(s)
+will either be included or excluded from the the summary data.  However, the data will
+<i>still</i> be collected so if recorded to a file can later be viewed.
+
+<div class=terminal-wide14>
+<pre>
+# NETWORK SUMMARY (/sec)
+# KBIn  PktIn SizeIn  MultI   CmpI  ErrsI  KBOut PktOut  SizeO   CmpO  ErrsO
+</pre></div>
+
+<table>
+<tr><td><b>KBIn</b></td>
+<td>Incoming KB/sec</td></tr>
+
+<tr><td><b>PktIn</b></td>
+<td>Incoming packets/sec</td></tr>
+
+<tr><td><b>SizeI</b></td>
+<td>Average incoming packet size in bytes</td></tr>
+
+<tr><td><b>MultI</b></td>
+<td>Incoming multicast packets/sec</td></tr>
+
+<tr><td><b>CmpI</b></td>
+<td>Incoming compressed packets/sec</td></tr>
+
+<tr valign=top><td><b>ErrsI</b></td>
+<td>Total incoming errors/sec.  This is an aggregation of incoming error counters.  To see explicit
+error counters use <i>--netopts e</i></td></tr>
+
+<tr><td><b>KBOut</b></td>
+<td>Outgoing KB/sec</td></tr>
+
+<tr><td><b>PktOut</b></td>
+<td>Outgoing packets/sec</td></tr>
+
+<tr><td><b>SizeO</b></td>
+<td>Average outgoing packet size in bytes</td></tr>
+
+<tr><td><b>CmpO</b></td>
+<td>Outgoing compressed packets/sec</td></tr>
+
+<tr valign=top><td><b>ErrsO</b></td>
+<td>Total outgoing errors/sec.  This is an aggregation of outgoing error counters.  To see explicit
+error counters use <i>--netopts e</i> </td></tr>
+</table>
+
+<p><h3>Network, <i>collectl -sn --netopts e</i></h3>
+<p>
+This alternative format, which is displayed when you specify <i>--netopts e</i> enumerates
+the individual error types.  You cannot see both output formats at the same time.
+
+<div class=terminal-wide14>
+<pre>
+# NETWORK ERRORS SUMMARY (/sec)
+#  ErrIn  DropIn  FifoIn FrameIn    ErrOut DropOut FifoOut CollOut CarrOut
+</pre></div>
+
+<table>
+<tr><td><b>ErrIn</b></td>
+<td>Receive errors/sec detected by the device driver</td></tr>
+<tr><td><b>DropIn</b></td>
+<td>Receive packets dropped/sec</td></tr>
+<tr><td><b>FifoIn</b></td>
+<td>Receive packet FIFO buffer errors/sec</td></tr>
+<tr><td><b>FrameIn</b></td>
+<td>Receive packet framing errors/sec</td></tr>
+<tr><td><b>ErrOut</b></td>
+<td>Transmit errors/sec detected by the device driver</td></tr>
+<tr><td><b>DropOut</b></td>
+<td>Transmit packets dropped/sec</td></tr>
+<tr><td><b>FifoOut</b></td>
+<td>Transmit packet FIFO buffer errors/sec</td></tr>
+<tr><td><b>CollOut</b></td>
+<td>Transmit collisions/sec detected on the interface</td></tr>
+<tr><td><b>CarrOut</b></td>
+<td>Transmit packet carrier loss errors detected/sec</td></tr>
+</table>
+
+<p><h3>NFS, <i>collectl -sf</i></h3>
+<p>
+As of version 3.2.1, by default collectl collects and reports on all versions of nfs data,
+both clients and servers.  One can limit the types of data reported with <i>--nfsfilt</i>
+and if only server or client data has been selected, only that type of data will be 
+reported as shown in the 2 forms below.  When both server and client data are being 
+reported they will be displayed side by side.  As with brief format, if filters have been
+selected they will be displayed in the header.
+
+<div class=terminal-wide14>
+<pre>
+# NFS SUMMARY (/sec)
+#<---------------------------server--------------------------->
+# Reads Writes Meta Comm  UDP   TCP  TCPConn  BadAuth  BadClnt
+</pre></div>
+
+<table>
+<tr><td><b>Reads</b></td><td>Total reads/sec</td></tr>
+<tr><td><b>Writes</b></td><td>Total writes/sec</td></tr>
+<tr><td><b>Meta</b></td><td>Total nfs meta data calls/sec, where meta data is 
+considered to be any of: lookup, access, getattr, setattr, readdir and readdirplus,
+noting that not all types of nfs version report all as V3 clients/servers do.</td></tr>
+<tr><td><b>Comm</b></td><td>Total commits/sec</td></tr>
+<tr><td><b>UDP</b></td><td>Number of UDP packets/sec</td></tr>
+<tr><td><b>TCP</b></td><td>Number of TCP packets/sec</td></tr>
+<tr><td><b>TCPConn</b></td><td>Number of TCP connections/sec</td></tr>
+<tr><td><b>BadAuth</b></td><td>Number of authentication failures/sec</td></tr>
+<tr><td><b>BadClnt</b></td><td>Number of unknown clients/sec</td></tr>
+</table>
+
+<div class=terminal-wide14>
+<pre>
+# NFS SUMMARY (/sec)
+#<----------------client---------------->
+# Reads Writes Meta Comm Retrans  Authref
+</pre></div>
+
+<table>
+<tr><td><b>Reads</b></td><td>Total reads/sec</td></tr>
+<tr><td><b>Writes</b></td><td>Total writes/sec</td></tr>
+<tr><td><b>Meta</b></td><td>Total nfs meta data calls/sec, where meta data is 
+considered to be any of: lookup, access, getattr, setattr, readdir and readdirplus,
+noting that not all types of nfs version report all as V3 clients/servers do.</td></tr>
+<tr><td><b>Comm</b></td><td>Total commits/sec</td></tr>
+<tr><td><b>Retrans</b></td><td>Number of retransmissions/sec</td></tr>
+<tr><td><b>Authref</b></td><td>Number of authrefreshes/sec</td></tr>
+</table
+
+<p><h3>NFS, <i>collectl -sf -nfsopts C</i></h3>
+<p>The data reported for clients is slightly different, specifically the 
+retrans and authref fields.
+
+<div class=terminal-wide14>
+<pre>
+# NFS CLIENT (/sec)
+#<----------RPC---------><---NFS V3--->
+#CALLS  RETRANS  AUTHREF    READ  WRITE
+</pre></div>
+
+<table>
+<tr><td><b>Calls</b></td><td>Number of RPC calls/sec</td></tr>
+<tr><td><b>Retrans</b></td><td>Retransmitted calls</td></tr>
+<tr><td><b>Authref</b></td><td>Authentication failed</td></tr>
+<tr><td><b>Read</b></td><td>Number of reads/sec</td></tr>
+<tr><td><b>Write</b></td><td>Number of writes/sec</td></tr>
+</table>
+
+<p><h3>Slabs, <i>collectl -sy</i></h3>
+<p>As of the 2.6.22 kernel, there is a new slab allocator, called SLUB, and since 
+there is not a 1:1 mapping between what it reports and the older slab allocator,
+the format of this listing will depend on which allocator is being used.  The following
+format is for the older allocator.
+
+<div class=terminal-wide14>
+<pre>
+# SLAB SUMMARY
+#<------------Objects------------><--------Slab Allocation-------><--Caches--->
+#  InUse   Bytes    Alloc   Bytes   InUse   Bytes   Total   Bytes  InUse  Total
+</pre></div>
+
+<table>
+<tr><td colspan=2>Objects</td></tr>
+<tr valign=top><td><b>InUse</b></td>
+<td>Total number of objects that are currently in use.</td></tr>
+<tr valign=top><td><b>Bytes</b></td>
+<td>Total size of all the objects in use.</td></tr>
+<tr valign=top><td><b>Alloc</b></td>
+<td>Total number of objects that have been allocated but not necessarily in use.</td></tr>
+<tr valign=top><td><b>Bytes</b></td>
+<td>Total size of all the allocated objects whether in use or not.</td></tr>
+
+<tr><td colspan=2>Slab Allocation</td></tr>
+<tr valign=top><td><b>InUse</b></td>
+<td>Number of slabs that have at least one active object in them.</td></tr>
+<tr valign=top><td><b>Bytes</b></td>
+<td>Total size of all the slabs.</td></tr>
+<tr valign=top><td><b>Total</b></td>
+<td>Total number of slabs that have been allocated whether in use or not.</td></tr>
+<tr valign=top><td><b> Bytes</b></td>
+<td>Total size of all the slabs that have been allocted whether in use or not.</td></tr>
+
+<tr><td colspan=2>Caches</td></tr>
+<tr valign=top><td><b>InUse</b></td>
+<td>Not all caches are actully in use.  This included only those with non-zero
+counts.</td></tr>
+<tr valign=top><td><b>Total</b></td>
+<td>This is the count of all caches, whether currently in use or not.</td></tr>
+</table>
+
+<p>This is format for the new <i>slub</i> allocator
+
+<div class=terminal-wide14>
+<pre>
+# SLAB SUMMARY
+#<---Objects---><-Slabs-><-----memory----->
+# In Use   Avail  Number      Used    Total
+</pre></div>
+
+One should note that this report summarizes those slabs being monitored.  In general
+this represents all slabs, but if filering is being used these numbers will only
+apply to those slabs that have matched the filter.
+<p>
+<table>
+<tr><td colspan=2>Objects</td></tr>
+<tr><td><b>InUse</b></td>
+<td>The total number of objects that have been allocated to processes.</td></tr>
+<tr valign=top><td><b>Avail</b></td>
+<td>The total number of objects that are available in the currently allocated slabs.
+This includes those that have already been allocated toprocesses.</td></tr>
+
+<tr><td colspan=2>Slabs</td></tr>
+<tr valign=top><td><b>Number</b></td>
+<td>This is the number of individual slabs that have been allocated and
+taking physical memory.</td></tr>
+
+<tr><td colspan=2>Memory</td></tr>
+<tr valign=top><td><b>Used</b></td>
+<td>Used memory corresponds to those objects that have been allocated to
+processes.</td></tr>
+
+<tr valign=top><td><b>Total</b></td>
+<td>Total physical memory allocated to processes.  When there is no filtering
+in effect, this number will be equal to the Slabs field reported by -sm.</td></tr>
+</table>
+
+<p><h3>Sockets, <i>collectl -ss</i></h3>
+
+<div class=terminal-wide14>
+<pre>
+# SOCKET STATISTICS
+#      <-------------Tcp------------->   Udp   Raw   <---Frag-->
+#Used  Inuse Orphan    Tw  Alloc   Mem  Inuse Inuse  Inuse   Mem
+</pre></div>
+
+<table>
+<tr><td valign=top><b>Used</b></td><td>Total number if socket allocated which can include additional types such as domain.</td></tr>
+<tr><td colspan=2>Tcp</td></tr>
+<tr><td><b>Inuse</td><td>Number of TCP connections in use</td></tr>
+<tr><td><b>Orphan</td><td>Number of TCP orphaned connections</td></tr>
+<tr><td><b>Tw</td><td>Number of connections in <i>TIME_WAIT</i></td></tr>
+<tr><td><b>Alloc</td><td>TCP sockets allocated</td></tr>
+<tr><td><b>Mem</td><td></td></tr>
+<tr><td colspan=2>Udp</td></tr>
+<tr><td><b>Inuse</td><td>Number of UCP connections in use</td></tr>
+<tr><td colspan=2>Raw</td></tr>
+<tr><td><b>Inuse</td><td>Number of RAW connections in use</td></tr>
+<tr><td colspan=2>Frag</td></tr>
+<tr><td><b>Inuse</td><td></td></tr>
+<tr><td><b>Mem</td><td></td></tr>
+</table>
+
+<p><h3>TCP, <i>collectl -st</i></h3>
+
+These are the counters one sees when running the command <i>netstat -s</i>, whose output is very verbose.  Since this
+format is an attemt to compress those field names to 6 characters or less, sometime something gets lost in the translation.
+
+As described in the <a href=Data-brief.html>brief</a> data formats, the actual TCP data displayed is based on the value of
+<i>--tcpfilt</i> and like brief data, everything is displayed on a single line which can be quite wide, even more reason to
+use this switch, espcially since the default format is over 200 columns wide!  The following definitions are based the 
+value of that filter:
+
+<p><b>--tcpfilt i</b>
+<div class=terminal-wide14>
+<pre>
+# TCP SUMMARY (/sec)# TCP STACK SUMMARY (/sec)
+#<----------------------------------IpPkts----------------------------------->
+# Receiv Delivr Forwrd DiscdI InvAdd   Sent DiscrO ReasRq ReasOK FragOK FragCr
+</pre></div>
+
+<table>
+<tr><td><b>Receiv</b><td></td><td>- total packets received/sec</td></tr>
+<tr><td><b>Delivr</b><td></td><td>- incoming packets delivered/sec</td></tr>
+<tr><td><b>Forwrd</b><td></td><td>- packets forwarded</td></tr>
+<tr><td><b>DiscdI</b><td></td><td>- discarded incoming packets</td></tr>
+<tr><td><b>InvAdd</b><td></td><td>- packets received with invalid addresses</td></tr>
+<tr><td><b>Sent</b><td></td><td>  - requests sent out/sec</td></tr>
+<tr><td><b>DiscrO</b><td></td><td>- discarded outbound requests</td></tr>
+<tr><td><b>ReasRq</b><td></td><td>- reassembled requests</td></tr>
+<tr><td><b>ReasOK</b><td></td><td>- reassembled OK</td></tr>
+<tr><td><b>FragOK</b><td></td><td>- fragments received OK</td></tr>
+<tr><td><b>FragCr</b><td></td><td>- fragments created</td></tr>
+</table>
+
+<p><b>--tcpfilt t</b>
+<div class=terminal-wide14>
+<pre>
+# TCP SUMMARY (/sec)# TCP STACK SUMMARY (/sec)
+#<---------------------------------Tcp--------------------------------->
+# ActOpn PasOpn Failed ResetR  Estab   SegIn SegOut SegRtn SegBad SegRes
+</pre></div>
+
+<table>
+<tr><td><b>ActOpn</b></td><td>- active connections opened/sec</td></tr>
+<tr><td><b>PasOpn</b></td><td>- passive connection opened/sec</td></tr>
+<tr><td><b>Failed</b></td><td>- failed connection attempts</td></tr>
+<tr><td><b>ResetR</b></td><td>- connection resets received</td></tr>
+<tr><td><b>Estab</b></td><td> - connections established</td></tr>
+<tr><td><b>SegIn</b></td><td> - segments received/sec</td></tr>
+<tr><td><b>SegOut</b></td><td>- segments sent out/sec</td></tr>
+<tr><td><b>SegRtn</b></td><td>- segments retransmitted</td></tr>
+<tr><td><b>SegBad</b></td><td>- bad segments received</td></tr>
+<tr><td><b>SegRes</b></td><td>- resets sent</td></tr>
+</table>
+
+<p><b>--tcpfilt u</b>
+<div class=terminal-wide14>
+<pre>
+# TCP SUMMARY (/sec)# TCP STACK SUMMARY (/sec)
+#<------------Udp----------->
+#  InDgm OutDgm NoPort Errors
+</pre></div>
+
+<table>
+<tr><td><b>InDgm</b></td><td>- packets received/sec</tr>
+<tr><td><b>OutDgm</b></td><td>- packets sent/sec</tr>
+<tr><td><b>NoPort</b></td><td>- packets received to unknown port</tr>
+<tr><td><b>Errors</b></td><td>- packet receive errors</tr>
+</table>
+
+<p><b>--tcpfilt c</b>
+<div class=terminal-wide14>
+<pre>
+# TCP SUMMARY (/sec)# TCP STACK SUMMARY (/sec)
+#<----------------------------Icmp--------------------------->
+# Recvd FailI UnreI EchoI ReplI  Trans FailO UnreO EchoO ReplO
+</pre></div>
+
+<table>
+<tr><td><b>Recvd</b></td><td>- ICMP messages received</td></tr>
+<tr><td><b>FailI</b></td><td>- incoming ICMP messages failed</td></tr>
+<tr><td><b>UnreI</b></td><td>- input destination unreachable</td></tr>
+<tr><td><b>EchoI</b></td><td>- input echo requests</td></tr>
+<tr><td><b>ReplI</b></td><td>- input echo reploes</td></tr>
+<tr><td><b>Trans</b></td><td>- ICMP messages sent</td></tr>
+<tr><td><b>FailO</b></td><td>- outbound ICMP messages failed</td></tr>
+<tr><td><b>UnreO</b></td-><td>- output destination unreachable</td></tr>
+<tr><td><b>EchoO</b></td><td> - output echo requests</td></tr>
+<tr><td><b>ReplO</b></td><td> - output echo replies</td></tr>
+</table>
+
+<p><b>--tcpfilt T</b>
+<div class=terminal-wide14>
+<pre>
+# TCP SUMMARY (/sec)# TCP STACK SUMMARY (/sec)
+#<------------------------------------------TcpExt----------------------------------------->
+# FasTim Reject DelAck QikAck PktQue PreQuB HdPdct AkNoPy PreAck DsAcks RUData REClos  SackS
+</pre></div>
+
+<table>
+<tr><td><b>FasTim</b></td><td>- TCP sockets finished time wait in fast timer</td></tr>
+<tr><td><b>Reject</b></td><td>- packet rejects in established connections because of timestamp</td></tr>
+<tr><td><b>DelAck</b></td><td>- delayed ACKs sent</td></tr>
+<tr><td><b>QikAck</b></td><td>- times quick ACK mode activated </td></tr>
+<tr><td><b>PktQue</b></td><td>- packets directly queued to recvmsg prequeue</td></tr>
+<tr><td><b>PreQuB</b></td><td>- bytes directly received in process context from prequeue</td></tr>
+<tr><td><b>HdPdct</b></td><td>- packet headers predicted</td></tr>
+<tr><td><b>AkNoPy</b></td><td>- acknowledgements for received packets not containing data </td></tr>
+<tr><td><b>PreAck</b></td><td>- predicted acknowledgements</td></tr>
+<tr><td><b>DsAcks</b></td><td>- DSACKS sent for old packets</td></tr>
+<tr><td><b>RUData</b></td><td>- connections reset to do unexpected data</td></tr>
+<tr><td><b>REClos</b></td><td>- connections reset due to early close</td></tr>
+<tr><td><b>SackS</b></td><td>- SackShiftFallback</td></tr>
+</table>
+
+<table width=100%><tr><td align=right><i>updated November 9, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>
