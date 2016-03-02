@@ -1,0 +1,224 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Exporting Custom Output</title>
+</head>
+
+<body>
+<center><h1>Exporting Custom Output</h1></center>
+<p>
+<h3>Introduction</h3>
+As with <i>--import</i>, the <i>--export</i> option allows one to build
+custom modules, but in this case for generating output.  Unlike <i>--import</i>, which
+allows multiple modules to be specified, you only <i>--export</i>
+using a single module, which in turn overrides all of collectl's output
+formatting routines.
+<p>
+These modules all end in the extension <i>.ph</i> and are searched for first 
+in the directory collectl is being executed from and then <i>/usr/share/collectl</i>.
+If the module name is prepended with a directory name, collectl will search only
+there.
+<p>
+The reason you might care about this is that now if you want to produce your 
+own exportable form of output and be able to print it locally, make it 
+available to another program over a socket or even write to a local file 
+while still being able to log to <i>raw</i> and/or <i>plot</i> formats, 
+you get that all that functionality for free.
+<p>
+<h3>How It Works</h3>
+The interface to all this is really quite simple.  At the command line the user
+types <i>collectl --export name[,options]</i> where:
+
+<ul>
+<li><b>name</b> both names a file to be <i>required</i> by collectl as well as
+the name of the entry points to both an initialization routine as well as one
+that produces the output</li>
+<li><b>options</b> specifies an optional list of arguments that are passed to both
+routines to do with whatever they wish</li>
+</ul>
+
+There are currently 6 different custom exports that are part of a standard collectl
+distribution:
+<ul>
+<li><b><a href=Gexpr.html>gexpr</a></b> allows one to send collectl data to <a href=http://ganglia.info/>ganglia</a></li>
+<li><b><a href=Graphite.html>graphite</a></b> allows one to send collectl data to <a href=http://graphite.wikidot.com/>graphite</a></li>
+<li><b>lexpr</b> generates output in an easy to parse format</li>
+<li><b>sexpr</b> generates output as an <a href=http://en.wikipedia.org/wiki/S-expression>s-expressions</a>  <i><b>note: sexp is deprecated and will be removed from the kit in 2014</i></b></li>
+<li><b><a href=Process.html>proctree</a></b> provides another way to look at process data</li>
+<li><b>vmstat</b> is the standard unix <i>vmstat</i> command most people know and love,
+so why reinvent it?  It's both a useful example of how to write an export as well as
+provides the benefit of allowing one to play back collectl data in vmstat format!</li>
+</ul>
+
+The first four are the most interesting because they have been built to take advantage
+of collectl's capability of sending their output over a socket and are therefore the ideal
+vehicle for interfacing with other tools and environments.  All four share a common set
+of options, though sexpr is fairly limited, as described in the following table:
+<p>
+<center>
+<table border=1 width=85%>
+<tr><td align=center colspan=2><b>NOTE: sexpr is deprecated and will be remove from kit in 2014</b></td></tr>
+<tr><td width=10%><b>align</b></td><td>Used in conjunction with <i>i=</i> and when specified data samples will
+                be aligned to whole minute boundaries.  In other words if used with <i>i=15</i>, data will be reported
+                at the top of the minute, 15 seconds past, etc.  The first sample may therefore be partial.</td>
+<tr><td width=10%><b>avg|max|min|tot</b></td><td>used in conjunction with <i>i=</i>, send the average, maximum,
+                minimum or total of the data over the associated set of intervals specified by <i>i=</i>. If 
+                none of these are specified, the values from the most recent monitoring interval will
+                be reported.</td></tr>
+<tr><td width=10%><b>co</b></td><td>this does not take a value and indicates <i>changes only</i> such
+                that only data elements that have changed since they were last sampled are reported in
+                an attempt to minimize processing and network bandwidth.  If not specified, samples for
+                all reporting intervals will be sent.</td></tr>
+<tr><td><b>d=mask</b></td><td>debugging mask, see beginning of the actual export file for details</td></tr>
+<tr><td><b>f=file</b></td><td>names the output snapshot file, which applies to only lexpr and sexpr.
+                If this option is not used, -f must be and the snapshot file names are then set to the
+                single character <i>L</i> and <i>S</i> respectively and written into the directory 
+                associated with -f
+		<center><i><b>caution</b></i></center>
+		If you are writing your own export module that doesn't use a snapshot file, you must explicity
+		include error checking to assure it is not run without at least <i>-P</i> or <i>--rawtoo</i> in
+                combination with <i>-f</i></td></tr>
+<tr><td><b>h</b></td><td>shows help/usage</td></tr>
+<tr><td><b>i=secs</b></td><td>specifies the reporting interval in seconds.  In other words, if you specify
+                i=60, a sample will be reported every 60 seconds independent of collectl's monitoring
+                interval.  The default is to report every sample.  This interval must be a multiple of 
+                the base collectl interval.  <i>note that while collectl always rounds rates to the next whole
+                value, when multiple intervals are added together only the totals are rounded.</i></td></tr>
+<tr><td><b>s</b></td><td>specifies a subset of those subsystems specified with -s in the collectl command line
+                and only data collected for that subset will be reported.  The default to report everything.
+                In the case where you only want report data collected via <i>--import</i>, use s= with
+                no args.</td></tr>
+<tr><td><b>ttl</b></td><td> is the <i>time to live</i> in intervals for each piece of performance data.  If
+                more than this number of intervals passes data will be sent regardless of whether it changed
+                or not and the ttl countdown timer reset.  The default is 5.  This actually has a second use
+                for gexpr and that is to set the gmond ttl to double this number multiplied by the interval.</td></tr>
+</table>
+</center>
+<p>
+<b>Logging</b>
+<br>
+Collectl can actually create up to 3 different type of log files and it's worth spending a little more
+time enumerating how collectl decides where and when to create them.
+<ul>
+<li>In its simplest form, when one runs collectl with --export and no options, all output is sent to the 
+terminal, noting <i>gexpr</i> and <i>graphite</i> always require an address.</li>
+<li>If collectl is run with -f, and one is exporting <i>lexpr</i> or <i>sexpr</i> a snapshot
+file is created in the directory associated with -f.</li>
+<li>If a socket is to be used by specifying <i>collectl -A</i> and the export supports 
+socket I/O:</li>
+  <ul>
+    <li>all output goes out over the socket and no snapshot file is involved</li>
+    <li>if one specifies -f, a raw file is created in the directory specified by -f.
+        If <i>-P</i> is also used, a plot file is created instead and if <i>-P</i> and <i>--rawtoo</i> are used,
+        both types of files are created.  <i>caution:</i> this is different behavior than one sees when running
+        without sockets in which case a snapshot file is written to the directory named by <i>-f</i>
+    <li>Since <i>gexpr</i> and <i>graphite</i> do not use <i>-A</i> for specifying socket I/O and do their own
+        communications, collectl's rules for non-socket logging apply, in which case <i>-f</i> by itself implies 
+        a snapshot file is involved and so requires <i>-P</i> or <i>--rawtoo</i> or <i>both</i> to do any logging.</li>
+  </ul>
+<li>To create the snapshot file in a directory other then the one specified with -f, use the
+<i>f=</i> option with <i>--export</i></li>
+<li>If one tries an invalid combination of switches or something not supported, it is up to 
+the export itself to determine that since by design collectl has no knowledge of those 
+module's inner workings.</li>
+</ul>
+
+<h3>Example</h3>
+Perhaps the best way to see how all this works is with a simple example and
+it turns out that <i>vmstat.ph</i> is small enough to meet that need.  You
+may also wish to refer to the others as well to see how some of the  more exotic
+capabilities are implemented.
+<p>
+This first section gets called almost immediately by collectl after reading
+in the various user switches.  This is the place to catch switch errors
+and since this routine always requires <i>-scm</i> we'll just hardcode it 
+to that and reject any user entered ones.  This initialization subroutine
+<i>must</i> be named for our module followed by <i>Init</i>.
+<div class=terminal-wide14>
+<pre>
+sub vmstatInit
+{
+  error("-s not allowed with 'vmstat'")          if $userSubsys ne '';
+  error("-f requires either --rawtoo or -P")     if $filename ne '' && !$rawtooFlag && !$plotFlag;
+  error("-P or --rawtoo require -f")             if $filename eq '' && ($rawtooFlag || $plotFlag);
+  $subsys=$userSubsys='cm';
+}
+</pre></div>
+
+Next we define the output routine, with the same base name as that
+of our included file.
+<p>
+The <i>if statement</i> uses collectl's standard idiom for printing headers
+based on the number of lines printed and whether or not the user wants only a
+single header, no header or even to clear the screen between headers.  If you
+do not want/need all these features it's perfectly fine to use a more simplified
+header printing mechanism, such as the one is <i>sexpr.ph</i>.
+
+<div class=terminal-wide14>
+<pre>
+sub vmstat
+{
+  my $line;
+  if (printHeader())
+  {
+    $line= "${cls}#${miniBlanks}procs ---------------memory (KB)--------------- --swaps-- -----io---- --system-- ----cpu-----\n";
+    $line.="#$miniDateTime r  b   swpd   free   buff  cache  inact active   si   so    bi    bo   in    cs us sy  id wa\n";
+  }
+</pre></div>
+
+Next comes the handling of optional date/time prefixes that I stole from
+printTerm() in formatit.ph and which can be controlled
+by various switch options.  Again, if you have no intent of supporting these
+you can even put in error handling in your <i>initialization routine</i>
+or simply ignore the switches.
+
+<div class=terminal>
+<pre>
+  my $datetime='';
+  if ($options=~/[dDTm]/)
+  {
+    ($ss, $mm, $hh, $mday, $mon, $year)=localtime($lastSecs);
+    $datetime=sprintf("%02d:%02d:%02d", $hh, $mm, $ss);
+    $datetime=sprintf("%02d/%02d %s", $mon+1, $mday, $datetime)                  if $options=~/d/;
+    $datetime=sprintf("%04d%02d%02d %s", $year+1900, $mon+1, $mday, $datetime)   if $options=~/D/;
+    $datetime.=".$usecs"                                                         if ($options=~/m/);
+    $datetime.=" ";
+  }
+</pre></div>
+
+Here we build the actual output, noting that we're not really printing
+anything yet, but rather building up a string (which may contain the header) 
+that we will print in one shot.
+<div class=terminal-wide14>
+<pre>
+  my $i=$NumCpus;
+  my $usr=$userP[$i]+$niceP[$i];
+  my $sys=$sysP[$i]+$irqP[$i]+$softP[$i]+$stealP[$i];
+  $line.=sprintf("%s %2d %2d %6s %6s %6s %6s %6s %6s %4d %4d %5d %5d %4d %5d %2d %2d %3d %2d\n",
+                $datetime, $procsRun, $procsBlock,
+                cvt($swapUsed,6,1,1),  cvt($memFree,6,1,1),  cvt($memBuf,6,1,1),
+                cvt($memCached,6,1,1), cvt($inactive,6,1,1), cvt($active,6,1,1),
+                $swapin/$intSecs, $swapout/$intSecs, $pagein/$intSecs, $pageout/$intSecs,
+                $intrpt/$intSecs, $ctxt/$intSecs,
+                $usr, $sys, $idleP[$i], $waitP[$i]);
+</pre></div>
+
+Finally comes the output.  There is actually a lot of latitude here and in this case
+we're calling <i>printText()</i> which will send the output to the terminal or over a
+socket.  It will not write to a local file as do <i>sexpr or lexpr</i>, but if you
+want to see how to do that, refer to them.  As with all perl require files, they must
+return <i>true</i> and therefore the final line is the digit 1.
+<div class=terminal-wide14>
+<pre>
+  printText($line);
+}
+1;
+</pre></div>
+
+Try running it and you'll see all the pagination and time formats work just as they
+do with standard output formats.
+
+<table width=100%><tr><td align=right><i>updated November 9, 2012</i></td></tr></colgroup></table>
+
+</body>
+</html>

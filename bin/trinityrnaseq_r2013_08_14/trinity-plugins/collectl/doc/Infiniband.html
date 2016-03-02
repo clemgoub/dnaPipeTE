@@ -1,0 +1,99 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Infiniband</title>
+</head>
+
+<body>
+<center><h1>Infiniband</h1></center>
+<p>
+<h3>Monitoring</h3>
+The most important thing you should know about Infiniband monitoring is that it
+is <i>destructive</i>.  What is meant by this is that every time 
+collectl reads the counters from the HCA it immediately resets them to zero, thereby 
+<i>destroying</i> their previous contents.  You should also note this does 
+<i>not</i> apply error counters, which are never reset.
+<p>
+The obvious question is <i>why?</i> and perhaps the less than obvious answer is
+because when the hardware specifications were written for the Infiniband HCAs it
+was decided that performance counters would not wrap, probably because nobody
+thought someone might want to do continuous sampling.  In any event, at even modest
+traffic rates HCAs with 32-bit counters quickly reach their maximum values and
+stop incrementing, rendering them useless for performance monitors like collectl.
+Collectl's solution to this problem is to read the
+counters and immediately reset them to 0.  As long as the next sampling period occurs
+before the counters <i>fill up</i>, this methodology comes reasonably close to 
+reflecting the traffic rates (some counts are lost between the read and reset).
+<p>
+However, this methodology has a downside in that while collectl is monitoring
+the Infiniband stats, nobody else can (including other copies of collectl).
+Unfortunately there is no solution to this problem short of redesigning the HCA
+and that's simply not going to happen.  A second alternative would be to come
+up with a mechanism in which the read/rest of the counters are moved into an OFED
+module which exports these to /proc or /sys as rolling counters.  This was in 
+fact done in a pre-ofed version of Voltaire's IB stack which is currently supported
+by collectl.  If someone would like to hear more details on how this was done, feel
+free to contact me or to post something in a collectl
+<a href=http://sourceforge.net/forum/?group_id=196536>forum</a> or to the 
+<a href=http://sourceforge.net/mail/?group_id=196536>mailing list</a>.
+<p>
+If you want to run collectl but also prevent it from doing destructive monitoring,
+simple comment out the line in <i>/etc/collectl.conf</i> that begins with
+<i>PQuery =</i> and you will be informed by collectl that Infiniband monitoring
+has been disabled whenever someone try to monitor it.
+<p>
+<h3>Monitoring Mechanics</h3>
+The main purpose of this section is to help you understand how monitoring works so when
+it doesn't you might be able to figure out what went wrong.  There are 2 different ways
+collectl can monitor Infiniband, one for the OFED stack, which is the Infiniband Stack 
+of choice these days and the other for pre-OFED.
+<p>
+<b>OFED</b>
+<p>
+The OFED stack can be identified by the presence of the <i>/sys/class/infiniband</i>
+directory.  If there, collectl looks inside to find which HCAs are present and which
+ports are active.  This information is then used to query the HCA via the <i>perfquery</i>
+utility.
+<p>
+Unfortunately, with each release of OFED that utility seems to move to another location
+and collectl tries to react by using a search path in /etc/collectl.conf.  As of the 2.5.1
+release of collectl, if it still can't find the utility it will try to find its location
+with rpm and then add its path to collectl.conf.  If a future OFED release eliminates or
+replaces perfquery collectl will break.
+<p>
+<b>Pre-OFED</b>
+<p>
+If it is determined the OFED stack is not running, collectl will try to use the
+<i>get_pcounter</i> utility to query the HCA, which is in fact what 
+<i>perfquery</i> is based on.  Since this utility has also moved around during
+various releases, it too has a search list in collectl.conf, but unlike perfquery
+if it can't be found no additional heroics will be attempted to find it.  If you
+don't have this utility on your system (and even if you do) you should probably 
+consider moving to OFED.
+<p>
+<b>Debugging</b>
+<p>
+Collectl has a variety of debugging capabilities built into it, the main one being
+the debug switch -d.  To use this switch you specify a bit mask which is then applied
+against a variety settings which tells collectl what to display.  For
+debugging interconnect problems simply use -d2.  All possible bit settings
+and their meanings are listed in the beginning of collectl itself.
+<p>
+If collectl runs without errors but you're not seeing IB traffic being reported
+when you think you should, you can always use -d4 or even -d6, which show
+the values of the counters returned by both perfquery and get_pcounter.  If they
+don't change something outside of collectl must be wrong.
+<p>
+One example of a non-collectl problem was a system had IB configured and started
+which could be verified by seein an <i>ib0</i> interface show up with <i>ifconfig</i>.
+However, when
+running <i>collectl -sN</i>, which will show the traffic over all the network
+interfaces, there was never any traffic on the <i>ib</i> interface however there
+was unexpected traffic on one of the <i>eth</i> interfaces.  Clearly something 
+was wrong and looking at the routing showed the routes were set such that all 
+traffic to the infiniband address was being routed over the <i>eth</i> interface.
+
+<table width=100%><tr><td align=right><i>updated Nov 22, 2008</i></td></tr></colgroup></table>
+
+</body>
+</html>

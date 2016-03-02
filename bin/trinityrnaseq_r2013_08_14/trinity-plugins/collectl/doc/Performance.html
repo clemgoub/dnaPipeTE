@@ -1,0 +1,131 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Performance</title>
+</head>
+
+<body>
+<center><h1>Performance</h1></center>
+<p>
+<h3>Introduction</h3>
+When thinking about the performance of collectl keep in mind that efficiency is one 
+of the main design principles and it should therefore be possible to run collectl 
+as a daemon on most systems with little concern for the overhead it generates.  
+However, given that the another design principal it to be able to collect a very broad
+and deep set of data, it is worth understanding a little more about just what goes on
+in collectl.
+<p>
+During the earlier days of collectl development a third design consideration was
+minimizing the amount of storage used for <i>raw</i> files.  At the time
+disks were smaller and the amount of data collected was small enough that being more
+judicious about what was saved felt like it made a difference.  However, since the 
+inclusion of process, slab and now interrupt data along with larger disks the amount
+of storage used has become less of a consideration.  In other words don't spend extra
+data collection cycles trying to be more selective about what is recorded if it's
+going to add to the overhead.
+<p>
+<h3>Measuring the Overhead</h3>
+If you take a closer look at the <a href=Architecture.html>architecture</a> you can
+see that the path of minimal overhead is when collectl reads from /proc and write
+it to a file.  This is not an accident!  In fact, on many system this has been 
+observed to take less than 0.1% of the CPU and this is when collecting almost 
+all the data collectl is capable of.
+However, this also raises several important questions for consideration:
+<ul>
+<li>What is the overhead on a specific system?</li>
+<li>Is there a way to reduce the overhead further?</li>
+<li>Is collection overhead for all data types the same and if not, what is it?</li>
+</ul>
+In fact, these are the very questions I asked during the initial development as well as
+every time I add support for new data types.  In order to be able to answer these questions
+quantitatively, collectl should be run with a collection interval of 0 and told to collect
+8640 samples, the number of 10-second samples in a day.  By timing the execution you can 
+then get a reasonable estimate of the daily overhead.  Consider the following:
+
+<pre>
+# time collectl -scdnm -i0 -c8640 -f /tmp
+real    0m9.711s
+user    0m7.480s
+sys     0m2.140s
+</pre>
+
+and you can see that collectl uses about 10 seconds out of 86400 or about 0.01% of the cpu
+to collect cpu, disk, network and memory data.  If we repeat the test again for just cpu
+the time drops to under 4 seconds, so you can see if performance is really critical, you
+can improve things by recording less data or maybe just do it less frequently.  The point
+is these are tradeoffs only you can make if you feel collectl is using too much resource.
+<p>
+So what happens if you take a different processing path and save collectl data in plot
+format?  This means adding the additional overhead of parsing the /proc data and performing
+some basic math of the values.  If we use the same command as above and include -P:
+
+<pre>
+# time collectl -scdnm -i0 -c8640 -f /tmp
+real    0m20.607s
+user    0m17.970s
+sys     0m2.580s
+</pre>
+
+we can see that this takes a little over twice as much overhead even though it is 
+still pretty low.
+<p>
+One other example worth mentioning and is process monitoring overhead,
+which is the highest overhead operation collectl can do and one of the reasons
+it has its own monitoring interval.  The overheard for collection of this type of data can
+vary quite broadly depending on how may processes are running at the time and on a 
+system with only 138 processes look at this:
+
+<pre>
+# time ./collectl.pl -sZ -i0 -c8640 -f /tmp
+real    1m8.453s
+user    0m54.650s
+sys     0m13.430s
+</pre>
+
+noting collectl is also smart enough to only look at 1/6 as many samples of process data
+since that is the default relationship of process monitoring to other subsystem data.
+This also leads to the mention of a way to further optimize process monitoring.  
+If you are monitoring a specify
+set of processes, say <i>http</i> daemons, collectl no longer has to look at as much data 
+in /proc and so we now see:
+
+<pre>
+# time ./collectl.pl -sZ -Zchttp -i0 -c8640 -f /tmp
+real    0m5.721s
+user    0m4.480s
+sys     0m1.180s
+</pre>
+
+In fact, if we know there are never going to be any new http process appearing
+(collectl looks for new processes that match selection strings by default):
+
+<pre>
+# time ./collectl.pl -sZ -Zchttp -i0 -c8640 --procopts p  -f /tmp
+real    0m5.080s
+user    0m3.930s
+sys     0m1.130s
+</pre>
+
+And things get even better as you could even image monitoring these processes
+at the same interval as everything else with almost no additional overhead!
+<p>
+<b>Another wrinkle - process I/O statistics</b>
+<p>
+Since the inclusion of process I/O stats, collectl now has to read an addition set
+of data for each process, specifically <i>/proc/pid/io</i>, which adds over 25% to
+the total process data collection load.  For most users, collectl's overhead is reasonable low
+enough for this extra overhead to not be a problem.  Remember - we're talking about
+an increase of 25% to a relatively small number.  But for those concerned with this
+extra overhead, a new --procopt value of <i>I</i> has been added to V3.6.1 which
+suppresses the reading of process I/O stats.
+<p>
+<h3>Remember - your milage can and will vary!</h3>
+The number of different combinations of switches one can measure far exceeds the scope
+of this discussion - for example we haven't even talked about the pros/cons of
+compression.  But in conclusion, the main thing to remember is collectl's overhead is 
+already pretty low but if you're really concerned, measure it yourself and adjust accordingly.
+
+<table width=100%><tr><td align=right><i>updated Jan 15, 2012</i></td></tr></colgroup></table>
+
+</body>
+</html>

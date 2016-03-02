@@ -1,0 +1,194 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Exporting Data In Ganglia Format</title>
+</head>
+
+<body>
+<center><h1>Exporting Data In Ganglia Format</h1></center>
+<p>
+<h3>Introduction</h3>
+<p>
+With the release of Collectl Version 3.3.1, one can now send collectl data directly to
+a <a href=http://ganglia.info/>ganglia</a> gmond in binary format using the custom export <i>gexpr.ph</i>.  This results
+in several benefits for existing users of ganglia:
+<p>
+<ul>
+<li>You can now get the benefit of collecting all the data collectl can generate
+at a very low overheard.</li>
+<li>Since all collectl instances send this data at the same time, system noise on
+clusters running fine-grained parallel jobs is reduced.</li>
+<li>You can still log all the data collectl collects locally and only send a subset
+to gmond, making it possible to collect far more data than ganglia can handle without
+overwhelming the gmetad. This is especially important on large clusters.  In fact, if
+you choose you can have collectl only send ganglia the core data it currently provide
+graphs for.</li>
+<li>And finally, you can monitor as frequently as you like and send data to ganglia at a
+coarser frequency.</li>
+</ul>
+
+<p>
+As of V3.5 of collectl, the <i>experimental</i> status of this capability has been lifted
+since enough people are currently using it to verify it works as described.
+
+<h3>Ganglia Configuration</h3>
+The following figure shows one possible configuration of a large cluster running ganglia and
+is only intended to be illustrative.  For complete documentation on how to set up and configure
+ganglia see the <a href=http://ganglia.wiki.sourceforge.net/>official wiki</a>.
+<p>
+This configuration assumes one has set up ganglia <i>gmond</i>s in a hierarchy, such that those at
+the bottom of the tree collect system statistics and send them up to a higher level
+aggregation gmond and ultimately percolate up to the <i>gmetad</i> which writes the data to
+a <a href=http://oss.oetiker.ch/rrdtool/>round-robin database</a>.
+
+<center>
+<img src=Ganglia.jpg>
+</center>
+<p>
+To use collectl as a data source there are 2 alternatives.  In the diagram below at the left
+you simply have collectl send data to a local gmond to supplement whatever data it is
+already collecting, noting there won't be any way to record any of gmond's data
+locally.  The diagram at the right would replace all gmonds and have collectl do all the data
+collection, optionall logging data locally, and sending data to an aggregation level gmond.
+Whatever method you chose you must ensure the gmond(s) are listening on their udp receive
+channel and enable the ganglia communications feature in collectl as described
+in the following sections.  There are probably other hybrid
+configurations which are beyond the scope of this document as well as this author.
+<p>
+<center><table>
+<tr><td><img src=Ganglia2.jpg></td><td><img src=Ganglia3.jpg></td></tr>
+</table></center>
+<p>
+One last component is configuring the rrd to use the metrics being supplied by collectl and
+the details of that discussion are beyond the scope of this document as well.
+<h3>Usage</h3>
+Like any other <a href=Export.html>custom export</a> used by collectl, you tell collectl to
+use gexpr with <i>--export gexpr</i> and in addition include the gmond <i>hostname:port</i>
+followed by one or more of the standard <a href=Export.html> switches</a>.
+There are also 2 more switched unique to gexpr and they are:
+<ul>
+<li><b>g</b> - only send <i>core</i> variables to gmond, using the standard names gmond
+has predefined graphs for (<i>see the second verification example below</i>).</li>
+<li><b>G</b> - send <i>core</i> variables to gmond, using the standard names gmond
+has predefined graphs for, <i>but</i> also include any additional variables collected
+by collectl and possibly filtered by gexpr's <i>s</i> switch</li>
+</ul>
+
+<p>
+The following example shows collectl gathering data on many system components but only sending
+cpu, disk, memory and network data to a gmond on system <i>gmond</i> using port <i>8108</i>.
+It also sends a set of data every 20 seconds while writing the data to a file in plot
+format to a local file in /tmp every 5 seconds.
+<p>
+This module also supports sending its output to a multicast address, which is used if 
+<i>hostname</i> in an address in the range of 225.0.0.0 through 239.255.255.255.  To use this 
+feature you will have to first install 
+<a href=http://search.cpan.org/~lds/IO-Socket-Multicast-1.05/Multicast.pm>
+IO::Socket::Multicast</a> which in turn requires the module 
+<a href=http://search.cpan.org/~lds/IO-Interface-1.05/Interface.pm>IO::Socket::Interface</a>
+be installed as well.  Note that both these modules may be updated and so you should verify
+you're actually installing the latest one.
+
+<div class=terminal>
+<pre>
+collectl -scdfijmntx --export gexpr,gmond:8108,s=cdmn,i=20 -i5 -f /tmp -P
+</pre></div>
+
+<h3>Verification</h3>
+There are 2 ways to make sure everything is working as expected, the first is to make sure you're
+using the ganglia export module correctly and to do this you can use the <i>debugging</i> parameter.
+Like collectl itself, which has its own debugging variable (see <i>d</i>), the value of this
+debugging variable should be interpreted as setting a bit mask, where each bit results in
+different behavior.  Refer to the header of <i>gexpr</i> for the complete set, noting
+the following example uses only 1 bit, namely the one for printing the data being set over the socket.
+If for some reason you want to simultaneously disable actually sending the data over the socket
+to ganglia use the debugging value of 8 or a combined value of 8.  Note that in this latter case
+you are still required to supply a socket:port because they will be opened  but also realize 
+you can use just about anything you want since no data is actually sent over it.
+
+<div class=terminal>
+<pre>
+ collectl -scd --export gexpr,192.168.253.168:2222,d=1
+
+ 07:32:11.004 Name: cputotals.user       Units: percent               Val: 0
+ 07:32:11.004 Name: cputotals.nice       Units: percent               Val: 0
+ 07:32:11.004 Name: cputotals.sys        Units: percent               Val: 0
+ 07:32:11.004 Name: cputotals.wait       Units: percent               Val: 0
+ 07:32:11.004 Name: cputotals.irq        Units: percent               Val: 0
+ 07:32:11.004 Name: cputotals.soft       Units: percent               Val: 0
+ 07:32:11.004 Name: cputotals.steal      Units: percent               Val: 0
+ 07:32:11.004 Name: cputotals.idle       Units: percent               Val: 99
+ 07:32:11.004 Name: ctxint.ctx           Units: switches/sec          Val: 173
+ 07:32:11.004 Name: ctxint.int           Units: intrpts/sec           Val: 1031
+ 07:32:11.004 Name: ctxint.proc          Units: pcreates/sec          Val: 4
+ 07:32:11.004 Name: ctxint.runq          Units: runqSize              Val: 238
+ 07:32:11.005 Name: disktotals.reads     Units: reads/sec             Val: 0
+ 07:32:11.005 Name: disktotals.readkbs   Units: readkbs/sec           Val: 0
+ 07:32:11.005 Name: disktotals.writes    Units: writes/sec            Val: 0
+ 07:32:11.005 Name: disktotals.writekbs  Units: writekbs/sec          Val: 0
+</pre></div>
+
+This second example shows the use of the <i>g</i> option which only sends the
+core ganglia data using <i>ganglia</i> variable naming.  Also notice a nifty
+trick that since we're telling gexpr not to send the data over a socket, we
+can use a dummy network address/port and same ourselves some typing.  Also
+note that since we didn't select memory or network stats, they aren't sent
+to ganglia either.
+
+<div class=terminal>
+<pre>
+ collectl -scd --export gexpr,1.2.3.4:5,d=9,g
+
+ 05:43:19.003 Name: cpu_user             Units: percent      Val:        0 TTL: 5 sent
+ 05:43:19.004 Name: cpu_nice             Units: percent      Val:        0 TTL: 5 sent
+ 05:43:19.004 Name: cpu_system           Units: percent      Val:        1 TTL: 5 sent
+ 05:43:19.004 Name: cpu_wio              Units: percent      Val:        0 TTL: 5 sent
+ 05:43:19.004 Name: cpu_idle             Units: percent      Val:       99 TTL: 5 sent
+ 05:43:19.004 Name: cpu_aidle            Units: percent      Val:       99 TTL: 5 sent
+ 05:43:19.005 Name: cpu_num              Units: CPUs         Val:        1 TTL: 5 sent
+ 05:43:19.005 Name: proc_total           Units: Load/Procs   Val:      141 TTL: 5 sent
+ 05:43:19.005 Name: proc_run             Units: Load/Procs   Val:        0 TTL: 5 sent
+ 05:43:19.005 Name: load_one             Units: Load/Procs   Val:        0 TTL: 5 sent
+ 05:43:19.005 Name: load_five            Units: Load/Procs   Val:        0 TTL: 5 sent
+ 05:43:19.006 Name: load_fifteen         Units: Load/Procs   Val:        0 TTL: 5 sent
+
+</pre></div>
+
+Assuming you're now successfully calling gexpr and can see the output above, it's time to
+make sure it is going to the expected gmond.  The easiest way to do this is to simply run
+the gmond with debugging enabled at a level of at least 2 
+and make sure it can see the data from collectl, being sure you haven't set a debug level 
+of 8 in gexpr.  If it can see data in gmond (note that only the variable names and not their
+values are reported by gmond), you're done.  If not, you need to make sure gmond is 
+correctly listening for udp data and that the port it expects to see data on is in fact the
+one gexpr is sending to.  If all looks correct, it may be necessary to watch the network
+traffic with a tool like udpdump or <a href=http://www.wireshark.org/>wireshark</a>.
+<p>
+This is an example of what you should expect to see, noting that in this case gmond
+<i>is</i> still configured to collect its standard metrics, which can be disabled
+in gmond.conf since you no longer need these.
+<div class=terminal-wide14>
+<pre>
+ gmond -d 2
+ loaded module: core_metrics
+ loaded module: cpu_module
+ loaded module: disk_module
+ loaded module: load_module
+ loaded module: mem_module
+ loaded module: net_module
+ loaded module: proc_module
+ loaded module: sys_module
+ udp_recv_channel mcast_join=NULL mcast_if=NULL port=8108 bind=NULL
+ tcp_accept_channel bind=NULL port=8109
+ Processing a metric metadata message from cag-dl585-02.cag
+ ***Allocating metadata packet for host--cag-dl585-02.cag-- and metric --cputotals.user-- ****
+ saving metadata for metric: cputotals.user host: cag-dl585-02.cag
+ Processing a metric value message from cag-dl585-02.cag
+ ***Allocating value packet for host--cag-dl585-02.cag-- and metric --cputotals.user-- ****
+ saving metadata for metric: cputotals.nice host: cag-dl585-02.cag
+</pre></div>
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

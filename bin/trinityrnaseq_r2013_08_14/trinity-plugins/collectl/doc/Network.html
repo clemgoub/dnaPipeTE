@@ -1,0 +1,57 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Network Info</title>
+</head>
+
+<body>
+<center><h1>Network Monitoring</h1></center>
+<p>
+<h3>Introduction</h3>
+
+As with other subsystems which contain instance data, you can monitor both <a href=WhySummary.html>summary</a>
+(in brief and verbose modes) and detail data.  Like disk data, the key brief mode values are bytes and packets
+(rather than iops).  The actual data comes from /proc/net/dev.
+<p>
+The one key thing to keep in mind with network data is that not all networks are the same.  Just like there are
+device mapper disks that shouldn't be included in the summary data the same is true for network devices.  Those that
+are not included in the summary are the <i>loopback, sit, bond</i> and <i>vmnet</i> devices, 
+<p>
+Since most lan networks run fairly cleanly and errors are rare, one is usually not interested in seeing long columns
+of zeros that never change and so by default brief mode does not include any error information.  Adding 
+<i>--netopts e</i> will add an additional column with a total error count.  To see specific errors one would have to
+run in summary more and do identify the specific networks on which those errors were occurring you would have to
+run in detail mode.
+<p>
+<b>What about IB over IP?</b>
+<br>
+Good question.  When using Infiniband networking you typically get an IB network device created.  So does this mean
+IB traffice gets counted twice when you monitor both it and network data?  As they say, it depends.  
+Some Infiniband data will indeed go over the native IB interface and never show up as network data.  This includes 
+MPI traffic or lustre which uses the native IB transport.  However, other uses of Infiniband may in fact be counted
+as network traffic.  BUT this is actually a good thing because if you're a heavy user of IB/IP and want to be able
+to differentiate the native IB traffic from it, simply look at the network detail data and subtract any IB network
+numbers from the native values.
+<p>
+<b>Tips and Tricks</b>
+<br>
+Ever try looking for a needle in a haystack, in this case maybe it's network errors? <i>--network E</i> works just
+like its lowercase cousin except it tells collectl to only report intervals that have network errors in them.  While
+this can be extremely boring in real-time mode, consider what happens during playback.  During the course of a day
+you'll have 8640 samples but this switch will allow you to see the one that recorded the network error!
+
+<p><b>Filtering</b>
+<br>If you'd like to limit the networks included in either the detail output or the summary
+totals, you can explicitly include or exclude them using <i>--netfilt</i>.  The target of
+this switch is actually one or more perl expressions, but if you don't know perl all you
+really need to know is these are strings that are compared to each network name.  If the first
+(or only) name is preceded with a ^, names that match the string(s) will be excluded.
+<p>
+This switch works <i>exactly</i> the same way as <i>--dskfilt</i> so for use case examples
+see <a href=Disks.html>Disk Monitoring</a>.
+
+
+<table width=100%><tr><td align=right><i>updated Sept 15, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

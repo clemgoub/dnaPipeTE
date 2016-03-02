@@ -1,0 +1,303 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Collectl Examples</title>
+</head>
+
+<body>
+<center><h1>Examples</h1></center>
+<p>
+There are far too many combinations of switches and output formats so only a few of the 
+more basic ones will be shown below.  These examples show both the command and in most
+cases the resultant output.  For more examples see both the
+<a href=http://collectl.sourceforge.net/FAQ-collectl.html>FAQ</a> and collectl man page
+after you install it.
+
+<p>
+<h2>Interactive Commands</h2>
+The following examples show the results of running collectl interactively and seeing
+system performance numbers in real-time.
+<p>
+<h3>Default</h3>
+Notice that in this mode you see one line per sampling interval.  You are only limited 
+by the width of your terminal window.
+
+<div class=terminal>
+<pre>
+[root@poker]# collectl
+#<-------CPU--------><-----------Disks-----------><-----------Network---------->
+#cpu sys inter ctxsw KBRead  Reads  KBWrit Writes netKBi pkt-in  netKBo pkt-out
+   0   0   134    30      0      0       0      0      0      1       0       1
+   0   0   136    39      0      0     200      3      2     20       0       4
+   0   0   130    30      0      0       0      0      0      1       0       0
+   2   2   134    24      0      0       0      0      2     18       0       2
+</pre>
+</div>
+
+<h3>Default, but in verbose mode</h3>
+In this mode you give up one line per interval and are rewarded with more details than
+could fit on a single line.  This format always includes the date and time.
+
+<div class=terminal>
+<pre>
+[root@poker]# collectl --verbose
+### RECORD    1 >>> cag-dl380-01 <<< (1179493640.005) (Fri May 18 09:07:20 2007) ###
+
+# CPU SUMMARY (INTR, CTXSW & PROC /sec)
+# USER  NICE   SYS  WAIT   IRQ  SOFT STEAL  IDLE  INTR  CTXSW  PROC  RUNQ   RUN   AVG1  AVG5 AVG15
+     1     0     0     0     0     0     0    98   354    501     1   100     1   0.41  0.12  0.04
+
+# DISK SUMMARY (/sec)
+#KBRead RMerged  Reads SizeKB  KBWrite WMerged Writes SizeKB
+      0       0      0      0        0       0      0      0
+
+# NETWORK SUMMARY (/sec)
+# KBIn  PktIn SizeIn  MultI   CmpI  ErrIn  KBOut PktOut  SizeO   CmpO ErrOut
+    17    121    149      0      0      0     15     88    175      0      0
+</pre>
+</div>
+
+<h3>Detail Data</h3>
+If you would rather see details on specific instances, use the uppercase subsystem
+names with -s, so rather than the default of <i>-scdn</i> use <i>-sCDN</i>, 
+which also forces
+--verbose, noting that you can also mix lower and uppercase subsystem types.
+
+<div class=terminal-wide15>
+<pre>
+[root@poker]# collectl -sCDN
+### RECORD    1 >>> cag-dl380-01 <<< (1179493735.005) (Fri May 18 09:08:55 2007) ###
+
+# SINGLE CPU STATISTICS
+#   CPU  USER NICE  SYS WAIT IRQ  SOFT STEAL IDLE
+      0     0    0    0    0    0    0     0  100
+      1     0    0    0    0    0    0     0   99
+
+# DISK STATISTICS (/sec)
+#          <---------reads---------><---------writes---------><--------averages--------> Pct
+#Name       KBytes Merged  IOs Size  KBytes Merged  IOs Size  RWSize  QLen  Wait SvcTim Util
+cciss/c0d0       0      0    0    0       0      0    0    0       0     0     0      0    0
+cciss/c0d1       0      0    0    0       0      0    0    0       0     0     0      0    0
+cciss/c0d2       0      0    0    0       0      0    0    0       0     0     0      0    0
+
+# NETWORK STATISTICS (/sec)
+#Num    Name   KBIn  PktIn SizeIn  MultI   CmpI  ErrIn  KBOut PktOut  SizeO   CmpO ErrOut
+   0     lo:      0      0      0      0      0      0      0      0      0      0      0
+   1   eth0:      0      2    207      0      0      0      0      0      0      0      0
+   2   eth1:      0      2    207      0      0      0      0      0      0      0      0
+   3   eth2:      1     20     72      0      0      0      0      4    122      0      0
+   4   eth3:      0      0      0      0      0      0      0      0      0      0      0
+</pre>
+</div>
+
+<h3>Mixed Summary and Detail Data</h3>
+For brevity we're only showing cpu and disk data.  Note that we can show both
+cpu summary as well as detail while we're only showing disk details.
+
+<div class=terminal-wide14>
+<pre>
+[root@poker]# collectl -scCD
+### RECORD    1 >>> cag-dl380-01 <<< (1192729823.010) (Thu Oct 18 13:50:23 2007) ###
+
+# CPU SUMMARY (INTR, CTXSW & PROC /sec)
+# USER  NICE   SYS  WAIT   IRQ  SOFT STEAL  IDLE  INTR  CTXSW  PROC  RUNQ   RUN   AVG1  AVG5 AVG15
+     0     0     0     0     0     0     0    99   135     30     0   145     0   0.01  0.01  0.00
+
+# SINGLE CPU STATISTICS
+#   CPU  USER NICE  SYS WAIT IRQ  SOFT STEAL IDLE
+      0     0    0    0    0    0    0     0  100
+      1     0    0    0    0    0    0     0   99
+
+# DISK STATISTICS (/sec)
+#          <---------reads---------><---------writes---------><--------averages--------> Pct
+#Name       KBytes Merged  IOs Size  KBytes Merged  IOs Size  RWSize  QLen  Wait SvcTim Util
+cciss/c0d0       0      0    0    0       0      0    0    0       0     0     0      0    0
+cciss/c0d1       0      0    0    0       0      0    0    0       0     0     0      0    0
+cciss/c0d2       0      0    0    0       0      0    0    0       0     0     0      0    0
+</pre>
+</div>
+
+<h3>Different Subsystems With Timestamps</h3>
+
+<div class=terminal>
+<pre>
+[root@poker]# collectl -scft -oT
+waiting for 1 second sample...
+#         <--------CPU--------><------------TCP-------------><------NFS Totals------>
+#Time     cpu sys inter  ctxsw PureAcks HPAcks   Loss FTrans   read  write meta comm
+08:12:20    0   0  1007    120        1      0      0      0      0      0    0    0
+08:12:21    1   1  1077    400        1      0      0      0      0      0    0    0
+</pre>
+</div>
+
+<h3>When you just don't know...</h3>
+A great way to familiarize yourself with the types of data collectl can
+generate is to do (as of Version 2.6.0) <i>--all --verbose</i> and 
+see all the summary data generated at once,
+excluding processes and slabs.  Since this can be a lot to watch, 
+especially as it scrolls off the screen between samples, the <i>--home</i>
+can be your friend.  It will clear the
+screen between samples and remove extra lines to give an appearance 
+of a continuously refreshing screen-based utility.  Try it with different
+combinations of subsystems to reduce the amount of information
+displayed.
+
+<div class=terminal-wide14>
+<pre>
+### RECORD    1 >>> hadesn1 <<< (1214918640.001) (Tue Jul  1 09:24:00 2008) ###
+# CPU SUMMARY (INTR, CTXSW & PROC /sec)
+# USER  NICE   SYS  WAIT   IRQ  SOFT STEAL  IDLE  INTR  CTXSW  PROC  RUNQ   RUN   AVG1  AVG5 AVG15
+     0     0     0     0     0     0     0   100  1327    647     1   341     0   0.00  0.00  0.00
+# INTERRUPT SUMMARY
+#    Cpu0   Cpu1   Cpu2   Cpu3   Cpu4   Cpu5   Cpu6   Cpu7
+      999      0    300      0      0      0     26      0
+# DISK SUMMARY (/sec)
+#KBRead RMerged  Reads SizeKB  KBWrite WMerged Writes SizeKB
+      0       0      0      0        0       0      0      0
+# NFS SUMMARY (/sec)
+#<---------------------------server---------------------------><----------------client---------------->
+# Reads Writes Meta Comm  UDP   TCP  TCPConn  BadAuth  BadClnt  Reads Writes Meta Comm Retrans  Authref
+      0      0    0    0    0     0        0        0        0      0      0    0    0       0        0
+# INODE SUMMARY
+#    Dentries      File Handles    Inodes
+# Number  Unused   Alloc   % Max   Number
+   42532   39837     510    0.03    39011
+# LUSTRE CLIENT SUMMARY
+# KBRead  Reads  KBWrite Writes
+       0      0        0      0
+# MEMORY STATISTICS
+#<------------------------Physical Memory-----------------------><-----------Swap----------><-Inactive-><Pages/sec>
+#   TOTAL    USED    FREE    BUFF  CACHED    SLAB  MAPPED  COMMIT     TOTAL    USED    FREE     TOTAL     IN    OUT
+   16053M   1276M  14776M 130816K 403696K 587884K  80992K 130684K    15308M       0  15308M   201028K      0      0
+# NETWORK SUMMARY (/sec)
+# KBIn  PktIn SizeIn  MultI   CmpI  ErrIn  KBOut PktOut  SizeO   CmpO ErrOut
+     1     15    103      0      0      0      0      2    150      0      0
+# SOCKET STATISTICS
+#      <-------------Tcp------------->   Udp   Raw   <---Frag-->
+#Used  Inuse Orphan    Tw  Alloc   Mem  Inuse Inuse  Inuse   Mem
+   90      8      0     1     11     0      8     0      0     0
+# TCP SUMMARY (/sec)
+# PureAcks HPAcks   Loss FTrans
+         0      1      0      0
+# INFINIBAND SUMMARY (/sec)
+#  KBIn   PktIn  SizeIn   KBOut  PktOut SizeOut  Errors
+      0       0       0       0       0       0       0
+</pre></div>
+
+<p>
+<h2>Record Mode</h2>
+This mode is often used when running a test of a limited duration from a couple of minutes
+to several hours or more and since collectl is not being run as a daemon, the default
+sampling rate is 1 second.
+<p>
+<h3>Collect 100 Samples and Exit</h3>
+<div class=terminal>
+<pre>
+[root@poker]# collectl -c100 -f/tmp
+</pre>
+</div>
+
+<h3>Run Until Terminated With ^C</h3>
+<div class=terminal>
+<pre>
+[root@poker]# collectl -f/tmp
+</pre>
+</div>
+
+<p>
+<h2>Playback Mode</h2>
+There are a couple of things to remember about playback:
+<ul>
+<li>You need a data file.  When run as a deamon via <i>service collectl start</i>
+data will be written to /var/log/collectl by default.</li>
+<li>You can playback a subset of data by inclusion of the -s switch</li>
+<li>Just about any formatting switches you can use interactively you can use during playback</li>
+<li>You can select a subset of the time period with --from and --thru</li>
+</ul>
+
+<h3>Playback Between 2 Time Periods</h3>
+In this example we're not selecting any device details and so the output defaults
+to brief mode and all data is printing on the same line.  We've also chosen to
+display time in msecs and use --from to specify both times.
+
+<div class=terminal-wide15>
+<pre>
+collectl -scdn -p /var/log/collectl/cag-dl380-01-20070830-082013.raw.gz --from 08:29-08:30 -oTm
+#             <--------CPU--------><-----------Disks-----------><-----------Network---------->
+#Time         cpu sys inter  ctxsw KBRead  Reads  KBWrit Writes netKBi pkt-in  netKBo pkt-out
+08:29:00.012    0   0   135     38      0      0       2      0      0     11       0       2
+08:29:10.012    2   0   142    142      0      0     142      2      1     14       1       5
+08:29:20.012    1   0   138     45      0      0      33      1      1     14       0       3
+08:29:30.012    0   0   135     52      0      0       5      0      1     11       0       3
+08:29:40.012    0   0   136     44      0      0      21      0      1     11       0       3
+08:29:50.012    1   0   177    123     14      2     385     38      1     13       1       4
+</pre>
+</div>
+
+<h3>Same Data File, Shorter Interval, Disk Details</h3>
+As expected this defaults to --verbose mode.  Also notice we left off the leading 0
+in the <i>from time</i>.
+
+<div class=terminal-wide14>
+<pre>
+collectl -sD -p /var/log/collectl/cag-dl380-01-20070830-082013.raw.gz -from 8:29 --thru 08:29:10 -oD
+# DISK STATISTICS (/sec)
+#                   <---------reads---------><---------writes---------><--------averages--------> Pct
+#         Name       KBytes Merged  IOs Size  KBytes Merged  IOs Size  RWSize  QLen  Wait SvcTim Util
+08:29:00 c0d0             0      0    0    0       2      0    0    6       6     0     6      6    0
+08:29:00 c0d1             0      0    0    0       0      0    0    0       0     0     0      0    0
+08:29:00 c0d2             0      0    0    0       0      0    0    0       0     0     0      0    0
+</pre>
+</div>
+
+<h3>Same Data File, Different Data</h3>
+Notice here that we're using -oD instead of -T and so both the date and time are displayed.
+We could have also chosen to force the time in msecs but chose not to in order to save
+screen real estate.
+
+<div class=terminal-wide15>
+<pre>
+collectl -sms -p /var/log/collectl/cag-dl380-01-20070830-082013.raw.gz --from 08:29-08:30 -oD
+#                  <-----------Memory----------><------Sockets----->
+#Date    Time      free buff cach inac slab  map   Tcp  Udp  Raw Frag
+20070830 08:29:00   64M 529M   2G 483M    0    0    89   17    0    0
+20070830 08:29:10   64M 529M   2G 483M    0    0    89   17    0    0
+20070830 08:29:20   64M 529M   2G 483M    0    0    89   17    0    0
+20070830 08:29:30   64M 529M   2G 483M    0    0    89   17    0    0
+20070830 08:29:40   64M 529M   2G 483M    0    0    89   17    0    0
+20070830 08:29:50   64M 529M   2G 483M    0    0    89   17    0    0
+</pre>
+</div>
+
+<h3>Same As Last Command But Display In Plot Format</h3>
+This format is rarely used, but nothing prevents one from doing so.
+
+<div class=terminal-wide12>
+<pre>
+[root@poker]# collectl -P -sms -p /var/log/collectl/cag-dl380-01-20070830-082013.raw.gz --from 08:29-08:30
+#Date Time [MEM]Tot [MEM]Used [MEM]Free [MEM]Shared [MEM]Buf [MEM]Cached [MEM]Slab [MEM]Map [MEM]Commit [MEM]SwapTot [MEM]SwapUsed
+[MEM]SwapFree [MEM]Dirty [MEM]Clean [MEM]Laundry [MEM]Inactive [MEM]PageIn [MEM]PageOut [SOCK]Used [SOCK]Tcp [SOCK]Orph [SOCK]Tw  [SOCK]Alloc
+[SOCK]Mem [SOCK]Udp [SOCK]Raw [SOCK]Frag [SOCK]FragMem
+20070830 08:29:00 3098632 3032208 66424 0 542188 2258744 0 0 0 2044056 36596 2007460 336 62176 432280 494792 0 2 89 39 0 0 39 2 17 0 0 0
+20070830 08:29:10 3098632 3032412 66220 0 542244 2258744 0 0 0 2044056 36596 2007460 1208 62176 431404 494788 0 142 89 39 0 0 39 1 17 0 0 0
+20070830 08:29:20 3098632 3032440 66192 0 542276 2258776 0 0 0 2044056 36596 2007460 1412 62176 431232 494820 0 34 89 39 0 0 39 2 17 0 0 0
+20070830 08:29:30 3098632 3032464 66168 0 542292 2258776 0 0 0 2044056 36596 2007460 1412 62176 431232 494820 0 5 89 39 0 0 39 2 17 0 0 0
+20070830 08:29:40 3098632 3032464 66168 0 542300 2258776 0 0 0 2044056 36596 2007460 1584 62176 431060 494820 0 22 89 39 0 0 39 2 17 0 0 0
+20070830 08:29:50 3098632 3033020 65612 0 542532 2258700 0 0 0 2044056 36596 2007460 2504 61628 430748 494880 14 386 89 39 0 0 39 1 17 0 0 0
+</pre>
+</div>
+
+<h3>Playback and Convert To Non-Compressed Plot File</h3>
+There's really not much to see here since the only output this command will produce
+is error messages.
+
+<div class=terminal-wide15>
+<pre>
+[root@poker]# collectl -p /var/log/collectl/cag-dl380-01-20070830-082013.raw.gz -P -f /tmp -oz
+</pre>
+</div>
+
+<table width=100%><tr><td align=right><i>updated Feb 18, 2009</i></td></tr></colgroup></table>
+
+</body>
+</html>

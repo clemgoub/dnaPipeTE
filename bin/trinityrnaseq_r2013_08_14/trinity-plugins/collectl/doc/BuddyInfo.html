@@ -1,0 +1,92 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Memory Fragmentation</title>
+</head>
+
+<body>
+<center><h1>Memory Fragmentation</h1></center>
+<p>
+<h3>Introduction</h3>
+Version 3.2.1 of collectl introduces support for <i>/proc/buddyinfo</i>, which shows the distribution
+of memory fragments where the size of each fragment is a power of 2 pages.  The memory is categorized
+by node, depending on the system architecture and then subcategorized by the type of memory, referred
+as a zone.  For example, the <i>/proc/buddyinfo</i> might look like:
+
+<div class=terminal><pre>
+Node 0, zone      DMA      5      5      3      4      2      4      3      1      0      0      0
+Node 0, zone    DMA32     79     61      4     12      0      0      0      2      0      1      0
+Node 1, zone    DMA32    134     57     27     60      0      0      1      1      0      1      0
+Node 2, zone   Normal    865    357     37      1      6      0      2      1      0      1      0
+Node 3, zone   Normal    651     47     19     10      1      1      1      1      0      1      0
+</pre></div>
+
+Running collectl with <i>-sb --verbose</i> would produce a single line of output that shows the totals
+of each column.  For example, taking 1 second samples with timestamps included:
+
+<div class=terminal><pre>
+collectl -sb --verbose -oT
+# MEMORY FRAGMENTATION SUMMARY (4K pages)
+#                1       2       4       8      16      32      64     128     256     512    1024
+16:11:26      1296     483     157      85       9       5       7       6       0       4       0
+16:11:27      1354     485     163      87       9       5       7       6       0       4       0
+16:11:28      1395     480     165      89       9       5       7       6       0       4       0
+</pre></div>
+
+And in detail mode we see one line per entry, again with timestamps:
+
+<div class=terminal-wide14><pre>
+collectl -sB -oT
+# MEMORY FRAGMENTATION (4K pages)
+#         Node    Zone        1       2       4       8      16      32      64     128     256     512    1024
+16:13:33     0     DMA        5       5       3       4       2       4       3       1       0       0       0
+16:13:33     0   DMA32      175      97       3      12       0       0       0       2       0       1       0
+16:13:33     1   DMA32      933     389      60      68       0       0       1       1       0       1       0
+16:13:33     2  Normal        0       1       8       1       6       0       2       1       0       1       0
+16:13:33     3  Normal        1       2      57      10       1       1       1       1       0       1       0
+</pre></div>
+
+Where things get interesting is in <i>brief</i> mode.  The challege here is to show the maximum amount of
+information in the least amount of space, thus allowing you to look at other information on the same line
+as well.  To better understand the methodology chosen for this, think in terms of <i>base 36</i>.
+However, instead of mapping each character to a number from 0 to 35, we're going to do something very
+different.  Since we're mainly interested in seeing what's happening as the numbers of fragments shrink:
+
+<ul>
+<li>map the 0 through 9 to the characters 0 through 9</li>
+<li>map the numbers 10-99 to the characters <i>a</i> through <i>i</i> by dividing these values by 10</li>
+<li>fragments in the range of 100-999 will be divided by 100 and mapped to the letters <i>j</i> through r</i></li>
+<li>this only leaves us with the 8 letters <i>s</i> through <i>z</i> and being the coarsest
+will be mapped to powers of 10 by essentially dividing the value by 1000 and taking the log10() of it</li>
+</ul>
+
+This results in a display like the following:
+
+<div class=terminal><pre>
+collectl -sb -oT
+#         <---Memory-->
+#Time        Fragments
+16:24:13   qmji9576040
+16:24:14   rmji9576040
+16:24:15   smji9576040
+16:24:16   smji9576040
+16:24:17   rmji9576040
+</pre></div>
+
+As a final example of what this looks like when combined with other data, remembering you can choose
+virtually any combination of subsystem for your display both in collection and playback modes:
+
+<div class=terminal-wide14><pre>
+collectl -sbcmn -oT
+#         <--------CPU--------><------------------Memory-----------------><----------Network---------->
+#Time     cpu sys inter  ctxsw Free Buff Cach Inac Slab  Map    Fragments   KBIn  PktIn  KBOut  PktOut
+16:44:46    0   0  1029    146  23M 178M   6G   5G 461M 234M  lljj9576040      2      8      0       2
+16:44:47    0   0  1020    136  24M 178M   6G   5G 461M 234M  nljj9576040      2      8      1       2
+16:44:48    1   0  1062    371  22M 178M   6G   5G 461M 235M  kljj9576040      3     31      2      27
+16:44:49    0   0  1009    146  22M 178M   6G   5G 461M 235M  kljj9576040     14     13      0       2
+</pre></div>
+
+<table width=100%><tr><td align=right><i>updated Feb 12, 2009</i></td></tr></colgroup></table>
+
+</body>
+</html>

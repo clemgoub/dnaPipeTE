@@ -1,0 +1,66 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Input Files</title>
+</head>
+
+<body>
+<center><h1>Input Files</h1></center>
+<p>
+The following is a list of the files read by collectl to support the different types of data
+being collected.  Also included are the basic linux commands that
+should produce the same numbers as collectl for those times you may want to know if
+you've uncovered a collectl problem OR it's a linux problem.  The one exception is 
+Infiniband data which is obtained by the <i>perfquery</i> OFED utility as noted.
+
+<center>
+<table border="1">
+<tr><td><b>Subsystem</b></td><td><b>File(s)</b></td><td><b>Commands</b></td></tr>
+<tr><td>Buddy</td><td>/proc/budyinfo</td><td>cat /proc/buddyinfo</td></tr>
+<tr><td>CPU</td><td>/proc/loadavg</td><td>mpstat, iostat -c, vmstat</td></tr>
+<tr><td>&nbsp;</td><td>/proc/stat</td><td>&nbsp;</td></tr>
+<tr><td>Disk</td><td>/proc/diskstats</td><td>iostat -d, iostat -x</td></tr>
+<tr><td>&nbsp;</td><td>/proc/partitions</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/stat</td><td>&nbsp;</td></tr>
+<tr><td>Inode</td><td>/proc/sys/fs/dentry-state</td><td>sar -v</td></tr>
+<tr><td>&nbsp;</td><td>/proc/sys/fs/dquot-nr</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/sys/fs/file-nr</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/sys/fs/inode-state</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/sys/fs/super-nr</td><td>&nbsp;</td></tr>
+<tr><td>Interrupts</td><td>/proc/interrupts</td><td>&nbsp;</td></tr>
+<tr><td>Interconnect</td><td>/proc/qsnet/ep/rail[0-1]/stats</td><td>perfquery</td></tr>
+<tr><td>&nbsp;</td><td>perfquery *</td><td>&nbsp;</td></tr>
+<tr><td>Lustre</td><td>/proc/fs/lustre/llite/.../stats</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/fs/lustre/llite/.../read_ahead_stats</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/fs/lustre/mdt/MDT/mds/stats</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/fs/lustre/osc/OST_...client.../stats</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/fs/lustre/obdfilter/OST_.../stats</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/fs/lustre/obdfilter/OST_.../brw_stats</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/fs/lustre/osc/OSC...mds.../stats</td><td>&nbsp;</td></tr>
+<tr><td>Memory</td><td>/proc/meminfo</td><td>sar -rB, free, vmstat</td></tr>
+<td>&nbsp;</td><td>/proc/vmstat</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/sys/device/system/node/node*/meminfo/</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/sys/device/system/node/node*/numastat/</td><td>&nbsp;</td></tr>
+<tr><td>Network</td><td>/proc/net/dev</td><td>netstat -i</td></tr>
+<tr><td>NFS</td><td>/proc/net/rpc/nfs</td><td>nfsstat -c/s [c if -o C]</td></tr>
+<tr><td>&nbsp;</td><td>/proc/net/rpc/nfsd</td><td>&nbsp;</td></tr>
+<tr><td>Process</td><td>/proc/pid/cmdline</td><td>ps or top</td></tr>
+<tr><td>&nbsp;</td><td>/proc/pid/io</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/pid/stat</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/proc/pid/status</td><td>&nbsp;</td></tr>
+<tr><td>Slab</td><td>/proc/slabinfo</td><td>slabtop</td></tr>
+<tr><td>&nbsp;</td><td>/sys/slab<slab>/object_size</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/sys/slab<slab>/objects</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/sys/slab<slab>/objs_per_slab</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/sys/slab<slab>/order</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/sys/slab<slab>/slab_size</td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>/sys/slab<slab>/slabs</td><td>&nbsp;</td></tr>
+<tr><td>Socket</td><td>/proc/net/sockstat</td><td>sar -n SOCK</td></tr>
+<tr><td>Tcp</td><td>/proc/net/netstat</td><td>&nbsp;</td></tr>
+</table>
+</center>
+
+<table width=100%><tr><td align=right><i>updated Sept 15, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

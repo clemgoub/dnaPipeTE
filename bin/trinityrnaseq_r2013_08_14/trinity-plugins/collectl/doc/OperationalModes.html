@@ -1,0 +1,71 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Operation Modes</title>
+</head>
+
+<body>
+<center><h1>Operational Modes</h1></center>
+<p>
+Depending on which combination of switches are selected, collectl will run in
+one of 3 main modes with various options for added flexibility.
+The most basic mode, which you get if you don't select one of the other 2,
+is <i>display</i>.  In this mode the output is displayed on the terminal
+in real-time as it is collected.  In <i>record</i>
+mode, specified by the -f switch, data is written in real-time to a
+directory of the user's choosing with an optional prefix.  In <i>playback</i> mode, selected with -p,
+data is read from a file that was generated in <i>record</i> mode at an earlier
+time.
+<p>
+The format of the results can also be selected as either <i>Terminal</i> or 
+<i>Plot</i>.  <i>Terminal</i> data is always displayed on the terminal while 
+<i>Plot</i> data, selected by including
+-P with any of the 3 modes, can be either written to a file or displayed on
+the terminal.  Since plot data is not intended for human consumption, the
+reason one would typically send it to a terminal would be with the intent of
+redirecting the output to a file or piping it into another script.
+<p>
+Using the -f, -p and -P  switches in different combinations result in the
+following behaviors:
+<p>
+<table>
+<tr valign=top><td width=20%>No switches</td><td>Data is displayed on the terminal as formatted text</td></tr>
+
+<tr valign=top><td>-P</td><td>Data is displayed on the terminal in Plot Format</td></tr>
+
+<tr valign=top><td>-f file</td><td>Raw data is written to the file (whose name is constructed
+by collectl) in the same format as it occurred in /proc, with the extension <i>raw</i>.
+For more details on file naming see <a href=FileNaming.html>file naming</a>.</td></tr>
+
+<tr valign=top><td>-f file -P</td><td>Data is written to the specified file in plot format, 
+with one or more of a number of extensions depending on what detail data may 
+have been requested.</td></tr>
+
+<tr valign=top><td>-p file</td><td>Data is played back from the <i>raw</i> file specified by -p and 
+displayed on the terminal as formatted text.  If one wishes to view a subset of the data 
+recorded, -s can be included to provide that discrimination or <i>--from/--thru</i> to
+select a subset of the timeframe.  Note that if one specifies
+subsystems for which data has not been recorded, they will be displayed as zeros.  
+One can also change the format that the data is displayed though
+various switches such as --verbose and -o.</td></tr>
+
+<tr valign=top><td>-p file -P</td><td>Data is played back from the <i>raw</i> file and displayed on the 
+terminal in Plot Format.  Note that since one often uses this mode to produce 
+output usable by other tools/programs, the user can force the output format by 
+including -s and only those subsystems specified will be displayed.
+Furthermore, subsystems for which data has not been collected will also be displayed
+as zeros to ensure consistent formatting across multiple data files.</td></tr>
+
+<tr valign=top><td>-p file1 -f file2</td><td>This is NOT supported as you can only write data that is played
+back to another file in plot format.  Someone wanting to do this should rethink what 
+it is they are trying to do.</td></tr>
+
+<tr valign=top><td>-p file1 -f file2 -P</td><td>Data is played back from the <i>raw</i> file and written to
+the specified file in Plot Format.  Note that here too -s will force specific subsystems 
+to be displayed.</td></tr>
+</table>
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

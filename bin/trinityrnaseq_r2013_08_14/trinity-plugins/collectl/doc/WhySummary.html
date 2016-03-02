@@ -1,0 +1,111 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Why Summary</title>
+</head>
+
+<body>
+<center><h1>Why would I monitor summary data?</h1></center>
+<p>
+<h3>Introduction</h3>
+
+The answer to this question is fundamental to understanding system monitoring in general,
+whether you're using collectl or some other utilities.  To really understand what your system is
+actually doing you should be looking at individual disks, cpus or networks.  But in reality that's
+often too much to keep track of unless of course you have a single-cpu/disk system.
+<p>
+Let's say you have multiple devices such as disks and the one you're interested in is
+misbehaving and reading or writing too slowly.  Won't the total disk activity also be low?  Similary if
+disk traffic is being reported high on a lightly loaded system won't this also jump out you by simply
+looking at the total disk activity?  The same can be said about networks and most other subsystems for
+which there is summary data and simply looking at the totals will often alert you to the fact that 
+something is not right.  The key thing to keep in mind that you are looking at totals.
+<p>
+CPU monitoring can be a little tricker as these are reported as averages as opposed to totals
+and as the number of cores increase so does the divisor of the calculation.  In most cases when you
+have a system with excessive load, it will effect all CPUs and so will be very visible even as an average,
+but in some cases it won't.  What if you have a 2 core system and see 
+a CPU load of 45% when you're expecting a much lighter load?  Looking at individual CPUs you may see
+one running at near zero load and the second at 90%.  Your only clue was that the 45% load was unexpected
+and so you looked closer.  But what if you had a heavily loaded CPU on a 48 core system?  You'd never
+even realize it.  In other words, just pay attention.
+<p>
+Stated slightly differently, summary data is often a starting point to help identify potential trouble ares
+and from there you can determine if you need to dig deeper.
+<p>
+<b>So why brief data?</b>
+<p>
+It you have ever tried to look at multiple lines of different text and identify what was changing over
+time you should already know the answer - it's really difficult!  For example, here's what collectl might
+show for CPU, Disk and Network data:
+
+<div class=terminal>
+<pre>
+collectl.pl --verbose
+### RECORD    1 >>> poker <<< (1314712401.002) (Tue Aug 30 09:53:21 2011) ###
+
+# CPU SUMMARY (INTR, CTXSW & PROC /sec)
+# User  Nice   Sys  Wait   IRQ  Soft Steal  Idle  CPUs  Intr  Ctxsw  Proc  RunQ   Run   Avg1  Avg5 Avg15
+     0     0     0     0     0     0     0   100     4  1120    192     0   363     0   0.00  0.00  0.00
+
+# DISK SUMMARY (/sec)
+#KBRead RMerged  Reads SizeKB  KBWrite WMerged Writes SizeKB
+      0       0      0      0        0       0      0      0
+
+# NETWORK SUMMARY (/sec)
+# KBIn  PktIn SizeIn  MultI   CmpI  ErrsI  KBOut PktOut  SizeO   CmpO  ErrsO
+     0      1     60      0      0      0      0      0      0      0      0
+
+### RECORD    2 >>> poker <<< (1314712402.002) (Tue Aug 30 09:53:22 2011) ###
+
+# CPU SUMMARY (INTR, CTXSW & PROC /sec)
+# User  Nice   Sys  Wait   IRQ  Soft Steal  Idle  CPUs  Intr  Ctxsw  Proc  RunQ   Run   Avg1  Avg5 Avg15
+     0     0     0     0     0     0     0    99     4  1111    200     0   363     0   0.00  0.00  0.00
+
+# DISK SUMMARY (/sec)
+#KBRead RMerged  Reads SizeKB  KBWrite WMerged Writes SizeKB
+      0       0      0      0      256      59      5     51
+
+# NETWORK SUMMARY (/sec)
+# KBIn  PktIn SizeIn  MultI   CmpI  ErrsI  KBOut PktOut  SizeO   CmpO  ErrsO
+     0      2     60      0      0      0      0      3    328      0      0
+</pre>
+</div class=terminal>
+
+and that's only 2 samples!  Think about trying to watch level of detail changing every second and identifying
+changes?  Extremely difficult if not impossible.  It might be a little easier to watch in top format which you
+can get by including --home, but now you lose the previous records to compare the values to.
+<p>
+Now consider the fact that in many cases seeing network errors or disk merges or even the percentage of time
+the CPU spent processing interrupts, while important, may not be when trying to identify anomalous behaviors.
+And that's where brief mode comes in.  Here we are identifying those few nuggets of information which will
+tell us whether or not things are functioning as expected such that we can display them all on the same line
+and make it easier to spot change.  In fact, during the following run I did a <i>ping -f</i> and see how easy it is
+to spot the network burst?
+
+<div class=terminal>
+<pre>
+collectl
+#<--------CPU--------><----------Disks-----------><----------Network---------->
+#cpu sys inter  ctxsw KBRead  Reads KBWrit Writes   KBIn  PktIn  KBOut  PktOut
+   0   0  1124    203      0      0    240      4      0      0      0       0
+   0   0  1105    253      0      0     12      2      0      1      0       1
+   0   0  1123    206      0      0      0      0      0      3      0       2
+   2   1  6051   8584      0      0      0      0    173   2099    297    2860
+   3   2  7828  11270      0      0      0      0    222   2770    411    3936
+   0   0  1115    204      0      0     92      5      0      5      1       5
+   0   0  1121    198      0      0      0      0      0      1      0       1
+</pre>
+</div class=terminal>
+
+Now, if you think there is a network problem you can then run collectl in verbose or detail
+mode and only look at network and not be distracted by other data.
+<p>
+In summary, just keep in mind that there is no single recipe for how to monitor a system, what format to
+display the output in and how to drill deeper.  However, as you become more familiar with the types of data
+and collectl formats your ability to better utilize collectl will increase.
+
+<table width=100%><tr><td align=right><i>updated Sept 19, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

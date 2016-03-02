@@ -1,0 +1,73 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>Importing Miscellaneous Data</title>
+</head>
+
+<body>
+<center><h1>Importing Miscellaneous Data</h1></center>
+<p>
+This module reports on several variables that are not collectled as part of collectl's core
+metrics, partly because some of them don't exactly fit into collectl's main stats, but some users
+still find useful.  There are also a few instructive techniques used in this simple module that 
+are worth calling out:
+<ul>
+<li>use of its own routine grepProc() to find a specific entry in /proc and return either the  first
+instance or the count of instances, noting that using the real <i>grep</i> has far too much overhead
+due to the grep process start-up and tear-down</li>
+<li>support for a different monitoring interval yet still displays, exports and logs the data every cycle</li>
+<li>ability to pass additional parameters with values, in this case the interval</li>
+<li>use of getExec() for running another process to get the number of logged in users, noting this is 
+slower than getProc() and the command being used is slow enough that a different monitoring interval
+is needed to avoid excess overhead.</li>
+</ul>
+<p>
+The following example shows one importing both hello.ph and misc.ph while displaying cpu data and
+running all at the same interval:
+
+<div class=terminal>
+<pre>
+[root@cag-dl585-02 collectl]# collectl -sc --import hello:misc
+#<--------CPU--------><-Hello-><------CMU Extras----->
+#cpu sys inter  ctxsw   Total   UTim  MHz MT Huge Log
+   0   0  1034    149     140     94 2197  1    0   4
+   0   0  1010    138     230     94 2197  1    0   4
+</pre></div>
+
+In this example we're just doing the 2 imports, setting the misc monitoring interval to 2
+and exporting the data with lexpr.  As you can see, the hello data is reported every interval
+but the misc data only every other one:
+
+<div class=terminal>
+<pre>
+[root@cag-dl585-02 collectl]# collectl --import hello:misc,i=2 --export lexpr
+sample.time 1239625280.001
+hwtotals.val 140
+misc.uptime 93
+misc.cpuMHz 2197
+misc.mounts 1
+misc.logins 4
+sample.time 1239625281.001
+hwtotals.val 230
+sample.time 1239625282.002
+hwtotals.val 319
+misc.uptime 93
+misc.cpuMHz 2197
+misc.mounts 1
+misc.logins 4
+sample.time 1239625283.002
+hwtotals.val 410
+sample.time 1239625284.002
+hwtotals.val 500
+misc.uptime 93
+misc.cpuMHz 2197
+misc.mounts 1
+misc.logins 4
+sample.time 1239625285.002
+hwtotals.val 590
+</pre></div>
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

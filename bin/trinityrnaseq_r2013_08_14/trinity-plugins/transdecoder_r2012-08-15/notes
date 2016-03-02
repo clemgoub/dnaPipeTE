@@ -1,0 +1,1 @@
+svn checkout --username=bhaas svn+ssh://bhaas@svn.code.sf.net/p/transdecoder/code-0/trunk transdecoder-code-0/trunk transdecoder
