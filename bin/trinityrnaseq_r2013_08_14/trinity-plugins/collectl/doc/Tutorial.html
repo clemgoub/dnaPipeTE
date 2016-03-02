@@ -1,0 +1,249 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>A Tutorial - Getting Started With Collectl</title>
+</head>
+
+<body>
+
+<body>
+<center>
+<h1>Tutorial - The Basics</h1>
+</center>
+
+<p>
+Getting started using collectl may seem a little challenging to the new user because
+of its many options, but it shouldn't be.  After all, how many people simply run the
+<i>top</i> command and don't even realize there are a rich set of options available?
+In that same spirit, you can simply enter the <i>collectl</i> command and get a lot
+of useful information, but you would also be losing out on a lot.  The intent of
+this tutorial is to give you a better appreciation of what you can do with collectl
+and hopefully encourage you to experiment with even more options than those described
+below.
+<p>
+<h3>Measuring Disk Activity</h3>
+For this first set of examples I'll be using Robin Miller's 
+<a href=http://www.scsifaq.org/RMiller_Tools/index.html>dt</a> to write a large file
+to /tmp using the command <i>dt of=/tmp/test limit=1g bs=1m disable=compare,verify dispose=keep</i> while running collectl in another window:
+
+<div class=terminal>
+<pre>
+#<--------CPU--------><----------Disks-----------><----------Network---------->
+#cpu sys inter  ctxsw KBRead  Reads KBWrit Writes netKBi pkt-in netKBo pkt-out
+  30  30   254     65      8      2   7920     97      0      4      0       2
+  10  10   377     65      0      0  32500    282      4     52      2      19
+  10  10   332     61      0      0  29312    246      0      3      0       3
+   9   9   330     65      0      0  32512    275      3     45      1       9
+  11  11   331     53      4      1  29684    270      0      2      0       2
+   8   8   352     63      0      0  35004    273      3     33      1       8
+  13  12   329    116      0      0  28924    249      0      2      0       2
+</pre>
+</div>
+
+Here we see a few things including a burst of cpu activity when the test first
+starts as well as an I/O rate of about 30MB/sec which corresponds to what dt is
+telling us in the following summary line:
+
+<pre>
+Average transfer rates: 32051995 bytes/sec, 31300.776 Kbytes/sec
+</pre>
+
+If we compare the write rates to the number of writes we can also infer writes 
+of about 128KB which is good to know because that means we're being efficient 
+in the size of the data blocks being handed to the driver.  However if we don't
+mind using the extra columns, we can include <i>--iosize</i>, which tells
+collectl to include the average I/O size when using this default display format
+also known as brief mode.  In <i>verbose</i> mode the I/O sizes are always included.
+
+<div class=terminal>
+<pre>
+#<--------CPU--------><---------------Disks---------------->
+#cpu sys inter  ctxsw KBRead  Reads Size KBWrit Writes Size
+   9   8   381     71      0      0    0  30644    276  111
+  14  13   325     85      0      0    0  32888    258  127
+  11  10   313     80      0      0    0  31064    261  119
+  12  11   421    186      0      0    0  32376    276  117
+</pre>
+</div>
+<p>
+This may also be a good time to mention screen real estate.  There is a lot of information
+that collectl can display and everything takes space!  More often than not you don't 
+really care about time and so by default it isn't displayed.  However there may be times
+you do care and so you can simply add the switch -oT add the option of time to the display.
+In fact, sometimes you may want to include the date as well in which case -oD will do
+both.  You can even show the times in msec by including <i>m</i> with -o, which can be
+useful when running at sub-second monitoring levels and/or if you want to correlate data
+to system or application logs with may themselves have finer grained time.
+Here's an example of the command <i>collectl -scd -i.25 -oDm</i>
+which shows the cpu and disk loads every quarter second and includes the date and time in msecs:
+
+<div class=terminal>
+<pre>
+#                      <--------CPU--------><----------Disks----------->
+#Date    Time          cpu sys inter  ctxsw KBRead  Reads KBWrit Writes
+20080212 11:22:47.008    2   0   364     84      0      0  31328    284
+20080212 11:22:47.258    8   6   392     92      0      0  30832    356
+20080212 11:22:47.508    8   6   308     84      0      0  36256    268
+20080212 11:22:47.758    2   0   292     44      0      0  31152    196
+</pre>
+</div>
+
+<p>
+So what about that CPU load?  Given that this is a 2 CPU system we might be
+interested in seeing how that load is being distributed by running the command
+<i>collectl -sC</i>, since an uppercase subsystem type, like cpu, disk
+or network tells collectl to show instance level details:
+
+<div class=terminal>
+<pre>
+# SINGLE CPU STATISTICS
+#   CPU  USER NICE  SYS WAIT IRQ  SOFT STEAL IDLE
+      0     0    0   17    0    0    0     0   83
+      1     0    0    4    0    0    0     0   96
+      0     0    0   14    0    0    0     0   86
+      1     0    0    0    0    0    0     0  100
+      0     0    0   20    0    0    0     0   80
+      1     0    0    0    0    0    0     0  100
+</pre>
+</div>
+
+noting all the load is being delivered by a single CPU as expected.  Ok, so now
+let's read back the 1G file we just wrote and see what happens.
+
+<div class=terminal>
+<pre>
+#<--------CPU--------><----------Disks-----------><----------Network---------->
+#cpu sys inter  ctxsw KBRead  Reads KBWrit Writes netKBi pkt-in netKBo pkt-out
+  38  37   248    189   7283    111      0      0      1      9      1       8
+  24  23   153     81     32      0      0      0      2     32      1       9
+</pre>
+</div>
+
+Now we see a big burst of CPU load and not much from disk.  Furthermore dt
+is reporting
+
+<pre>
+Average transfer rates: 872960833 bytes/sec, 852500.813 Kbytes/sec
+</pre>
+
+which in fact confirms that reads are coming from cache and not disk since
+no local disk can read at this rate!  In general, when doing disk I/O testing one
+should use file sizes that are larger than cache to force all I/O to come 
+from disk.  So repeating the tests with a larger file we now see more 
+realistic read rates:
+
+<div class=terminal>
+<pre>
+#<--------CPU--------><----------Disks-----------><----------Network---------->
+#cpu sys inter  ctxsw KBRead  Reads KBWrit Writes netKBi pkt-in netKBo pkt-out
+   9   8   773    743  41376    629      0      0      1      8      1       7
+   9   8   619    639  31716    476      0      0      2     33      1       8
+  16  15   510    554  23016    370      0      0      0      4      0       2
+  10  10   572    624  27272    429      0      0      2     27      1       8
+  16  15   458    504  19560    306     12      2      0      4      0       2
+</pre>
+</div>
+
+So just what is happening to cache during testing?  To see memory utilization
+we can simply add the memory subsystem to the default selections as
+<i>collectl -s+m</i> but that also makes the display wider and since for our 
+purposes we don't need network information I'm just going to run the following
+<i>collectl -scmd</i>:
+
+<div class=terminal>
+<pre>
+#<--------CPU--------><-----------Memory----------><----------Disks----------->
+#cpu sys inter  ctxsw free buff cach inac slab  map KBRead  Reads KBWrit Writes
+   3   0   159     80   2G 395M 189M   1M    0    0      0      0     20      3
+   1   0   153     52   2G 395M 189M   1M    0    0      0      0      0      0
+  43  42   238     68   2G 395M 340M 152M    0    0      0      0   3060     72
+  25  25   376     53   1G 395M 431M 242M    0    0      0      0  29808    273
+   6   6   377     59   1G 395M 455M 266M    0    0      0      0  30900    266
+  10  10   347     55   1G 395M 492M 303M    0    0      0      0  35004    265
+   5   4   389     60   1G 395M 506M 318M    0    0      0      0  27308    262
+</pre>
+</div>
+
+and watch the cache fill up.  In fact, if we keep running collectl eventually
+we use up all available memory (but that's what it's there for) and even after
+the test completes and there is no more I/O, we still see hardly any free
+memory.  But that too is ok because until someone else needs it or deletes
+the file, that data stays in cache.  Look at the last sample where I manually
+deleted the file.  You can see the cache drop to 204M and the free memory 
+rise to 2G during a single reporting interval:
+
+<div class=terminal>
+<pre>
+#<--------CPU--------><-----------Memory----------><----------Disks----------->
+#cpu sys inter  ctxsw free buff cach inac slab  map KBRead  Reads KBWrit Writes
+   1   1   374     91 171M 397M   2G   2G    0    0      0      0  34624    288
+   1   1   368     82 171M 397M   2G   2G    0    0      0      0  31408    260
+   2   2   319     56 171M 397M   2G   2G    0    0      0      0  31148    266
+   0   0   385     70 172M 397M   2G   2G    0    0      0      0  25844    273
+   0   0   167     70 172M 397M   2G   2G    0    0      0      0      0      0
+   0   0   173     51 172M 397M   2G   2G    0    0      0      0      0      0
+   2   0   181    108 172M 397M   2G   2G    0    0      0      0     12      2
+  41  41   148     52   2G 397M 204M  15M    0    0      0      0     72      5
+</pre>
+</div>
+
+For one more test, I'm going to write that same 1G file to my home directory and
+look what collectl tells me:
+
+<div class=terminal>
+<pre>
+#<--------CPU--------><----------Disks-----------><----------Network---------->
+#cpu sys inter  ctxsw KBRead  Reads KBWrit Writes netKBi pkt-in netKBo pkt-out
+   0   0   145     48      0      0      0      0      2     38      2      13
+  13  13  6716   3491      0      0      0      0    136    682  21144   14762
+  18  18  6802   3426      0      0      0      0    248   1256  39111   27278
+  14  14  4680   2420      0      0     28      2    252   1256  40166   28008
+   7   7  3105   1520      0      0      0      0    148    752  23256   16228
+</pre>
+</div>
+
+Since my home directory is mounted via nfs, all I/O goes through the network!  In
+fact, if I run collectl as <i>collectl -scfn</i> I see:
+
+<div class=terminal>
+<pre>
+#<--------CPU--------><----------Network----------><------NFS Totals------>
+#cpu sys inter  ctxsw   KBIn  PktIn  KBOut  PktOut   read  write meta comm
+  19  19  1672    429      1     11      2      12      0   3885    6    0
+  27  27  8466  12909   1652  20875  56112   39495      0  19383    0    4
+   9   9  4042   1632    301   3781  10125    7129      0   9508    0    0
+   7   7 18677   9074   3557  44897 120375   84729      0      0    0    0
+   8   8 18082   8874   3559  44928 120359   84717      0      0    0    0
+</pre>
+</div>
+
+I first see a batch of over 3K nfs writes which also include 6 metadata calls,
+which are clearly doing a variety of directory accesses to see if the file
+currently exists as well as for creating the new one.  During the next 
+interval the network starts sending the bulk of the data over the network,
+which also include 4 commits (nfs does commits for a batch of writes as 
+opposed to a single commit/write which would be excessive and slow).  In
+the intervals that follow, nfs need do no more writes as they've already been
+queued up and so for the next several intervals all we see is the network
+traffic.  The CPU load has also gone down because the data has already been
+moved into the outbound I/O buffers.  For more details on nfs, see <a href=NfsInfo.html>
+this</a> page.
+<p>
+So in conclusion you can see there is really quite a lot you can do with just a few basic
+switches and I haven't even gotten into <i>--verbose</i>, which as they say is an exercise left for
+the student.  So try some simple dt tests yourself or use you own personal favorite
+load generator, while trying out <i>collectl -sc --verbose</i> or <i>collectl -sm --verbose</i> or even
+<i>collectl -sn --verbose</i>.  You can even put them all together as 
+<i>collectl -scmn --verbose</i>, but then as you'll see you end up using a lot of that valuable
+screen real estate.  As a final bonus, try adding the --home switch which move the cursor to the
+home (upper left-hand corner) position of the screen.  Think of this as something like the
+linux <i>top</i> command (collectl also has a --top switch for displaying slab/process data)
+since each sample is displayed at the top of the screen.  That command
+would then look like <i>collectl -smcn --verbose --home</i>.
+<p>
+enjoy...
+
+<table width=100%><tr><td align=right><i>updated Feb 21, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

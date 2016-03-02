@@ -1,0 +1,49 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>High Resolution Timer Warnings</title>
+</head>
+
+<body>
+<center><h1>High Resolution Timer Warnings</h1></center>
+<p>
+There has been a recent problem identified when running collectl on systems
+with versions of the <i>Time:HiRes</i> perl module less than 1.91 and versions
+of <i>glibc</i> newer then 2.3.  So far these messages appear to be harmless as
+they've only been identified as occurring during system boot.  However, since the
+problem is that <i>HiRes</i> is actually calling the <i>setitimer</i> system
+service incorrectly, it is really living on borrowed time (if you'll pardon the
+pun) and users would be much better off and safer to simply upgrade to a newer
+version which they can get at http://search.cpan.org/dist/Time-HiRes/.
+<p>
+If you've never installed something from CPAN before you shouldn't be intimidated
+even if you're not a programmer as all you need to do is perform the following
+steps.  If the version you're downloading is not 1.9715, replace that string
+in the instructions below with the appropriate version number:
+<ul>
+<li>download Time-HiRes-1.9715.tar.gz to /tmp</li>
+<li>cd /tmp</li>
+<li>unpack it with the command <i>tar -zxf Time-HiRes-1.9715.tar.gz</i></li>
+<li>cd Time-HiRes-1.9715</li>
+<li>perl Makefile.PL</li>
+<li>make</li>
+<li>make test</li>
+<li>make install</li>
+<li>collectl -v should identify the newer version</li>
+</ul>
+<p>
+In a few cases, rather than replacing the older version the new one ends up in a
+different location, and collectl still sees the old version.  You can usually get
+around this problem by re-executing the <i>make install</i> command as <i>make 
+install -UNINST=1</i>
+<p>
+<b>Update - April 08, 2009</b>
+<br>It looks like RedHat has finally responded to my bugzilla and posted a
+<a href=http://rhn.redhat.com/errata/RHBA-2009-0406.html>solution</a>, which makes
+me optimistic we should see a newer version of <i>Time::HiRes</i> in the RHEL5.4 timeframe.
+That still doesn't mean the problem has been resolved on distros that use older versions.
+
+<table width=100%><tr><td align=right><i>updated April 8, 2009</i></td></tr></colgroup></table>
+
+</body>
+</html>

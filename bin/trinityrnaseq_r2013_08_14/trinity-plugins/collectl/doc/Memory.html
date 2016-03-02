@@ -1,0 +1,136 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Memory Info</title>
+</head>
+
+<body>
+<center><h1>Memory Info Monitoring</h1></center>
+<p><b>Introduction</b>
+<br>Collectl reports the <i>standard</i> values with respect to memory which are fully
+documented under the <a href="Data.html">data definitions</a>.  Trying to rationalize the
+way these values relate to each other can be a frustrating experience because they rarely
+add up to what you expect.  Part of the reason for this that every byte is simply not 
+accounted for in every category.  This can be further complicated because at boot time, 
+some devices will actually grab some memory that the kernel will never even see and so the
+total memory will not always equal to the physical amount of installed memory.
+<p>
+If one looks at <i>/proc/meminfo</i>, which shows a lot more types of memory than collectl
+reports, it begs the question "why not report it all?" and the simple answer is there is just too
+much.  Further, collectl uses a second file <i>/proc/vmstat</i> to gather virtual memory stats
+which further adds to the volume of possibly candidates to report.  Again, collectl tries to
+report values of most use.
+<p>
+<b>Brief, verbose and detail</b>
+<br>Like other data in these 3 categories memory also reports values in this way as well.  However
+there are a few important caveats to note:
+<ul>
+<li><i>Brief</i> mode combines mapped and anonymous memory into a single value of <i>Map</i>
+primarily as a mechanism to try and reduce the width of the memory columns since including too 
+many defeats the whole purpose of brief data reporting, which is to allow multiple types of 
+data on a single line.</li>
+<li>Unlike other subsystems that report summary and detail data, memory summary data is <i>not</i>
+the result of collecting detail data and adding it up.  This means that unlike subsystems like
+disks or CPUs in which you can record either summary or detail and still be able to play back
+either, when playing black memory you will only get values for what you chose to record, otherwise
+you will see values of all zeros.</i>
+<li>There is no buffer or cache values reported as detail data because that information is not reported</li>
+</ul>
+<b>Don't get fooled by <i>cache</i> memory vs <i>used</i> and <i>free</i> memory</b>
+<br>One of the most confusing things for people who aren't more familiar with linux memory management
+is the interpretation of <i>cache</i> memory and its relationship to used and free memory.
+As one might expect, as cache memory increases so does <i>used</i> and as expected <i>free</i> decreases.
+<p>
+What fools people is that the first (or many) times they see low free memory they think their system is 
+running out of memory when in fact is it not.  If they reboot, the memory frees up, but then starts to fill again.
+So what's going on?  It turns out that whenever you read/write a file, unless you explicitly
+tell linux not to, it passes the file through the cache and this will cause an increase in the amount 
+of cache memory used and a drop in free memory.  What many people do not realize is, until that file is
+deleted or the cache explicitly cleared, all files remain in cache and as a result if the system accesses
+a lot of files cache will eventually fill up and reduce the amount of free memory.
+<p>
+Naturally linux can't allow the cache to grow unchecked, and so when it reaches a maximum set by kernel,
+older entries will start to age out.  In other words, reading a file will be extremely fast when in cache
+but its access slowed to disk speeds when not.
+<p>
+The only real way to tell what is going on is to look
+at the disk subsystem while accessing a file.  If a complete or partial file is in cache, read I/O rates will
+be much higher than normal.  If a file is written that will completely fit in cache, again the I/O rates will
+be very high because the rate at which cache is being filled is what is actually being reported.  It is only
+when a file is a lot larger than cache that the I/O rates slow down, operating only as fast as dirty
+data in cache can be written to disk and is in fact the only real way to measure how fast your disk subsystem
+actually is.
+
+<p><center><b><i>tip: --vmstat</b></i></center>
+Some people find the way <i>vmstat</i> reports virtual memory information to be very handy in
+some cases.  The only problem with vmstat is it doesn't write its output to a file and so even if
+you wrap it in a script to write its output to a file you're now stuck with memory information 
+in a specific format and if you do want to plot it that takes a little more effort too.
+<p>
+Collectl's <i>--vmstat</i> switch is actually internally turned into <i>--export vmstat</i> and
+so reports data the same way as vmstat does but now you get some added bonuses:
+<ul>
+<li>This data is always available when you record memory stats, you don't have to do anything
+extra to make this information available.  However note if you haven't recorded CPU stats those
+fields will be reported as zero.</li>
+<li>You can easily include the timestamp format of your choice, at least the 3 different ones
+collectl allows and even include msec it you need that precision</i>
+<li>You can playback data in vmstat format and then play it back again in other formats.
+<li>You can use this with <a href=colmux.html>colmux</a> which now means you can do a 
+cluster-wide vmstat and show the top users sorted by the column of your choice</li>
+<li>And of course you can still use any of <a href=colplot.html>colplot's</a> memory plots</li>
+<li>This is an excellent example of a very simple export module which can be a guide to help
+you write others of your own choosing.
+</ul>
+
+<p><center><b><i>tip: don't forget about --grep</b></i></center>
+As previously mentioned, there is a lot more data contained in the memory <i>/proc</i> 
+structures than collectl reports.  So does that mean you're out of luck if you want to 
+see the value of say <i>Committed_AS</i>?
+Absolutely not, at least not during playback.  Since collectl actually records the contents of
+<i>/proc</i> data in its original formats in the <i>raw</i> files, you could always use linux's
+grep (or zgrep) commands to search them for a particular pattern like this:
+
+<div class=terminal>
+<pre>
+zgrep Committed_AS /var/log/collectl/poker-20110928-000000.raw.gz
+Committed_AS:   889272 kB
+Committed_AS:   889272 kB
+Committed_AS:   889272 kB
+Committed_AS:   889272 kB
+Committed_AS:   889272 kB
+Committed_AS:   889272 kB
+Committed_AS:   889272 kB
+Committed_AS:   891664 kB
+Committed_AS:   891664 kB
+Committed_AS:   891664 kB
+Committed_AS:   891664 kB
+</pre></div>
+
+But unfortunately this does nothing to tell you what time the values correspond to.  You could
+have included the reporting of fields with >>> in them and you'll see the UTC timestamps, but
+those aren't easily mapped to conventional time formats.  Now look at this:
+
+<div class=terminal>
+<pre>
+collectl -p /var/log/collectl/poker-20110928-000000.raw.gz --grep Committed_AS -oT
+00:00:00 Committed_AS:   889272 kB
+00:00:10 Committed_AS:   889272 kB
+00:00:20 Committed_AS:   889272 kB
+00:00:30 Committed_AS:   889272 kB
+00:00:40 Committed_AS:   889272 kB
+00:00:50 Committed_AS:   889272 kB
+00:01:00 Committed_AS:   889272 kB
+00:01:10 Committed_AS:   891664 kB
+00:01:20 Committed_AS:   891664 kB
+</pre></div>
+
+Pretty slick!  And since this is collectl/playback, you can use other switches like
+<i>from/thru</i> or even change the timestamp format and/or see msec too.  Also remember 
+this trick can be applied to any data collectl records, though memory tends to be the most
+interesting.
+
+<p><table width=100%><tr><td align=right><i>updated September 29, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>

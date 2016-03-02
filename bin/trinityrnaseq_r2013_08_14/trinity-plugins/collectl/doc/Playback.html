@@ -1,0 +1,141 @@
+<html>
+<head>
+<link rel=stylesheet href="style.css" type="text/css">
+<title>collectl - Playback</title>
+</head>
+
+<body>
+<center><h1>Playback</h1></center>
+<p>
+<h3>Playing back one or more files</h3>
+There are actually 2 reasons for playing back a file, one being to generate
+<a href=Plotfiles.html>plottable files</a> and the other is to simply examine
+the data in the same format as you would see if running collectl interactively.
+The following discussion applies to both cases, the only real difference is that to
+generate plot files you include the switches <i>-P</i> and <i>-f</i>.
+<p>
+You tell collectl to play back one or more files using <i>-p</i> followed by any
+combination of one or more filenames separated with commas or whitespace, noting you 
+need to quote the string if it contains spaces or wildcard characters.
+The files will be played back as if a single file with monotonically
+increasing sample numbers for each unique host.  It should be noted
+that if these files contain samples for different subsystems the resultant
+stream will contain data elements for all, zero filling as appropriate.  When
+this occurs, a message will be displayed if -m has been specified.
+<p>
+Collectl will generate plot format if requested with -P, 
+writing the output to multiple output files if both summary and detail data is
+specified or when a file with data for a differnet host or a different collection
+date is encounted.  <i>NOTE: files that contain data that crosses
+midnight will <i>not</i> force creation of a second file when the date changes</i>.
+<p>
+<b>Filtering with <i>--from</i> and <i>--thru</i></b>
+<br>
+You restrict the timeframe between which data is reported by using 
+<i>--from</i> and <i>--thru</i>.  However, since collectl doesn't require you 
+to specify both switches nor does it require you to specify both a date and time
+for each switch, it tries to make an intelligent guess as to what timeframe
+you really meant.  In most cases it guesses right but sometimes it guesses wrong.
+The simple fix if it gets confused is to remove the ambiguity and just specify 
+full dates/times with both switches.
+<p>
+When you specify playback files using wildcarding in the name string, collectl
+initially selects all the files that match.  However, in some cases you may not 
+really intend for them to all be played back, especially if you selected a timeframe
+using <i>--from</i> and <i>--thru</i> switches.  Have no fear.  Collectl will use 
+these switches to select the appropriate subset of files that match your selection.
+<p>
+<center><b><i>Caution</i></b></center>
+When filtering wildcarded files using <i>--from</i> and/or <i>--thru</i> switches,
+collectl compares those values with the timestamps of the filenames to determine
+whether or not that file is likey to contain the data requested.  However, collectl
+doesn't know if a file contains data that spans midnight or not so it simply assumes it
+doesn't since this is a rarely used feature.  Therefore, collectl <i>only</i>
+relaxes these tests when wildcards are <i>not</i> specified in the filename playback string.
+<p>
+<b>Processing files that span midnight</b>
+<br>
+The main reason for the <a href=#complex>complexity</a> in the interpretation of <i>--from</i> and 
+<i>--thru</i>, is to allow collectl to deal with files that
+contain data that crosses midnight.  
+As an example, consider a single file with data collected from midnite
+on one day to 2AM, 26 hours later.  If you want to tell collectl to process the entire file,
+don't specify any time filters and it will report everything.  
+But if you want to process the date from midnight to 1AM,
+you need to tell collectl which dates are involved!  As stated in the rules above:
+<ul>
+<li>if you only specify <i>--from 00:00-01:00</i> (note we're using the alternate switch
+format), collectl will process 1 hour's worth of data</i>.</li>
+<li>If you want 25 hours worth of data you will need to include the date of the second day 
+with <i>--thru</i>.</li>
+<li>If you only want one hour's worth of data for the second day you will need to specify 
+both dates.</li>
+</ul>
+<p>
+<b>A word about the first record reported</b>
+<br>
+Collectl always needs data from a base interval from which to begin
+calculating changes in counters and that interval is never displayed.
+In other words, if you collected data every 10 seconds starting at 10:00:00
+and then played it back, the first time reported will be for 10:00:10.
+<p>
+In order to try and mitigate this when playing back data and specifying
+a <i>--from</i> time, collectl attempts to read a sample from the previous interval so
+that you actually see the time you requested.
+Further, when mulitple files are processed collectl is smart enough to know if they are 
+contiguous to use the last set of data from one file as the base interval for the next one
+and as a result there will be no <i>holes</i> in the data as reported.
+However if they are not configuous a new base level must be taken for the new file and 
+its first record skipped.  This can be confusing and probably not even that important 
+but consider 2 files generated contiguously:
+<ul>
+<li>If you process each file one at a time, their first samples will not be displayed</li>
+<li>If you process them in one command using a wild card for the date/time, you will see
+the first record of the second file</li>
+</ul>
+If you have 2 non-contiguous files you will see the same results whether you process them one
+at a time or together using a wild card, that is no first record for either.
+<p>
+<a name=complex></a>
+<b>How <i>--from</i> and <i>--thru</i> are really interpretted</b>
+<br>
+This section probably contains more detail than you should really care about and
+is here more for completeness than anything else.  Remember, these switches can
+contain a date, a time or both!  You can also use the shorthand form of combining
+both switches under <i>--from</i> by separating the two with a hypen.  In other
+words you do something like: <i>--from 12:00-13:00</i>, noting you can use
+an combination of dates/times on either side of the hyphen.
+
+<ul>
+<li>the default <i>from</i> and <i>thru</i> dates are 20000101 and 20380101 respectively</li>
+<li>if no times are specified, each file will be processed from beginning to end</li>
+<li>if no dates are specified, the time(s) apply to each file being processed.  In
+other words the switches <i>--from 10:00 --thru 11:00</i> will result in data being
+reported from 10:00 to 11:00 for each day!  If only <i>--from 10:00</i>, data will be
+played back every day starting at 10:00.  If you want to the first day to start at 10:00
+and subsequent days to be reported in full, specify a complete set of dates/times.</li>
+<li>if one or both dates are specified, things become a little more complicated</li>
+<ul>
+<li>if one date is specified, use the default for the one not specified</li>
+<li>if both dates are specified, times only apply to the first/last dates</li>
+<li>ignore any files created after the thru date/time</li>
+</ul>
+</ul>
+</ul>
+
+<p>
+<center><i><b>Important Tip</b></i></center>
+Perhaps the most important thing to keep in mind is that when you play back a file,
+collectl will use the same switches as were specified during collection.  In other
+words if you collect cpu, disk and network data using <i>-scdn</i>, when you play
+it back you will get cpu, disk and network <i>summary</i> data either displayed on
+the terminal or written to a file.  However, you could just have easily chosen a
+different subsystem specification such as <i>-scND</i> in which case you'd still get
+CPU summary data but now you'd get network and disk detail data.  This feature can
+be extremely useful especially when combined with different output formatting switches
+such as <i>-o</i> and/or <i>--verbose</i>.
+
+<table width=100%><tr><td align=right><i>updated May 04, 2011</i></td></tr></colgroup></table>
+
+</body>
+</html>
