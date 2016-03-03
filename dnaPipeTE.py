@@ -455,13 +455,16 @@ class RepeatMasker:
 		return repeatmasker_done
 
 class Blast:
-	def __init__(self, Blast_path, Parallel_path, cpu, output_folder, sample_number, sample_files):
+	def __init__(self, Blast_path, Parallel_path, cpu, output_folder, sample_number, sample_files, genome_coverage, genome_size):
 		self.Blast_path = str(Blast_path)
 		self.Parallel_path = str(Parallel_path)
 		self.cpu =  int(cpu)
 		self.output_folder = str(output_folder)
 		self.sample_number = int(sample_number)
 		self.sample_files = sample_files
+		self.genome_coverage = float(genome_coverage)
+		self.genome_size = int(genome_size)
+		self.genome_base = int(float(self.genome_size) * self.genome_coverage)
 		self.blast1_run()
 		self.blast2_run()
 		self.blast3_run()
@@ -548,17 +551,21 @@ class Blast:
 		count = dict()
 		with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
 			for line in counts2_file:
+				to_add = int(line.split()[3])
+				#takes first part before the "_"
 				line = line.split()[1].split("_")[0]
 				if line[0:3] == "comp":
+					#replaces column 2 by "comp"
 					line = "comp"
 				if line in count:
-					count[line] += 1
+					count[line] += to_add
 				else:
-					count[line] = 1
+					count[line] = to_add
 		count["na"] = 0
 		with open(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
 			for line in counts2_file:
-				count["na"] += 1
+				to_add = int(line.split()[3])
+				count["na"] += to_add
 		with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
 			for super_familly in ["LTR", "LINE", "SINE", "DNA", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
 				if super_familly.split("_")[0] in count:
@@ -569,9 +576,9 @@ class Blast:
 				counts1_file.write("Others\t"+str(count["comp"])+"\n")
 			else:
 				counts1_file.write("Others\t0\n")
-			with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
-				line = counts2_file.readline()
-				counts1_file.write("Total\t"+str(line)+"\n")
+			# with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
+			# 	line = counts2_file.readline()
+				counts1_file.write("Total\t"+str(self.genome_base)+"\n")
 		print("parsing blastout and adding RM annotations for each read...")
 		count = "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out |  awk '{print $1\"\\t\"$2\"\\t\"$3}' |grep -v 'comp' > "+self.output_folder+"/blastout_RMonly && "
 		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | sed 's/_comp/\\tcomp/g' | awk '{print $1\"\\t\"$3\"\\t\"$4}' | grep 'comp' > "+self.output_folder+"/join.blastout && "
@@ -628,7 +635,7 @@ Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.
 RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.RM_species, args.cpu, args.output_folder, args.RM_threshold)
 Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, 1, args.output_folder, True)
 sample_files_blast = Sampler_blast.result()
-Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast)
+Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast, args.genome_coverage, args.genome_size)
 Graph(args.output_folder)
 
 if not args.keep_Trinity_output:
