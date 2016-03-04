@@ -55,7 +55,7 @@ print( "                                       | |                              
 print( "                                       |_|                                       ")
 print( "                                                                                 ")
 print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements         ")
-print( "                              v.1.1_02-2016                                      ")
+print( "                              v.1.2_03-2016                                      ")
 print( "                                                                                 ")
 print( "                                                                                                                                                                       ")                                          
 print( "   	                                                        ") 
@@ -353,7 +353,7 @@ class RepeatMasker:
 		repeatmasker += " "+self.output_folder+"/Trinity.fasta"
 		repeatmaskerProcess = subprocess.Popen(str(repeatmasker), shell=True)
 		repeatmaskerProcess.wait()
-		if not os.path.exists(self.output_folder+"/Annotation"):
+		if os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
 		line_number = 0
 		trinity_out = list()
@@ -445,14 +445,14 @@ class RepeatMasker:
 		files = [self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 
 			self.output_folder+"/Annotation/Best_RM_annot_80-80", 
 			self.output_folder+"/Annotation/Best_RM_annot_partial"]
-		repeatmasker_done = True
+		repeatmasker_not_done = False
 		for output in files:
 			if not os.path.isfile(output) or (os.path.isfile(output) and not os.path.getsize(output) > 0):
 				print(output)
-				repeatmasker_done = False
-		if repeatmasker_done:
+				repeatmasker_not_done = True
+		if not repeatmasker_not_done:
 			print("RepeatMasker files found, skipping Repeatmasker...")
-		return repeatmasker_done
+		return repeatmasker_not_done
 
 class Blast:
 	def __init__(self, Blast_path, Parallel_path, cpu, output_folder, sample_number, sample_files, genome_coverage, genome_size):
@@ -477,7 +477,7 @@ class Blast:
 		if not os.path.isfile(self.output_folder+"/Reads_to_components_Rtable.txt") or not os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out") or (os.path.isfile(self.output_folder+"/Reads_to_components_Rtable.txt") and not os.path.getsize(self.output_folder+"/Reads_to_components_Rtable.txt") > 0) or (os.path.isfile(self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out") and not os.path.getsize(self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out") > 0):
 			if not os.path.exists(self.output_folder+"/blast_out"):
 				os.makedirs(self.output_folder+"/blast_out")
-			print("blasting...")
+			print("blasting...")		
 			blast = "cat "
 			# for i in range(0,self.sample_number):
 			# 	blast += self.output_folder+"/"+self.sample_files[i]+" "
@@ -490,7 +490,8 @@ class Blast:
 			blastProcess.wait()
 			print("Paring blast1 output...")
 			blast = "cat "+self.output_folder+"/blast_out/reads_vs_Trinity.fasta.blast.out | sort -k1,1 -k12,12nr -k11,11n | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out && "
-			blast += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | awk '{print $2\"\\t\"$3}' | sed 's/_/\t/g' > "+self.output_folder+"/Reads_to_components_Rtable.txt"
+			
+			blast += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | awk '{print $2\"\\t\"$3\"\\t\"$4}' | sed 's/_/\t/g' > "+self.output_folder+"/Reads_to_components_Rtable.txt"
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
 		else:
@@ -549,7 +550,7 @@ class Blast:
 		print("### Estimation of Repeat content from blast outputs ###")
 		print("#######################################################")
 		count = dict()
-		if self.genome_size == "":
+		if self.genome_size != "":
 			with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
 				for line in counts2_file:
 					to_add = int(line.split()[3])
@@ -628,8 +629,11 @@ class Blast:
 		print("Done, results in: blast_out/blastout_final_fmtd_annoted")
 
 class Graph:
-	def __init__(self, output_folder):
+	def __init__(self, output_folder, genome_size, genome_coverage):
 		self.output_folder = str(output_folder)
+		self.genome_coverage = float(genome_coverage)
+		self.genome_size = int(genome_size)
+		self.genome_base = int(float(self.genome_size) * self.genome_coverage)
 		self.run()
 
 	def run(self):
@@ -637,9 +641,9 @@ class Graph:
 		print("### OK, lets build some pretty graphs ###")
 		print("#########################################")
 		print("Drawing graphs...")
-		graph = os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts && "
+		graph = os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts "+str(self.genome_base)+" && "
 		graph += "cat "+self.output_folder+"/reads_per_component_sorted.txt | sort -k1,1 > "+self.output_folder+"/sorted_reads_per_component && "
-		graph += "join -a1 -12 -21 "+self.output_folder+"/sorted_reads_per_component "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,1.1,2.2,2.4,2.5,2.3 | sort -k1,1nr > "+self.output_folder+"/reads_per_component_and_annotation && "
+		graph += "join -a1 -12 -21 "+self.output_folder+"/sorted_reads_per_component "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,1.5,1.1,2.2,2.4,2.5,2.3 | sort -k1,1nr > "+self.output_folder+"/reads_per_component_and_annotation && "
 		graph += "rm "+self.output_folder+"/reads_per_component_sorted.txt "+self.output_folder+"/sorted_reads_per_component && "
 		graph += os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieChart.R "+self.output_folder+" Counts.txt "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/pieColors && "
 		graph += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_Trinity.fasta.blast.out | sort -k2,2 > "+self.output_folder+"/Annotation/sorted_blast3 && "
@@ -664,7 +668,7 @@ RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.
 Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, 1, args.output_folder, True)
 sample_files_blast = Sampler_blast.result()
 Blast(config['DEFAULT']['Blast_folder'], config['DEFAULT']['Parallel'], args.cpu, args.output_folder, 1, sample_files_blast, args.genome_coverage, args.genome_size)
-Graph(args.output_folder)
+Graph(args.output_folder, args.genome_size, args.genome_coverage)
 
 if not args.keep_Trinity_output:
 	print("Removing Trinity runs files...")
