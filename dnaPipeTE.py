@@ -353,7 +353,7 @@ class RepeatMasker:
 		repeatmasker += " "+self.output_folder+"/Trinity.fasta"
 		repeatmaskerProcess = subprocess.Popen(str(repeatmasker), shell=True)
 		repeatmaskerProcess.wait()
-		if os.path.exists(self.output_folder+"/Annotation"):
+		if not os.path.exists(self.output_folder+"/Annotation"):
 			os.makedirs(self.output_folder+"/Annotation")
 		line_number = 0
 		trinity_out = list()
@@ -425,12 +425,12 @@ class RepeatMasker:
 		print("#########################################")
 
 		annotation = ""
-		for super_familly in ["LTR", "LINE", "SINE", "DNA", "Low_complexity","Satellite","Helitron", "Simple_repeat", "rRNA"] :
+		for super_familly in ["LTR", "LINE", "SINE", "DNA","MITE","Low_complexity","Satellite","Helitron", "Simple_repeat", "rRNA"] :
 			# fais une liste de fichier headers pour aller récupérer les contigs
 			annotation += "awk '{print $1 \"\\t\" $5}' "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | grep '"+super_familly+"' | awk '{print$1}' > "+self.output_folder+"/Annotation/"+super_familly+".headers && "
 			# récupère et annote les contigs de Trinity.fasta selon les meilleurs hits RM
 			annotation += "perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/"+super_familly+".headers "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>"+super_familly+"_comp/g' > "+self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta && "
-		annotation += "grep -v 'LTR\|LINE\|SINE\|DNA\|Low_complexity\|Satellite\|Helitron\|Simple_repeat\|rRNA' "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{print$1}' > "+self.output_folder+"/Annotation/others.headers && "
+		annotation += "grep -v 'LTR\|LINE\|SINE\|DNA\|Low_complexity\|Satellite\|Helitron\|Simple_repeat\|rRNA\|MITE' "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{print$1}' > "+self.output_folder+"/Annotation/others.headers && "
 		annotation += "perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/others.headers "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>others_comp/g' >"+self.output_folder+"/Annotation/others_annoted.fasta && "
 		annotation += "cat "+self.output_folder+"/Annotation/*.headers > "+self.output_folder+"/Annotation/all_annoted.head && "
 		annotation += "perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/all_annoted.head "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>na_comp/g' > "+self.output_folder+"/Annotation/unannoted.fasta && "
@@ -445,14 +445,14 @@ class RepeatMasker:
 		files = [self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs", 
 			self.output_folder+"/Annotation/Best_RM_annot_80-80", 
 			self.output_folder+"/Annotation/Best_RM_annot_partial"]
-		repeatmasker_not_done = False
+		repeatmasker_done = True
 		for output in files:
 			if not os.path.isfile(output) or (os.path.isfile(output) and not os.path.getsize(output) > 0):
 				print(output)
-				repeatmasker_not_done = True
-		if not repeatmasker_not_done:
+				repeatmasker_done = False
+		if repeatmasker_done:
 			print("RepeatMasker files found, skipping Repeatmasker...")
-		return repeatmasker_not_done
+		return repeatmasker_done
 
 class Blast:
 	def __init__(self, Blast_path, Parallel_path, cpu, output_folder, sample_number, sample_files, genome_coverage, genome_size):
@@ -569,7 +569,7 @@ class Blast:
 					to_add = int(line.split()[3])
 					count["na"] += to_add
 			with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
-				for super_familly in ["LTR", "LINE", "SINE", "DNA", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
+				for super_familly in ["LTR", "LINE", "SINE", "DNA", "MITE", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
 					if super_familly.split("_")[0] in count:
 						counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
 					else:
@@ -596,7 +596,7 @@ class Blast:
 				for line in counts2_file:
 					count["na"] += 1
 			with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
-				for super_familly in ["LTR", "LINE", "SINE", "DNA", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
+				for super_familly in ["LTR", "LINE", "SINE", "DNA", "MITE", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
 					if super_familly.split("_")[0] in count:
 						counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
 					else:
