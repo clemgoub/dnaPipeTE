@@ -250,7 +250,7 @@ class FastqSamplerToFasta:
 						sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
 						sys.stdout.flush()
 				i += 1
-				if self.use_coverage
+				if self.use_coverage:
 					if base_sampled >= self.genome_base:
 						break
 					if base_sampled >= self.fastq_total_size:
