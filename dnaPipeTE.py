@@ -208,12 +208,11 @@ class FastqSamplerToFasta:
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
 		if self.use_coverage:
-			if self.fastq_total_size < self.genome_base:
+			if self.fastq_total_size <= self.genome_base:
 				sys.exit("not enought base to sample "+str(self.fastq_total_size)+" vs "+str(self.genome_base)+" to sample")
 			self.number = int(float(self.genome_base)/float(size_min))
 			if self.number > np:
 				self.number = np
-
 		print( "number of reads to sample : ", self.number, "\nfastq : ", file_name )
 		tirages = random.sample(range(np), self.number*self.sample_number)
 		for i in range(self.sample_number):
@@ -250,7 +249,7 @@ class FastqSamplerToFasta:
 						sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
 						sys.stdout.flush()
 				i += 1
-				if self.use_coverage
+				if self.use_coverage:
 					if base_sampled >= self.genome_base:
 						break
 					if base_sampled >= self.fastq_total_size:
