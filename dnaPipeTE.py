@@ -122,7 +122,7 @@ class FastqSamplerToFasta:
 		self.fastq_total_size = 0
 		if self.genome_size != 0 and self.genome_coverage > 0.0:
 			self.use_coverage = True
-			self.genome_base = int(float(self.genome_size) * self.genome_coverage
+			self.genome_base = int(float(self.genome_size) * self.genome_coverage)
 		self.sample_number = int(sample_number)
 		self.output_folder = output_folder
 		if not os.path.exists(self.output_folder):
