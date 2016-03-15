@@ -119,9 +119,10 @@ class FastqSamplerToFasta:
 		self.genome_size = int(genome_size)
 		self.genome_coverage = float(genome_coverage)
 		self.use_coverage = False
+		self.fastq_total_size = 0
 		if self.genome_size != 0 and self.genome_coverage > 0.0:
 			self.use_coverage = True
-			self.genome_base = int(float(self.genome_size) * self.genome_coverage)
+			self.genome_base = int(float(self.genome_size) * self.genome_coverage
 		self.sample_number = int(sample_number)
 		self.output_folder = output_folder
 		if not os.path.exists(self.output_folder):
@@ -180,21 +181,22 @@ class FastqSamplerToFasta:
 		if self.use_coverage:
 			np = 0
 			size_min = 10 ** 30
-			total_size = 0
 			if self.R1_gz:
 				with gzip.open(file_name+".gz", 'rt') as file1 :
 					for line in file1:
 						np += 1
-						if np % 2 == 0:
-							total_size += len(str(line))
+						if np % 4 == 0:
+							self.fastq_total_size += len(str(line))
 							if len(str(line)) < size_min:
 								size_min = len(str(line))
 			else:
 				with open(file_name, 'r') as file1 :
 					for line in file1:
 						np += 1
-						if np % 2 == 0 and len(line) < size_min:
-							size_min = len(line)
+						if np % 4 == 0:
+							self.fastq_total_size += len(str(line))
+							if len(str(line)) < size_min:
+								size_min = len(str(line))
 		else:
 			if self.R1_gz:
 				with gzip.open(file_name+".gz", 'rt') as file1 :
@@ -206,8 +208,8 @@ class FastqSamplerToFasta:
 		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
 		sys.stdout.flush()
 		if self.use_coverage:
-			if total_size < self.genome_base:
-				sys.exit("not enought base to sample "+str(total_size)+" vs "+str(self.genome_base)+" to sample")
+			if self.fastq_total_size < self.genome_base:
+				sys.exit("not enought base to sample "+str(self.fastq_total_size)+" vs "+str(self.genome_base)+" to sample")
 			self.number = int(float(self.genome_base)/float(size_min))
 			if self.number > np:
 				self.number = np
@@ -248,8 +250,11 @@ class FastqSamplerToFasta:
 						sys.stdout.write("\r"+str(j)+"/"+str(self.number*self.sample_number))
 						sys.stdout.flush()
 				i += 1
-				if self.use_coverage and base_sampled >= self.genome_base:
-					break
+				if self.use_coverage
+					if base_sampled >= self.genome_base:
+						break
+					if base_sampled >= self.fastq_total_size:
+						sys.exit("not enought base to sample "+str(self.fastq_total_size)+" vs "+str(self.genome_base)+" to sample")
 				if j >= len(self.tirages):
 					break
 		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
