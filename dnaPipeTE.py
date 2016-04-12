@@ -529,7 +529,7 @@ class Blast:
 			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
-			sortblast = "python3 ./blast_sorter.py --input_dir" +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out" > self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out" + " ; rm " +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
+			sortblast = "python3 ./blast_sorter.py --input_dir "+self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out" + " ; rm " +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
 			sortBlastProcess = subprocess.Popen(str(sortblast),shell=True)
 			sortBlastProcess.wait()
 			print("Selecting non-matching reads for blast3")
@@ -557,9 +557,12 @@ class Blast:
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
 			print("Paring blast3 output...")
-			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out"
+			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out > "+self.output_folder+"/blast_out/int.reads_vs_unannoted.blast.out"
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
+			sortblast = "python3 ./blast_sorter.py --input_dir "+self.output_folder+"/blast_out/int.reads_vs_unannoted.blast.out > "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out" + " ; rm " +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
+			sortBlastProcess = subprocess.Popen(str(sortblast),shell=True)
+			sortBlastProcess.wait()
 		else:
 			print("Blast 3 files found, skipping Blast 3 ...")
 
