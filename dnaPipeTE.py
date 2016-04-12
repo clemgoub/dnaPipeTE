@@ -40,7 +40,8 @@ if not os.path.isfile('config.ini'):
 						'Parallel': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/parallel',
 						'Sample_size': 500000,
 						'RM_species' : "All",
-						'Sample_number': 2}
+						'Sample_number': 2,
+						'Trinity_glue' : 1}
 	with open('config.ini', 'w') as configfile:
 		config.write(configfile)
 config.read('config.ini')
@@ -55,7 +56,7 @@ print( "                                       | |                              
 print( "                                       |_|                                       ")
 print( "                                                                                 ")
 print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements         ")
-print( "                              v.1.2_03-2016                                      ")
+print( "                              v.1.2_04-2016                                      ")
 print( "                                                                                 ")
 print( "                                                                                                                                                                       ")                                          
 print( "   	                                                        ") 
@@ -107,6 +108,7 @@ parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['Repeat
 parser.add_argument('-species', action='store', default=config['DEFAULT']['RM_species'], dest='RM_species', help='default RepeatMasker library to use. Must be a valid NCBI for species or clade ex: homo, drosophila, "ciona savignyi". Default All is used')
 parser.add_argument('-RM_t', action='store', default=0.0, dest='RM_threshold', help='minimal percentage of query hit on repeat to keep anotation')
 #parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
+parser.add_argument('-Trin_glue', action='store',default=config['DEFAULT']['Trinity_glue'], dest='Trinity_glue', help='number of reads to join Inchworm (k-mer) contigs')
 parser.add_argument('-keep_Trinity_output', action='store_true', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
 
 print("Start time: "+time.strftime("%c"))
@@ -281,13 +283,14 @@ class FastqSamplerToFasta:
 		return sampling_done
 
 class Trinity:
-	def __init__(self, Trinity_path, Trinity_memory, cpu, output_folder, sample_files, sample_number):
+	def __init__(self, Trinity_path, Trinity_memory, cpu, Trinity_glue, output_folder, sample_files, sample_number):
 		self.Trinity_path = str(Trinity_path)
 		self.Trinity_memory = str(Trinity_memory)
 		self.cpu = int(cpu)
 		self.output_folder = str(output_folder)
 		self.sample_files = sample_files
 		self.sample_number = int(sample_number)
+		self.trin_glue = int(Trinity_glue)
 		if not self.test_trinnity():
 			self.trinity_iteration(0)
 			for i in range(1, self.sample_number):
@@ -303,7 +306,7 @@ class Trinity:
 		if not os.path.exists(self.output_folder+"/Trinity_run"+str(iteration+1)):
 			os.makedirs(self.output_folder+"/Trinity_run"+str(iteration+1))
 		self.select_reads(iteration)
-		trinity = self.Trinity_path+" --seqType fa --JM "+str(self.Trinity_memory)+" --single "+self.output_folder+"/"+self.sample_files[iteration]+" --CPU "+str(self.cpu)+" --min_glue 0 --output "+self.output_folder+"/Trinity_run"+str(iteration+1)
+		trinity = self.Trinity_path+" --seqType fa --JM "+str(self.Trinity_memory)+" --single "+self.output_folder+"/"+self.sample_files[iteration]+" --CPU "+str(self.cpu)+" --min_glue "+str(self.trin_glue)+" --output "+self.output_folder+"/Trinity_run"+str(iteration+1)
 		trinityProcess = subprocess.Popen(str(trinity), shell=True)
 		trinityProcess.wait()
 		print("Trinity iteration "+str(iteration+1)+" Done'")
@@ -675,7 +678,7 @@ class Graph:
 #program execution:
 Sampler = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, args.sample_number, args.output_folder, False)
 sample_files = Sampler.result()
-Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, args.output_folder, sample_files, args.sample_number)
+Trinity(config['DEFAULT']['Trinity'], config['DEFAULT']['Trinity_memory'], args.cpu, config['DEFAULT']['Trinity_glue'], args.output_folder, sample_files, args.sample_number)
 RepeatMasker(config['DEFAULT']['RepeatMasker'], args.RepeatMasker_library, args.RM_species, args.cpu, args.output_folder, args.RM_threshold)
 Sampler_blast = FastqSamplerToFasta(args.input_file, args.sample_size, args.genome_size, args.genome_coverage, 1, args.output_folder, True)
 sample_files_blast = Sampler_blast.result()
