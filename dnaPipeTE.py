@@ -526,9 +526,12 @@ class Blast:
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
 			print("Paring blast2 output...")
-			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out | sort -u -k1,1 > "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out"
+			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
+			sortblast = "python3 ./blast_sorter.py --input_dir" +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out" > self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out" + " ; rm " +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
+			sortBlastProcess = subprocess.Popen(str(sortblast),shell=True)
+			sortBlastProcess.wait()
 			print("Selecting non-matching reads for blast3")
 			blast = "awk '{print$1}' "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/matching_reads.headers && "
 			blast += "perl -ne 'if(/^>(\S+)/){$c=!$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/blast_out/matching_reads.headers "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_out/unmatching_reads1.fasta"
