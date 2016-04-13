@@ -529,7 +529,8 @@ class Blast:
 			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
-			sortblast = "python3 ./blast_sorter.py --input_dir "+self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out" + " ; rm " +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
+			sortblast = "python3 ./blast_sorter.py --input_dir "+self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/s.reads_vs_annoted.blast.out" + " ; rm " +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out &&"
+			sortblast += "awk '/comp/ {print $0; next} /#/ {gsub(\".*#\",\"\",$2); gsub(\"/\",\"_comp_\",$2); print $0 }' "+self.output_folder+"/blast_out/s.reads_vs_annoted.blast.out > "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out"+" ; rm " +self.output_folder+"/blast_out/s.reads_vs_annoted.blast.out" #rename repbase hit to fit for counting
 			sortBlastProcess = subprocess.Popen(str(sortblast),shell=True)
 			sortBlastProcess.wait()
 			print("Selecting non-matching reads for blast3")
