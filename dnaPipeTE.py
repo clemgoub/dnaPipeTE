@@ -573,68 +573,68 @@ class Blast:
 		print("### Estimation of Repeat content from blast outputs ###")
 		print("#######################################################")
 		count = dict()
-		if self.genome_size != "":
-			with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
-				for line in counts2_file:
-					to_add = int(line.split()[3])
-					#takes first part before the "_"
-					line = line.split()[1].split("_")[0]
-					if line[0:3] == "comp":
-						#replaces column 2 by "comp"
-						line = "comp"
-					if line in count:
-						count[line] += to_add
-					else:
-						count[line] = to_add
-			count["na"] = 0
-			with open(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
-				for line in counts2_file:
-					to_add = int(line.split()[3])
-					count["na"] += to_add
-			with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
-				for super_familly in ["LTR", "LINE", "SINE", "DNA", "MITE", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
-					if super_familly.split("_")[0] in count:
-						counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
-					else:
-						counts1_file.write(super_familly+"\t0\n")
-				if "comp" in count:
-					counts1_file.write("Others\t"+str(count["comp"])+"\n")
+		# if self.genome_size != "":
+		with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
+			for line in counts2_file:
+				to_add = int(line.split()[3])
+				#takes first part before the "_"
+				line = line.split()[1].split("_")[0]
+				if line[0:3] == "comp":
+					#replaces column 2 by "comp"
+					line = "comp"
+				if line in count:
+					count[line] += to_add
 				else:
-					counts1_file.write("Others\t0\n")
-				# with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
-				# 	line = counts2_file.readline()
-					countbase_command = "awk 'NR%2 == 0 {basenumber += length($0)} END {print basenumber}' "+self.output_folder+"/renamed.blasting_reads.fasta"
-					countbase = subprocess.check_output(str(countbase_command), shell=True)
-					# decode string to urf-8
-					countbase = countbase.decode('utf8')
-					counts1_file.write("Total\t"+str(countbase)+"\n")
-		else:
-			with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
-				for line in counts2_file:
-					line = line.split()[1].split("_")[0]
-					if line[0:3] == "comp":
-						line = "comp"
-					if line in count:
-						count[line] += 1
-					else:
-						count[line] = 1
-			count["na"] = 0
-			with open(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
-				for line in counts2_file:
-					count["na"] += 1
-			with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
-				for super_familly in ["LTR", "LINE", "SINE", "DNA", "MITE", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
-					if super_familly.split("_")[0] in count:
-						counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
-					else:
-						counts1_file.write(super_familly+"\t0\n")
-				if "comp" in count:
-					counts1_file.write("Others\t"+str(count["comp"])+"\n")
+					count[line] = to_add
+		count["na"] = 0
+		with open(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
+			for line in counts2_file:
+				to_add = int(line.split()[3])
+				count["na"] += to_add
+		with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
+			for super_familly in ["LTR", "LINE", "SINE", "DNA", "MITE", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
+				if super_familly.split("_")[0] in count:
+					counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
 				else:
-					counts1_file.write("Others\t0\n")
-					with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
-						line = counts2_file.readline()
-						counts1_file.write("Total\t"+str(line)+"\n")			
+					counts1_file.write(super_familly+"\t0\n")
+			if "comp" in count:
+				counts1_file.write("Others\t"+str(count["comp"])+"\n")
+			else:
+				counts1_file.write("Others\t0\n")
+			# with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
+			# 	line = counts2_file.readline()
+				countbase_command = "awk 'NR%2 == 0 {basenumber += length($0)} END {print basenumber}' "+self.output_folder+"/renamed.blasting_reads.fasta"
+				countbase = subprocess.check_output(str(countbase_command), shell=True)
+				# decode string to urf-8
+				countbase = countbase.decode('utf8')
+				counts1_file.write("Total\t"+str(countbase)+"\n")
+		# else:
+		# 	with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
+		# 		for line in counts2_file:
+		# 			line = line.split()[1].split("_")[0]
+		# 			if line[0:3] == "comp":
+		# 				line = "comp"
+		# 			if line in count:
+		# 				count[line] += 1
+		# 			else:
+		# 				count[line] = 1
+		# 	count["na"] = 0
+		# 	with open(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
+		# 		for line in counts2_file:
+		# 			count["na"] += 1
+		# 	with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
+		# 		for super_familly in ["LTR", "LINE", "SINE", "DNA", "MITE", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
+		# 			if super_familly.split("_")[0] in count:
+		# 				counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
+		# 			else:
+		# 				counts1_file.write(super_familly+"\t0\n")
+		# 		if "comp" in count:
+		# 			counts1_file.write("Others\t"+str(count["comp"])+"\n")
+		# 		else:
+		# 			counts1_file.write("Others\t0\n")
+		# 			with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
+		# 				line = counts2_file.readline()
+		# 				counts1_file.write("Total\t"+str(line)+"\n")			
 		print("parsing blastout and adding RM annotations for each read...")
 		count = "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out |  awk '{print $1\"\\t\"$2\"\\t\"$3}' |grep -v 'comp' > "+self.output_folder+"/blastout_RMonly && "
 		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | sed 's/_comp/\\tcomp/g' | awk '{print $1\"\\t\"$3\"\\t\"$4}' | grep 'comp' > "+self.output_folder+"/join.blastout && "
@@ -668,7 +668,11 @@ class Graph:
 		print("### OK, lets build some pretty graphs ###")
 		print("#########################################")
 		print("Drawing graphs...")
-		graph = os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts "+str(self.genome_base)+" && "
+		countbase_command = "awk 'NR%2 == 0 {basenumber += length($0)} END {print basenumber}' "+self.output_folder+"/renamed.blasting_reads.fasta"
+		countbase = subprocess.check_output(str(countbase_command), shell=True)
+		countbase = countbase.decode('utf8')
+		countbase = countbase.strip()
+		graph = os.path.dirname(os.path.realpath(sys.argv[0]))+"/graph.R "+self.output_folder+" Reads_to_components_Rtable.txt blast_reads.counts "+str(countbase)+" && "
 		graph += "cat "+self.output_folder+"/reads_per_component_sorted.txt | sort -k1,1 > "+self.output_folder+"/sorted_reads_per_component && "
 		graph += "join -a1 -12 -21 "+self.output_folder+"/sorted_reads_per_component "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs -o 1.3,1.5,1.1,2.2,2.4,2.5,2.3 | sort -k1,1nr > "+self.output_folder+"/reads_per_component_and_annotation && "
 		graph += "rm "+self.output_folder+"/reads_per_component_sorted.txt "+self.output_folder+"/sorted_reads_per_component && "
@@ -682,7 +686,7 @@ class Graph:
 		graph += "mv "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscape.pdf "+self.output_folder+"/ && "
 		graph += "rm "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/Rplots.pdf &&"
 		graph += "rm "+self.output_folder+"/colors"
-		# print(graph)
+		#print(graph)
 		graphProcess = subprocess.Popen(str(graph), shell=True)
 		graphProcess.wait()
 		print("Done")
