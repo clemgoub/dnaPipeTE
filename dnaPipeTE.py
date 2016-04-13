@@ -602,7 +602,11 @@ class Blast:
 					counts1_file.write("Others\t0\n")
 				# with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
 				# 	line = counts2_file.readline()
-					counts1_file.write("Total\t"+str(self.genome_base)+"\n")
+					countbase_command = "awk 'NR%2 == 0 {basenumber += length($0)} END {print basenumber}' "+self.output_folder+"/renamed.blasting_reads.fasta"
+					countbase = subprocess.check_output(str(countbase_command), shell=True)
+					# decode string to urf-8
+					countbase = countbase.decode('utf8')
+					counts1_file.write("Total\t"+str(countbase)+"\n")
 		else:
 			with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
 				for line in counts2_file:
