@@ -258,8 +258,8 @@ class FastqSamplerToFasta:
 						sys.exit("not enought base to sample "+str(self.fastq_total_size)+" vs "+str(self.genome_base)+" to sample")
 				if j >= len(self.tirages):
 					break
-			print(str(base_sampled)+" bases sampled in "+str(j)+" reads")
-		sys.stdout.write("\r"+"s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
+			sys.stdout.write("\r"+str(base_sampled)+" bases sampled in "+str(j)+" reads \n")
+		sys.stdout.write("s_"+self.path_leaf(fastq_file)+str(self.blast_sufix)+" done.\n")
 
 	def test_sampling(self, blast):
 		sampling_done = True
