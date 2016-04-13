@@ -153,7 +153,7 @@ class FastqSamplerToFasta:
 		self.files = list()
 		if not self.test_sampling(blast):
 			self.get_sampled_id(self.fastq_R1)
-			print("sampling "+str(self.sample_number)+" samples of "+str(self.number)+" reads...")
+			print("sampling "+str(self.sample_number)+" samples of max "+str(self.number)+" reads to reach coverage...")
 			for i in range(self.sample_number):
 				if self.R1_gz:
 					self.sampling_gz(self.fastq_R1, i)
@@ -178,7 +178,7 @@ class FastqSamplerToFasta:
 	def get_sampled_id(self, file_name):
 		self.tirages = list()
 		tirages = list()
-		sys.stdout.write("counting reads number ...")
+		sys.stdout.write("counting reads number...")
 		sys.stdout.flush()
 		if self.use_coverage:
 			np = 0
@@ -207,7 +207,7 @@ class FastqSamplerToFasta:
 				with open(file_name, 'r') as file1 :
 					np = sum(1 for line in file1)
 		np = int((np) / 4)
-		sys.stdout.write("\rtotal number of reads : "+str(np)+"\n")
+		sys.stdout.write("\rtotal number of reads: "+str(np)+"\n")
 		sys.stdout.flush()
 		if self.use_coverage:
 			if self.fastq_total_size <= self.genome_base:
@@ -215,7 +215,7 @@ class FastqSamplerToFasta:
 			self.number = int(float(self.genome_base)/float(size_min))
 			if int(self.number)*int(self.sample_number) > np:
 				self.number = int(float(np)/float(self.sample_number))
-		print( "number of reads to sample : ", str(int(self.number)*int(self.sample_number)), "\nfastq : ", file_name )
+		print( "maximum number of reads to sample: ", str(int(self.number)*int(self.sample_number)), "\nfastq : ", file_name )
 		tirages = random.sample(range(np), self.number*self.sample_number)
 		for i in range(self.sample_number):
 			tirages_sample = tirages[(self.number*i):(self.number*(i+1))]
