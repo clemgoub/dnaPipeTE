@@ -1,0 +1,30 @@
+   SW   perc perc perc  query           position in query    matching     repeat        position in repeat
+score   div. del. ins.  sequence        begin end   (left)   repeat       class/family begin  end    (left)  ID
+
+ 3009    0.0  0.0  0.0  comp10_c0_seq1      1   328    (0) + SSU-rRNA_Dme rRNA           617    944 (1051)   1  
+ 2542    1.4  0.3  0.3  comp11_c0_seq1      3   292    (0) C R1_DM        LINE/R1     (1368)   3988   3699   2  
+  231    0.0  0.0  0.0  comp12_c0_seq1     28    52  (218) C Jockey-3_DVi LINE/Jockey (5318)     25      1   3 *
+ 2174    0.4  0.0  0.0  comp12_c0_seq1     36   270    (0) + SSU-rRNA_Dme rRNA             1    235 (1760)   4  
+ 2225    0.0  0.0  0.0  comp13_c0_seq1      1   250    (0) + ROO_I-int    LTR/Pao       4929   5178 (3078)   5  
+  970    8.1  1.1  2.3  comp14_c0_seq1      1   260    (5) + RSP          Satellite        1    257    (0)   6  
+ 2740    0.0  0.3  0.0  comp15_c0_seq1      1   295    (0) + LSU-rRNA_Dme rRNA          3432   3727  (173)   7  
+ 2068    0.9  0.0  0.0  comp16_c0_seq1      1   229    (0) + ROO_I-int    LTR/Pao         62    290 (7966)   8  
+ 1762    0.0  0.0  0.0  comp17_c0_seq1      1   187  (194) + SSU-rRNA_Dme rRNA          1809   1995    (0)   9  
+ 1479    0.0  0.0 14.0  comp18_c0_seq1      1   204    (0) + LSU-rRNA_Dme rRNA            68    246 (3654)  10  
+ 1832    0.0  0.0  0.0  comp19_c0_seq1      1   204    (0) + ROO_I-int    LTR/Pao       6818   7021 (1235)  11  
+ 2608    1.1  0.0  0.0  comp1_c0_seq1       1   285    (7) + R1_DM        LINE/R1       2252   2536 (2820)  12  
+ 1924    0.0  0.0  0.0  comp20_c0_seq1      1   213    (0) C ROO_I-int    LTR/Pao     (5951)   2305   2093  13  
+ 2363    0.7  0.0  0.0  comp21_c0_seq1      1   278    (0) + LSU-rRNA_Dme rRNA           398    675 (3225)  14  
+ 2034    0.0  0.0  0.0  comp3_c0_seq1       1   218  (189) C ROO_LTR      LTR/Pao      (210)    218      1  15  
+ 1699    1.1  0.0  0.0  comp3_c0_seq1     219   407    (0) C FW_DM        LINE/Jockey (2893)   1799   1611  16  
+  673    2.0  3.8  3.8  comp4_c0_seq1       3   107  (133) + NTS_DM       Other          136    240    (0)  17  
+ 1216    0.0  0.0  0.0  comp4_c0_seq1     108   240    (0) + NTS_DM       Other            1    133  (107)  18  
+ 1673    0.0  0.0  0.0  comp4_c0_seq2       1   178  (172) + LSU-rRNA_Dme rRNA          3723   3900    (0)  19  
+  227   10.0  0.0  0.0  comp4_c0_seq2     192   221  (129) + Jockey-1_DEr LINE/Jockey      2     31 (4678)  20 *
+  294    8.4  3.5 15.8  comp4_c0_seq2     215   299   (51) + Jockey-1_DEr LINE/Jockey   4624   4699   (10)  21  
+  266   19.6  0.0  2.0  comp4_c0_seq2     280   331   (19) + LSU-rRNA_Dme rRNA          2570   2620 (1280)  22 *
+  306    0.0  0.0  0.0  comp4_c0_seq2     315   348    (2) + Jockey-1_DEr LINE/Jockey   4624   4657   (52)  23  
+ 1834   16.1  1.1  0.6  comp5_c0_seq1       1   357    (0) C SAR_DM       Satellite    (542)    930    572  24  
+ 3418    0.0  0.0  0.0  comp6_c0_seq1       5   371    (0) + SSU-rRNA_Dme rRNA          1303   1669  (326)  25  
+ 2748    0.0  0.0  0.0  comp7_c0_seq1       1   297    (0) + LSU-rRNA_Dme rRNA          2845   3141  (759)  26  
+ 3503    0.0  0.0  0.0  comp9_c0_seq1       1   374    (0) C LSU-rRNA_Dme rRNA        (2775)   1125    752  27  
