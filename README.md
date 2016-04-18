@@ -12,7 +12,7 @@ more info at: https://lbbe.univ-lyon1.fr/-dnaPipeTE-?lang=en
 
 - Estimation of repeat content is now performed on the ratio of aligned bases (bp) on repeat contig over the total number of base sampled, instead of the number of reads mapping / total of read sampled; this produces a better estimate of the repeat content and reduces potential overestimations. In addition, it allows more accurate estimates if the size of reads used as input is variable.
 - If different part of one same read match different repeats contigs (e.g. in case adjacent TEs or TE in TE), all bases are retained instead only the one of the best hit.
-![changes-1.1_1.2](https://github.com/clemgoub/dnaPipeTE/blob/master/dna1.1_1.2.pdf)
+![changes-1.1_1.2](https://github.com/clemgoub/dnaPipeTE/blob/master/dna1.1_1.2.png)
 - New graph "Bases per component" replaces "reads per component"; is very similar to reads per component graph but represent the total amount of bases aligned over the dnaPipeTE contigs.
 - Bug fix: in last version, repbase library was not merged to annotated dnaPipeTE contigs for repeat estimates, now it is (as presented in the pipeline [cartoon](http://gbe.oxfordjournals.org/content/7/4/1192/F1.large.jpg)
 - New option: "-Trin_glue" to specify a minimum number of reads supporting the joining of kmer contigs during assembly (Chrysalis step in trinity)
