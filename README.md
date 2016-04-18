@@ -6,6 +6,9 @@ v.1.2-03/29/2016
 It is very usefull to quantify the proportion of TEs in newly sequenced genomes since it do not requier genome assembly and works on small datasets.
 
 more info at: https://lbbe.univ-lyon1.fr/-dnaPipeTE-?lang=en
+see the original publication in GBE here: http://gbe.oxfordjournals.org/content/7/4/1192.long
+
+![dnaPipeTE](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4419797/bin/evv050f1p.jpg)
 
 ***********************
 ******Changelog v1.2********
