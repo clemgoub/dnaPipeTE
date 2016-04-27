@@ -87,7 +87,7 @@ Your are ready !!!
 
 ```
 cd ~yourdirectory/dnaPipeTE
-python3 ./dnaPipeTE.py -input ./test/test_dataset.fastq -output ~/path/to/the/output_folder -genome_size 10000000 -genome_coverage 0.1 -sample_number 1 
+python3 ./dnaPipeTE.py -input test_dataset.fastq -output ~/path/to/the/output_folder -genome_size 10000000 -genome_coverage 0.1 -sample_number 1 
 ```
 If the pipeline worked properly you should be able to see the 3 output graphs (piechart, bases_per_component and landscapes) with annotations similar to those provided in the folder `dnaPipeTE/test/test_dataset_example_output`.
 Since this is a very small dataset used with at low coverage, it is normal that running this test several times won't produce exactly the same estimate of the total amount of repeats.
