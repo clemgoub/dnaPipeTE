@@ -564,7 +564,7 @@ class Blast:
 			blast = "sort -k1,1 -k12,12nr -k11,11n "+self.output_folder+"/blast_out/reads_vs_unannoted.blast.out > "+self.output_folder+"/blast_out/int.reads_vs_unannoted.blast.out"
 			blastProcess = subprocess.Popen(str(blast), shell=True)
 			blastProcess.wait()
-			sortblast = "python3 ./blast_sorter.py --input_dir "+self.output_folder+"/blast_out/int.reads_vs_unannoted.blast.out > "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out" + " ; rm " +self.output_folder+"/blast_out/int.reads_vs_annoted.blast.out"
+			sortblast = "python3 ./blast_sorter.py --input_dir "+self.output_folder+"/blast_out/int.reads_vs_unannoted.blast.out > "+self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out" + " ; rm " +self.output_folder+"/blast_out/int.reads_vs_unannoted.blast.out"
 			sortBlastProcess = subprocess.Popen(str(sortblast),shell=True)
 			sortBlastProcess.wait()
 		else:
