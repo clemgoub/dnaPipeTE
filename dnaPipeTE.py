@@ -642,7 +642,7 @@ class Blast:
 		count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | sed 's/_comp/\\tcomp/g' | awk '{print $1\"\\t\"$3\"\\t\"$4}' | grep 'comp' > "+self.output_folder+"/join.blastout && "
 		count += "cat "+self.output_folder+"/join.blastout | sort -k2,2 > "+self.output_folder+"/join.blastout.sorted && "
 		count += "cat "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | sort -k1,1 > "+self.output_folder+"/contigsTrinityRM.sorted && "
-		count += "join -a1 -12 -21 "+self.output_folder+"/join.blastout.sorted contigsTrinityRM.sorted > "+self.output_folder+"/blast_matching_w_annot_1 && "
+		count += "join -a1 -12 -21 "+self.output_folder+"/join.blastout.sorted "+self.output_folder+"/contigsTrinityRM.sorted > "+self.output_folder+"/blast_matching_w_annot_1 && "
 		count += "cat "+self.output_folder+"/blast_matching_w_annot_1 | awk '{print $1 \"\\t\" $2 \"\\t\" $5 \"\\t\" $3}' > "+self.output_folder+"/blast_matching_w_annot_2 && "
 		count += "cat "+self.output_folder+"/blastout_RMonly | sed 's/#/\t/g' | awk '{print \"Repbase-\\$2t\" $1 \"\\t\" $2 \"\\t\" $4}' > "+self.output_folder+"/blastout_RMonly_wMSAT && "
 		count += "cat "+self.output_folder+"/blast_matching_w_annot_2 "+self.output_folder+"/blastout_RMonly_wMSAT > "+self.output_folder+"/blast_out/blastout_final_fmtd_annoted && "
