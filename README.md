@@ -24,7 +24,7 @@ more info at: https://lbbe.univ-lyon1.fr/-dnaPipeTE-?lang=en
 - Estimation of repeat content is now performed on the ratio of aligned bases (bp) on repeat contig over the total number of base sampled, instead of the number of reads mapping / total of read sampled; this produces a better estimate of the repeat content and reduces potential overestimations. In addition, it allows more accurate estimates if the size of reads used as input is variable.
 - If different part of one same read match different repeats contigs (e.g. in case adjacent TEs or TE in TE), all bases are retained instead only the one of the best hit.
 - New graph "Bases per component" replaces "reads per component"; is very similar to reads per component graph but represent the total amount of bases aligned over the dnaPipeTE contigs.
-- Bug fix: in last version, repbase library was not merged to annotated dnaPipeTE contigs for repeat estimates, now it is (as presented in the pipeline [cartoon](http://gbe.oxfordjournals.org/content/7/4/1192/F1.large.jpg)
+- Bug fix: in last version, repbase library was not merged to annotated dnaPipeTE contigs for repeat estimates, now it is (as presented in the pipeline [cartoon](https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/gbe/7/4/10.1093_gbe_evv050/2/evv050f1p.jpeg?Expires=1509843015&Signature=cRair0qgCG7QoqteMdL6ISxQ6ONvRS-NKchGh27meYbvuf2x5oYFyAMnEFrQRn3TAPiE9~IS0pr5YMt16fvM08AABIKcxOBIIWhWsgsD~3~jOxTMgvqCFR2yOjo4mA1fPfHiBATF6L-f4fCSlREx6IM5pL-bKphEESupgp729Cnp-53FLpMr-9Hb8TyMSKU~eJIienvsORmJ03Wru-tn~1JHLPSL0sBeejo3GwIBLKQodJPtCFsAF~koX8SezxpNoa3W0qGLBBqSh-~OaaWi7OwPs71CL8Dv6s6cQrItL5NhaPSF5qCl5banQB8H--sH~BpAndHi4kpLc8--K6M7GQ__&Key-Pair-Id=APKAIUCZBIA4LVPAVW3Q)
 - New option: "-Trin_glue" to specify a minimum number of reads supporting the joining of kmer contigs during assembly (Chrysalis step in trinity)
 - New option: "-contig_length" to set a minimum size (in bp) to report a contig (default is 200 bp)
 
@@ -49,7 +49,7 @@ Thus we recommend to use it on assembly-dedicated servers but it could work (if 
 
 ## Dependencies
 
-We provide some of the dependencies dnaPipeTE needs to run, however the pipeline requiers the following programs to be installed:
+We provide some of the dependencies dnaPipeTE needs to run, however the pipeline requiers the following programs to be already installed:
 
 - **[Python 3](https://www.python.org/download/releases/3.1.1)**, including *argparse*, *configparser*, *os*, *re*, *subprocess*, *time*, *sys*, *random*, *ntpath*
 - **[Perl 5](https://www.perl.org/)**
@@ -61,7 +61,7 @@ The following dependancies are provided in the package or will be automatically 
 - **[GNU Parallel](http://www.gnu.org/software/parallel)** version 3.
 - **[Trinity](http://pbil.univ-lyon1.fr/pub/divers/goubert/trinityrnaseq_r20140413p1.tar.gz)** (RNAseq assembly) vers. 2014-04-13
 - **[RepeatMasker](http://repeatmasker.org/RMDownload.html)**, including **[RMblastn](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/rmblast/LATEST)**
-- **[blastn](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)** (from blast+ suite)
+- **[blastn](http://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)** (from blast+ suite)
 
 ### Installation
 
@@ -74,7 +74,14 @@ git clone https://github.com/clemgoub/dnaPipeTE
 
 It will create a new directory called dnaPipeTE with all the necessary files. Do not move or modify any of those file.
 
-- You need to provide your GIRI (Repbase) credential at the top of the "init.sh" script located in the dnaPipeTE folder. If you don't have a (free) GIRI account, you can request one online at http://www.girinst.org/. Simply replace *username* and *password* with yours, then save and close the file.
+- Move to the dnaPipeTE directory and open the **init.sh** file.
+
+```
+cd dnaPipeTE
+nano init.sh
+```
+
+- You need to provide your GIRI (Repbase) credential at the top of the "init.sh" script located in the dnaPipeTE folder. If you don't have a (free) GIRI account, you can request one online at http://www.girinst.org/. Simply replace *username* and *password* with yours, then save and close the file: from nano Ctrl-X, type "Y" and then Enter to save and exit.
 
 ```/bin/bash
 #set your GIRI username and password
@@ -84,12 +91,14 @@ GIRINST_PASSWORD='password'
 - You can now execute the "init.sh" script which will download and install most of the dependencies:
 
 ```
-cd ~/yourpath/dnaPipeTE
 ./init.sh
 ```
 
 - Now your need to execute the RepeatMasker ./configure script, that will build the libraries. Provide the following informations when asked:
 
+```
+cd bin/RepeatMasker
+./configure
 ```
 Enter path [ /usr/local/bin/perl ]: (press enter) # Should be found automatically
 ```
