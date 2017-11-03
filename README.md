@@ -7,6 +7,8 @@ It is very usefull to quantify the proportion of TEs in newly sequenced genomes 
 
 more info at: https://lbbe.univ-lyon1.fr/-dnaPipeTE-?lang=en
 
+***********************
+
 ******Changelog v1.3********
 - Updated Trinity with latest version (v2.4.0)
 - Updated RepeatMasker with latest version (version Open 4.0.7)
@@ -34,7 +36,7 @@ more info at: https://lbbe.univ-lyon1.fr/-dnaPipeTE-?lang=en
 
 If you encounter some issues during installation, do not hesitate to [ask for help](https://github.com/clemgoub/dnaPipeTE/issues) !
 
-##System requirement
+## System requirement
 
 dnaPipeTE only runs on Linux x64 environments (tested on ubuntu 14.04 PC, Debian 3.2.57-3 x86_64 cluster and CentOS 7.3.1611).
 
@@ -45,7 +47,7 @@ However, Trinity (used for assembly) can use a lot of RAM ! Here are some exampl
 
 Thus we recommend to use it on assembly-dedicated servers but it could work (if RAM is sufficient) on a PC.
 
-##Dependencies
+## Dependencies
 
 We provide some of the dependencies dnaPipeTE needs to run, however the pipeline requiers the following programs to be installed:
 
@@ -61,7 +63,7 @@ The following dependancies are provided in the package or will be automatically 
 - **[RepeatMasker](http://repeatmasker.org/RMDownload.html)**, including **[RMblastn](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/rmblast/LATEST)**
 - **[blastn](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)** (from blast+ suite)
 
-###Installation
+### Installation
 
 - Download and unzip the dnaPipeTE package in the folder of your choice
 
@@ -72,28 +74,27 @@ git clone https://github.com/clemgoub/dnaPipeTE
 
 It will create a new directory called dnaPipeTE with all the necessary files. Do not move or modify any of those file.
 
-- Execute the init.sh script that will automatically download and install the dnaPipeTE dependancies
+- You need to provide your GIRI (Repbase) credential at the top of the "init.sh" script located in the dnaPipeTE folder. If you don't have a (free) GIRI account, you can request one online at http://www.girinst.org/. Simply replace *username* and *password* with yours, then save and close the file.
+
+```/bin/bash
+#set your GIRI username and password
+GIRINST_USERNAME='username'
+GIRINST_PASSWORD='password'
+```
+- You can now execute the "init.sh" script which will download and install most of the dependencies:
 
 ```
 cd ~/yourpath/dnaPipeTE
 ./init.sh
 ```
 
-- Download and unpack the formated Repbase Libraries for RepeatMasker at [GIRI](http://www.girinst.org/server/RepBase/index.php) (REPET Edition) in the folder ~/yourpath/dnaPipeTE
-
-```
-cp ~/yourdownloads/RepBaseRepeatMaskerEdition-########.tar.gz ~/yourpath/dnaPipeTE/bin/RepeatMasker
-cd ~/yourpath/dnaPipeTE/bin/RepeatMasker
-tar -zxvf RepBaseRepeatMaskerEdition-########.tar.gz
-```
-
-- Now your need to execute the RepeatMasker ./configure script and provide the following informations when asked:
+- Now your need to execute the RepeatMasker ./configure script, that will build the libraries. Provide the following informations when asked:
 
 ```
 Enter path [ /usr/local/bin/perl ]: (press enter) # Should be found automatically
 ```
 ```
-Enter path [ /yourpath/dnaPipeTE/bin/RepeatMasker ]: (press enter or type path if not set) # Should be found automatically
+Enter path [ /yourpath/dnaPipeTE/bin/RepeatMasker ]: (press enter) # Should be found automatically
 ```
 ```
 Enter path [ ]: /yourpath/dnaPipeTE/bin/trf # Should be empty unless you already have trf in your path
@@ -108,7 +109,7 @@ Add a Search Engine:
    5. Done
 
 
-Enter Selection: 2
+Enter Selection: 2 # select 2 for RMblastn
 ```
 ```
 **RMBlast (rmblastn) INSTALLATION PATH**
@@ -140,7 +141,7 @@ Enter Selection: 5 # It's enough!!!
 
 Your are close!!!
 
-###Testing dnaPipeTE installation
+### Testing dnaPipeTE installation
 
 - To test the installation, first run the bash script ./test_config.sh
 
@@ -148,7 +149,7 @@ Your are close!!!
 ./test_config.sh
 ```
 
-This script will test if your version of Java is up to date (version 1.8) and if the RepeatMasker libraries are correclty installed for dnaPipeTE.
+- This script will test if your version of Java is up to date (version 1.8) and if the RepeatMasker libraries are correclty installed for dnaPipeTE.
 If your Java version is outdated, you can either update it (needs sudo rights) or use the provided version. For that you will need to execute the folling script: ./fixjava.sh
 
 ```
@@ -157,7 +158,7 @@ source ~/.bashrc
 ```
 
 To be sure that the fix worked, run again the script ./test_comfig.sh
-if you encounter difficulties with the RepeatMasker libraries, leaves a message on the [github forum](https://github.com/clemgoub/dnaPipeTE/issues)
+if you encounter difficulties with the RepeatMasker libraries, leave a message on the [github forum](https://github.com/clemgoub/dnaPipeTE/issues)
 
 
 Once everything is OK, you are ready for a test run!!! A sample file is available either in .fastq or .fastq.gz ( test_dataset.fastq[.gz]). This file is only provided to test if all the differents components of dnaPipeTE works well together.
