@@ -100,6 +100,8 @@ GIRINST_PASSWORD='password'
 cd bin/RepeatMasker
 ./configure
 ```
+
+```
 Enter path [ /usr/local/bin/perl ]: (press enter) # Should be found automatically
 ```
 ```
