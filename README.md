@@ -65,7 +65,7 @@ The following dependancies are provided in the package or will be automatically 
 
 ### Installation
 
-- Download and unzip the dnaPipeTE package in the folder of your choice
+- [Download](https://github.com/clemgoub/dnaPipeTE/archive/master.zip) and unzip the dnaPipeTE package in the folder of your choice
 
 - or clone the github repository
 ```
