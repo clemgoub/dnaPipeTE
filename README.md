@@ -138,8 +138,10 @@ Choose 2 and press enter
 
 
 
-Enter path [  ]: /yourpath/bin/ncbi-blast-2.2.28+/bin # BE CAREFULL NOT TO ADD A "/" AT THE END! 
+Enter path [  ]: </yourpath>/dnaPipeTE/bin/ncbi-blast-2.2.28+/bin  
 ```
+Same thing here, replace </yourpath> with the path to your local installation of dnaPipeTE. Then press enter. Be carefull to not add a final / after the 'bin', for some reason it is very sensitive!
+
 ```
 Do you want RMBlast to be your default
 search engine for Repeatmasker? (Y/N)  [ Y ]:Y
