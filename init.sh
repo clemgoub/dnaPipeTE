@@ -1,6 +1,6 @@
 #set your GIRI username and password
-GIRINST_USERNAME='clementgoubert'
-GIRINST_PASSWORD='Cle!1988'
+GIRINST_USERNAME='login'
+GIRINST_PASSWORD='password'
 
 if [[ $GIRINST_USERNAME == 'username' ]] || [[ $GIRINST_PASSWORD == 'password' ]]
 then 
