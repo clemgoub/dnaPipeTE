@@ -1,6 +1,6 @@
 #set your GIRI username and password
-GIRINST_USERNAME='username'
-GIRINST_PASSWORD='password'
+GIRINST_USERNAME='clementgoubert'
+GIRINST_PASSWORD='Cle!1988'
 
 if [[ $GIRINST_USERNAME == 'username' ]] || [[ $GIRINST_PASSWORD == 'password' ]]
 then 
@@ -10,6 +10,16 @@ else
 
 mkdir -p bin
 cd bin
+
+# install trinity
+echo ""
+echo "Installing Trinity"
+echo ""
+curl -k -L https://github.com/trinityrnaseq/trinityrnaseq/archive/Trinity-v2.5.1.tar.gz -o Trinity-v2.5.1.tar.gz
+tar -zxvf Trinity-v2.5.1.tar.gz
+cd trinityrnaseq*
+make
+cd ../
 
 # install trf
 echo ""
@@ -47,20 +57,10 @@ tar -xvf RepeatMasker-open-4-0-7.tar.gz
 echo ""
 echo "Installing RM Libraries"
 echo ""
-wget http://www.girinst.org/server/RepBase/protected/repeatmaskerlibraries/RepBaseRepeatMaskerEdition-20170127.tar.gz --password=$GIRINST_PASSWORD  --use
-r=$GIRINST_USERNAME
+wget http://www.girinst.org/server/RepBase/protected/repeatmaskerlibraries/RepBaseRepeatMaskerEdition-20170127.tar.gz --password=$GIRINST_PASSWORD  --user=$GIRINST_USERNAME
 mv RepBaseRepeatMaskerEdition-20170127.tar.gz RepeatMasker/
-tar -zxvf RepeatMasker/RepBaseRepeatMaskerEdition-20170127.tar.gz
-
-# install trinity
-echo ""
-echo "Installing Trinity"
-echo ""
-curl -k -L https://github.com/trinityrnaseq/trinityrnaseq/archive/Trinity-v2.5.1.tar.gz -o Trinity-v2.5.1.tar.gz
-tar -zxvf Trinity-v2.5.1.tar.gz
-cd trinityrnaseq*
-make
-cd ../
+cd RepeatMasker
+tar -zxvf RepBaseRepeatMaskerEdition-20170127.tar.gz
 
 echo ""
 echo "##################################################################################################"
