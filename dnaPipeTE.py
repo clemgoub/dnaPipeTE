@@ -1,7 +1,7 @@
 #!/bin/python3
 # -*-coding:Utf-8 -*
 
-#Copyright (C) 2014 Clement Goubert and Laurent Modolo
+#Copyright (C) 2014-2017 Clement Goubert and Laurent Modolo
 
 #This program is free software; you can redistribute it and/or
 #modify it under the terms of the GNU Lesser General Public
@@ -57,7 +57,7 @@ print( "                                       | |                              
 print( "                                       |_|                                       ")
 print( "                                                                                 ")
 print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements         ")
-print( "                              v.1.3_07-2017                                      ")
+print( "                              v.1.3_01.dec.2017                                      ")
 print( "                                                                                 ")
 print( "                                                                                                                                                                       ")
 print( "                                                               ")
@@ -108,7 +108,6 @@ parser.add_argument('-genome_coverage', action='store', default=0.0, dest='genom
 parser.add_argument('-RM_lib', action='store', default=config['DEFAULT']['RepeatMasker_library'], dest='RepeatMasker_library', help='path to Repeatmasker library (if not set, the path from the config file is used. The default library is used by default)')
 parser.add_argument('-species', action='store', default=config['DEFAULT']['RM_species'], dest='RM_species', help='default RepeatMasker library to use. Must be a valid NCBI for species or clade ex: homo, drosophila, "ciona savignyi". Default All is used')
 parser.add_argument('-RM_t', action='store', default=0.0, dest='RM_threshold', help='minimal percentage of query hit on repeat to keep anotation')
-#parser.add_argument('-lib', action='store', defaut=config['DEFAULT']['RepeatMasker_library'], dest='RM_library',)
 parser.add_argument('-Trin_glue', action='store',default=config['DEFAULT']['Trinity_glue'], dest='Trinity_glue', help='number of reads to join Inchworm (k-mer) contigs')
 parser.add_argument('-contig_length', action='store',default=200, dest='contig_length', help='minimum size of contig to report, default = 200 pb')
 parser.add_argument('-keep_Trinity_output', action='store_true', default=False, dest='keep_Trinity_output', help='keep Trinity output at the end of the run')
@@ -351,8 +350,6 @@ class Trinity:
         trinity = self.Trinity_path+" -version"
         proc = subprocess.Popen(str(trinity), shell=True, stdout=subprocess.PIPE)
         out = proc.communicate()[0]
-#        year = re.search('\d{4}', str(out)).group(0)
-#        if int(year) >= 2014:
         trinity_correction = "sed -i 's/>/>comp_/g' "+self.output_folder+"/Trinity_run"+str(self.sample_number)+"/Trinity.fasta" # add comp so contigs can be parsed by the script
         trinity_correctionProcess = subprocess.Popen(str(trinity_correction), shell=True)
         trinity_correctionProcess.wait()
@@ -469,9 +466,9 @@ class RepeatMasker:
 
         annotation = ""
         for super_familly in ["LTR", "LINE", "SINE", "DNA","MITE","Low_complexity","Satellite","Helitron", "Simple_repeat", "rRNA"] :
-            # fais une liste de fichier headers pour aller récupérer les contigs
+            # fais une liste de fichier headers pour aller récupérer les contigs (omelette au fromage)
             annotation += "awk '{print $1 \"\\t\" $5}' "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | grep '"+super_familly+"' | awk '{print$1}' > "+self.output_folder+"/Annotation/"+super_familly+".headers && "
-            # récupère et annote les contigs de Trinity.fasta selon les meilleurs hits RM
+            # récupère et annote les contigs de Trinity.fasta selon les meilleurs hits RM (Fafa du fifou)
             annotation += "perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/"+super_familly+".headers "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>"+super_familly+"_comp/g' > "+self.output_folder+"/Annotation/"+super_familly+"_annoted.fasta && "
         annotation += "grep -v 'LTR\|LINE\|SINE\|DNA\|Low_complexity\|Satellite\|Helitron\|Simple_repeat\|rRNA\|MITE' "+self.output_folder+"/Annotation/one_RM_hit_per_Trinity_contigs | awk '{print$1}' > "+self.output_folder+"/Annotation/others.headers && "
         annotation += "perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' "+self.output_folder+"/Annotation/others.headers "+self.output_folder+"/Trinity.fasta | sed 's/>comp/>others_comp/g' >"+self.output_folder+"/Annotation/others_annoted.fasta && "
@@ -522,8 +519,6 @@ class Blast:
                 os.makedirs(self.output_folder+"/blast_out")
             print("blasting...")
             blast = "cat "
-            # for i in range(0,self.sample_number):
-            #     blast += self.output_folder+"/"+self.sample_files[i]+" "
             blast += self.output_folder+"/"+self.sample_files[0]
             blast += " > "+self.output_folder+"/renamed.blasting_reads.fasta && "
             blast += "grep -c '>' "+self.output_folder+"/renamed.blasting_reads.fasta > "+self.output_folder+"/blast_reads.counts && "
@@ -608,7 +603,6 @@ class Blast:
         print("### Estimation of Repeat content from blast outputs ###")
         print("#######################################################")
         count = dict()
-        # if self.genome_size != "":
         with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
             for line in counts2_file:
                 to_add = int(line.split()[3])
@@ -636,40 +630,10 @@ class Blast:
                 counts1_file.write("Others\t"+str(count["comp"])+"\n")
             else:
                 counts1_file.write("Others\t0\n")
-            # with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
-            #     line = counts2_file.readline()
                 countbase_command = "awk 'NR%2 == 0 {basenumber += length($0)} END {print basenumber}' "+self.output_folder+"/renamed.blasting_reads.fasta"
                 countbase = subprocess.check_output(str(countbase_command), shell=True)
-                # decode string to urf-8
                 countbase = countbase.decode('utf8')
                 counts1_file.write("Total\t"+str(countbase)+"\n")
-        # else:
-        #     with open(self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out", "r") as counts2_file:
-        #         for line in counts2_file:
-        #             line = line.split()[1].split("_")[0]
-        #             if line[0:3] == "comp":
-        #                 line = "comp"
-        #             if line in count:
-        #                 count[line] += 1
-        #             else:
-        #                 count[line] = 1
-        #     count["na"] = 0
-        #     with open(self.output_folder+"/blast_out/sorted.reads_vs_unannoted.blast.out", "r") as counts2_file:
-        #         for line in counts2_file:
-        #             count["na"] += 1
-        #     with open(self.output_folder+"/Counts.txt", "w") as counts1_file:
-        #         for super_familly in ["LTR", "LINE", "SINE", "DNA", "MITE", "Helitron","rRNA", "Low_Complexity", "Satellite", "Tandem_repeats", "Simple_repeat", "others", "na"]:
-        #             if super_familly.split("_")[0] in count:
-        #                 counts1_file.write(super_familly+"\t"+str(count[super_familly.split("_")[0]])+"\n")
-        #             else:
-        #                 counts1_file.write(super_familly+"\t0\n")
-        #         if "comp" in count:
-        #             counts1_file.write("Others\t"+str(count["comp"])+"\n")
-        #         else:
-        #             counts1_file.write("Others\t0\n")
-        #             with open(self.output_folder+"/blast_reads.counts", "r") as counts2_file:
-        #                 line = counts2_file.readline()
-        #                 counts1_file.write("Total\t"+str(line)+"\n")
         print("parsing blastout and adding RM annotations for each read...")
         count = "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out |  awk '{print $1\"\\t\"$2\"\\t\"$3}' |grep -v 'comp' > "+self.output_folder+"/blastout_RMonly && "
         count += "cat "+self.output_folder+"/blast_out/sorted.reads_vs_annoted.blast.out | sed 's/_comp/\\tcomp/g' | awk '{print $1\"\\t\"$3\"\\t\"$4}' | grep 'comp' > "+self.output_folder+"/join.blastout && "
@@ -722,7 +686,7 @@ class Graph:
         graph += "mv "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscape.pdf "+self.output_folder+"/ && "
         graph += "rm "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/Rplots.pdf &&"
         graph += "rm "+self.output_folder+"/colors"
-        print(graph)
+        #print(graph)
         graphProcess = subprocess.Popen(str(graph), shell=True)
         graphProcess.wait()
         print("Done")
