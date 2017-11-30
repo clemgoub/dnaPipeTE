@@ -1,4 +1,4 @@
-#### dnaPipeTE - README
+# dnaPipeTE - README
 
 v.1.3-23/07/2017
 
@@ -63,7 +63,7 @@ The following dependancies are provided in the package or will be automatically 
 - **[RepeatMasker](http://repeatmasker.org/RMDownload.html)**, including **[RMblastn](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/rmblast/LATEST)**
 - **[blastn](http://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)** (from blast+ suite)
 
-### Installation
+## Installation
 
 - [Download](https://github.com/clemgoub/dnaPipeTE/archive/master.zip) and unzip the dnaPipeTE package in the folder of your choice
 
@@ -163,7 +163,7 @@ Your are close!!!
 
 ### Testing dnaPipeTE installation
 
-## Test scripts and java fix
+#### Test scripts and java fix
 
 - To test the installation, go back to the main dnaPipeTE folder and run the bash script ./test_config.sh
 
@@ -183,7 +183,7 @@ source ~/.bashrc
 To be sure that the fix worked, run again the script ./test_config.sh
 if you encounter difficulties with the RepeatMasker libraries, leave a message on the [github forum](https://github.com/clemgoub/dnaPipeTE/issues)
 
-## Test run
+#### Test run
 
 Once everything is OK, you are ready for a test run!!! A sample file is available either in .fastq or .fastq.gz ( test_dataset.fastq[.gz]). This file is only provided to test if all the differents components of dnaPipeTE works well together.
 
@@ -197,7 +197,7 @@ Since this is a very small dataset used with at low coverage, it is normal that 
 
 <h1>2 - RUNNING dnaPipeTE</h1>
 
-##Input File
+## Input File
 
 The input file must be a **single-end FASTQ or FASTQ.GZ** file of NGS reads}. dnaPipeTE do not handle paired-end (we found chimerism issues in PE assembly of TEs).
 Typically, your input file is your cleaned sequencing output. dnaPipeTE will sample it (so you can put deep-sequencing data in input) to produce "low coverage" samples for the run (see in the next section for sample size).
@@ -205,7 +205,7 @@ Using .fasta file as input works, however, since dnaPipeTE expects .fastq (4 lin
 
 >**IMPORTANT: We recommend to remove from your reads mitochondrial and other none nucleic DNA, such as known symbionts or guts' bacterias. We found that if mitochondrial reads are left in the samples, RepeatMasker will annotate the corresponding conting to "Gypsy-12_DVir-I LTR/Gypsy" with however a weak score.**
 
-##Run dnaPipeTE
+## Run dnaPipeTE
 
 Move into dnaPipeTE folder and type:
 
