@@ -21,6 +21,13 @@ cd trinityrnaseq*
 make
 cd ../
 
+# copy Java 1.8
+echo ""
+echo "Downloading Java 1.8 distribution..."
+echo ""
+wget ftp://pbil.univ-lyon1.fr/pub/divers/goubert/dnaPipeTE/OpenJDK-1.8.0.141-x86_64-bin.tar.xz
+tar -xJf OpenJDK-1.8.0.141-x86_64-bin.tar.xz
+
 # install trf
 echo ""
 echo "Installing Tandem Repeat Finder..."
@@ -48,14 +55,14 @@ cp ncbi-rmblastn-2.2.28/bin/* ncbi-blast-2.2.28+/bin/
 
 # install RepeatMasker
 echo ""
-echo "Installing RepeatMasker"
+echo "Installing RepeatMasker..."
 echo ""
 curl -k -L http://repeatmasker.org/RepeatMasker-open-4-0-7.tar.gz -o RepeatMasker-open-4-0-7.tar.gz
 tar -xvf RepeatMasker-open-4-0-7.tar.gz
 
 # RM database
 echo ""
-echo "Installing RM Libraries"
+echo "Installing RM Libraries..."
 echo ""
 wget http://www.girinst.org/server/RepBase/protected/repeatmaskerlibraries/RepBaseRepeatMaskerEdition-20170127.tar.gz --password=$GIRINST_PASSWORD  --user=$GIRINST_USERNAME
 mv RepBaseRepeatMaskerEdition-20170127.tar.gz RepeatMasker/
