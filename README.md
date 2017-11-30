@@ -81,7 +81,7 @@ cd dnaPipeTE
 nano init.sh
 ```
 
-- You need to provide your GIRI (Repbase) credential at the top of the "init.sh" script located in the dnaPipeTE folder. If you don't have a (free) GIRI account, you can request one online at http://www.girinst.org/. Simply replace *username* and *password* with yours, then save and close the file: from nano Ctrl-X, type "Y" and then Enter to save and exit.
+- You need to provide your GIRI (Repbase) login and password at the top of the "init.sh" script located in the dnaPipeTE folder. If you don't have a (free) GIRI account, you can request one online at http://www.girinst.org/. Simply replace *username* and *password* with yours, then save and close the file. From nano: Ctrl-X, type "Y" and then Enter to save and exit.
 
 ```/bin/bash
 #set your GIRI username and password
