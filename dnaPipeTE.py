@@ -32,7 +32,7 @@ import pprint
 config = configparser.ConfigParser()
 if not os.path.isfile('config.ini'):
     print("'config.ini' file not found, writing default one.")
-    config['DEFAULT'] = {'Trinity': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/trinityrnaseq_r2013_08_14/Trinity.pl',
+    config['DEFAULT'] = {'Trinity': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/trinityrnaseq-Trinity-v2.5.1/Trinity',
                         'Trinity_memory': '10G',
                         'RepeatMasker': os.path.dirname(os.path.realpath(sys.argv[0]))+'/bin/RepeatMasker/RepeatMasker',
                         'RepeatMasker_library': '',
