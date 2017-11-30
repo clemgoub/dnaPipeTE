@@ -102,14 +102,20 @@ cd bin/RepeatMasker
 ```
 
 ```
-Enter path [ /usr/local/bin/perl ]: (press enter) # Should be found automatically
+Enter path [ /usr/local/bin/perl ]:
 ```
+Just press enter. The path should be found automatically.
+
 ```
-Enter path [ /yourpath/dnaPipeTE/bin/RepeatMasker ]: (press enter) # Should be found automatically
+Enter path [ /yourpath/dnaPipeTE/bin/RepeatMasker ]:
 ```
+Same thing here, the path to RepeatMasker should be found automatically.
+
 ```
-Enter path [ ]: /yourpath/dnaPipeTE/bin/trf # Should be empty unless you already have trf in your path
+Enter path [ ]: </yourpath>/dnaPipeTE/bin/trf
 ```
+Here, replace </yourpath> by the path to the dnaPipeTE folder. The default prompt should be empty, unless you already have trf in your path.
+
 ```
 Add a Search Engine:
    1. CrossMatch: [ Un-configured ]
@@ -120,8 +126,10 @@ Add a Search Engine:
    5. Done
 
 
-Enter Selection: 2 # select 2 for RMblastn
+Enter Selection: 2
 ```
+Choose 2 and press enter
+
 ```
 **RMBlast (rmblastn) INSTALLATION PATH**
 
@@ -134,8 +142,9 @@ Enter path [  ]: /yourpath/bin/ncbi-blast-2.2.28+/bin # BE CAREFULL NOT TO ADD A
 ```
 ```
 Do you want RMBlast to be your default
-search engine for Repeatmasker? (Y/N)  [ Y ]:Y        # YES!!!
+search engine for Repeatmasker? (Y/N)  [ Y ]:Y
 ```
+Choose Y and press enter. Yes!!!
 
 ```
 Add a Search Engine:
@@ -147,16 +156,19 @@ Add a Search Engine:
    5. Done
 
 
-Enter Selection: 5 # It's enough!!!
+Enter Selection: 5
 ```
-
+Choose 5 here and press enter, we are done!
 Your are close!!!
 
 ### Testing dnaPipeTE installation
 
-- To test the installation, first run the bash script ./test_config.sh
+## Test scripts and java fix
+
+- To test the installation, go back to the main dnaPipeTE folder and run the bash script ./test_config.sh
 
 ```
+cd ../../
 ./test_config.sh
 ```
 
@@ -168,16 +180,18 @@ If your Java version is outdated, you can either update it (needs sudo rights) o
 source ~/.bashrc
 ```
 
-To be sure that the fix worked, run again the script ./test_comfig.sh
+To be sure that the fix worked, run again the script ./test_config.sh
 if you encounter difficulties with the RepeatMasker libraries, leave a message on the [github forum](https://github.com/clemgoub/dnaPipeTE/issues)
 
+## Test run
 
 Once everything is OK, you are ready for a test run!!! A sample file is available either in .fastq or .fastq.gz ( test_dataset.fastq[.gz]). This file is only provided to test if all the differents components of dnaPipeTE works well together.
 
 ```
 cd ~yourpath/dnaPipeTE
-python3 ./dnaPipeTE.py -input ./test/test_dataset.fastq -output ~/path/to/the/output_folder -genome_size 2000000 -genome_coverage 0.1 -sample_number 1
+python3 ./dnaPipeTE.py -input ./test/test_dataset.fastq -output ~/path/to/the/output_folder -genome_size 2000000 -genome_coverage 0.5 -sample_number 2
 ```
+
 If the pipeline worked properly you should be able to see the 3 output graphs (piechart, bases_per_component and landscapes) with annotations similar to those provided in the folder `dnaPipeTE/test/test_dataset_example_output`.
 Since this is a very small dataset used with at low coverage, it is normal that running this test several times won't produce exactly the same estimate of the total amount of repeats.
 
