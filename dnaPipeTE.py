@@ -718,7 +718,7 @@ class Graph:
         graph += "cat "+self.output_folder+"/reads_landscape | awk '{print $3}' | sed 's/Unknow\//DNA\//g' | sort -u -k1,1 > "+self.output_folder+"/sorted_families && "
         graph += "sort -k 1,1 "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/new_list_of_RM_superclass_colors_sortedOK >"+self.output_folder+"/colors &&"
         graph += "join -11 -21 "+self.output_folder+"/sorted_families "+self.output_folder+"/colors | awk '{print $1 \"\\t\" $2 \"\\t\\\"\"$3\"\\\"\"}' | sort -k2,2 > "+self.output_folder+"/factors_and_colors && "
-        graph += "Rscript "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscapes.R "+self.output_folder+"/reads_landscape "+self.output_folder+"/factors_and_colors && "
+        graph += "Rscript "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscapes.R "+self.output_folder+"/reads_landscape "+self.output_folder+"/factors_and_colors "+self.output_folder+"/blast_reads.counts && "
         graph += "mv "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/landscape.pdf "+self.output_folder+"/ && "
         graph += "rm "+os.path.dirname(os.path.realpath(sys.argv[0]))+"/Rplots.pdf &&"
         graph += "rm "+self.output_folder+"/colors"
