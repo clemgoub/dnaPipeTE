@@ -199,13 +199,14 @@ Since this is a very small dataset used with at low coverage, it is normal that 
 
 >**Note.** The following warnings/errors might appear and are expected during the test run:
 >
->```awk: fatal: cannot open file \`test1/Trinity_run0/chrysalis/readsToComponents.out.sort' for reading (No such file or directory)```
+>```awk: fatal: cannot open file \`test1/Trinity_run0/chrysalis/readsToComponents.out.sort' for reading (No such file or directory)
+```
 >
 >*This is just a bug: since there is no iteration 0 of Trinity, there is no run 0 to look for. Yes, we need to fix this...*
 >
 >```Parsing blast3 output...
-sort: cannot read: test1/blast_out/reads_vs_unannoted.blast.out: No such file or directory
-rm: cannot remove 'test1/blast_out/int.reads_vs_annoted.blast.out': No such file or directory```
+>sort: cannot read: test1/blast_out/reads_vs_unannoted.blast.out: No such file or directory
+>rm: cannot remove 'test1/blast_out/int.reads_vs_annoted.blast.out': No such file or directory```
 >
 >*The toy dataset is from D. melanogaster, where most repeats are known and annotated. The few contigs created are likely to be annotated, thus, they might not be unnanoted contigs in the test run leading to these errors.*
 
