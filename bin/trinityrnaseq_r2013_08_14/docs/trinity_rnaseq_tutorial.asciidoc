@@ -1,4 +1,0 @@
-= Trinity RNA-Seq Tutorial =
-
-Manuscript is currently under review. Upon publication, we will provide access to the tutorial and maintain it here.
-

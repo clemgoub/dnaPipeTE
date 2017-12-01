@@ -1,6 +1,0 @@
-
-svn checkout --username=bhaas svn+ssh://bhaas@svn.code.sf.net/p/trinityrnaseq/code/trunk trinityrnaseq-code
-
-autoreconf --install
-
-
