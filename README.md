@@ -9,8 +9,8 @@ dnaPipeTE is developped by Clément Goubert, Laurent Modolo and the TREEP team o
 You can find the original publication in GBE here: https://academic.oup.com/gbe/article/7/4/1192/533768
 
 
-- [dnaPipeTE - README](#)
-- [1 - INSTALLATION](#)
+
+- [1 - INSTALLATION](#installation)
 	- [System requirement](#)
 	- [Dependencies](#)
 	- [Installation](#)
