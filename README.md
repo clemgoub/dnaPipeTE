@@ -1,6 +1,6 @@
 # dnaPipeTE 1.3 - README
 
-dnaPipeTE (for **d**e-**n**ovo **a**ssembly & annotation **Pipe**line for **T**ransposable **E**lements), is a pipeline designed to find, quantify and annotate Transposable Elements in small samples of NGS datasets.
+dnaPipeTE (for **d**e-**n**ovo **a**ssembly & annotation **Pipe**line for **T**ransposable **E**lements), is a pipeline designed to find, annotate and quantify Transposable Elements in small samples of NGS datasets.
 It is very usefull to quantify the proportion of TEs in newly sequenced genomes since it **do not requier genome assembly** and works on **small datasets (< 1X per run)**.
 
 
@@ -9,6 +9,7 @@ It is very usefull to quantify the proportion of TEs in newly sequenced genomes 
 - You can find the original publication in GBE here: https://academic.oup.com/gbe/article/7/4/1192/533768
 
 ![Front](https://github.com/clemgoub/dnaPipeTE/blob/dev/dnaPipefront.png)
+*output examples of quantification and TE landscape (relative age) produced by dnaPipeTE*
 
 ***********************
 
