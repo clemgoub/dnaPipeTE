@@ -8,6 +8,8 @@ It is very usefull to quantify the proportion of TEs in newly sequenced genomes 
 
 - You can find the original publication in GBE here: https://academic.oup.com/gbe/article/7/4/1192/533768
 
+[!Front](https://github.com/clemgoub/dnaPipeTE/blob/dev/dnaPipefront.png)
+
 ***********************
 
 - [1 - INSTALLATION](#1---installation)
