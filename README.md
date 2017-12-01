@@ -80,9 +80,10 @@ We provide some of the dependencies dnaPipeTE needs to run, however the pipeline
 
 The following dependancies are provided in the package or will be automatically installed with dnaPipeTE (see INSTALLATION):
 
+- **[Java 1.8](http://openjdk.java.net/install/)
 - **[TRF](http://tandem.bu.edu/trf/trf.download.html)** (Tandem Repeat Finder)
 - **[GNU Parallel](http://www.gnu.org/software/parallel)** version 3.
-- **[Trinity](http://pbil.univ-lyon1.fr/pub/divers/goubert/trinityrnaseq_r20140413p1.tar.gz)** (RNAseq assembly) vers. 2014-04-13
+- **[Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki)** (RNAseq assembly) vers. 2.5.1
 - **[RepeatMasker](http://repeatmasker.org/RMDownload.html)**, including **[RMblastn](ftp://ftp.ncbi.nlm.nih.gov/blast/executables/rmblast/LATEST)**
 - **[blastn](http://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/)** (from blast+ suite)
 
