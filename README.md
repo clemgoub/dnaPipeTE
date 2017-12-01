@@ -1,21 +1,41 @@
-# dnaPipeTE - README
+# dnaPipeTE 1.3 - README
 
-v.1.3-23/07/2017
-
->dnaPipeTE (for De-Novo Assembly & Annotation Pipeline for Transposable Elements), is a pipeline tool designed to find, quantify and get annotation of Transposable Elements in small samples of NGS datasets.
+dnaPipeTE (for De-Novo Assembly & Annotation Pipeline for Transposable Elements), is a pipeline tool designed to find, quantify and get annotation of Transposable Elements in small samples of NGS datasets.
 It is very usefull to quantify the proportion of TEs in newly sequenced genomes since it do not requier genome assembly and works on small datasets.
 
-more info at: https://lbbe.univ-lyon1.fr/-dnaPipeTE-?lang=en
+
+dnaPipeTE is developped by Clément Goubert, Laurent Modolo and the TREEP team of the LBBE: http://lbbe.univ-lyon1.fr/-Equipe-Elements-transposables-.html?lang=en
+
+You can find the original publication in GBE here: https://academic.oup.com/gbe/article/7/4/1192/533768
+
+
+- [dnaPipeTE - README](#)
+- [1 - INSTALLATION](#)
+	- [System requirement](#)
+	- [Dependencies](#)
+	- [Installation](#)
+		- [Testing dnaPipeTE installation](#)
+			- [Test scripts and java fix](#)
+			- [Test run](#)
+- [2 - RUNNING dnaPipeTE](#)
+	- [Input File](#)
+	- [Run dnaPipeTE](#)
+- [3 - dnaPipeTE OUTPUTS](#)
 
 ***********************
 
 ******Changelog v1.3********
-- Updated Trinity with latest version (v2.4.0)
+01.Dec.2017
+
+- Updated Trinity with latest version (v2.5.1)
 - Updated RepeatMasker with latest version (version Open 4.0.7)
 - Compatible with latest Repbase (RepeatMasker compatible) libraries (20170127)
 - fix bug for the blast sample wich turned out to be a reclycling of the sample 1 instead of a new independant sample. Howerver, test showed this had no striking influence on the results (actual sampling variation between runs is more likely to create variation between outputs).
 - remove most of the files from the `bin` folder and replace it with the `init.sh` script so that user can make their own installation.
+- Landscape graph are now expressed relative to genome %
 - Clean git repository of larges files
+
+*You can download previous version on the github repository, clicking on "branch" menu and selecting the desired version*
 
 ***********************
 
