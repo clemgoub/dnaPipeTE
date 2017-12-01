@@ -10,17 +10,17 @@ You can find the original publication in GBE here: https://academic.oup.com/gbe/
 
 
 
-- [1 - INSTALLATION](#installation)
-	- [System requirement](#system)
+- [1 - INSTALLATION](#1---installation)
+	- [System requirement](#system-requirement)
 	- [Dependencies](#dependencies)
 	- [Installation](#installation)
-		- [Testing dnaPipeTE installation](#testing)
-			- [Test scripts and java fix](#)
-			- [Test run](#)
-- [2 - RUNNING dnaPipeTE](#)
-	- [Input File](#)
-	- [Run dnaPipeTE](#)
-- [3 - dnaPipeTE OUTPUTS](#)
+		- [Testing dnaPipeTE installation](#testing-dnapipete-installation)
+			- [Test scripts and java fix](#test-scripts-and-java-fix)
+			- [Test run](#test-run)
+- [2 - RUNNING dnaPipeTE](#2---running-dnapipete)
+	- [Input File](#input-file)
+	- [Run dnaPipeTE](#run-dnapipete)
+- [3 - dnaPipeTE OUTPUTS](#3---dnapipete-outputs)
 
 ***********************
 
