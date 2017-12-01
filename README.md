@@ -237,7 +237,7 @@ Since this is a very small dataset used with at low coverage, it is normal that 
 
 ## Input File
 
-The input file must be a **single-end FASTQ or FASTQ.GZ** file of NGS reads}. dnaPipeTE do not handle paired-end (we found chimerism issues in PE assembly of TEs).
+The input file must be a **single-end FASTQ or FASTQ.GZ** file of NGS reads. dnaPipeTE do not handle paired-end (we found chimerism issues in PE assembly of TEs).
 Typically, your input file is your cleaned sequencing output. dnaPipeTE will sample it (so you can put deep-sequencing data in input) to produce "low coverage" samples for the run (see in the next section for sample size).
 Using .fasta file as input works, however, since dnaPipeTE expects .fastq (4 lines per sequence), only half of the file will be considered (2 lines / 4 wont be read in the sampling step).
 
