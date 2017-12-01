@@ -11,10 +11,10 @@ You can find the original publication in GBE here: https://academic.oup.com/gbe/
 
 
 - [1 - INSTALLATION](#installation)
-	- [System requirement](#)
-	- [Dependencies](#)
-	- [Installation](#)
-		- [Testing dnaPipeTE installation](#)
+	- [System requirement](#System requirement)
+	- [Dependencies](#Dependencies)
+	- [Installation](#Installation)
+		- [Testing dnaPipeTE installation](#Testing dnaPipeTE installation)
 			- [Test scripts and java fix](#)
 			- [Test run](#)
 - [2 - RUNNING dnaPipeTE](#)
