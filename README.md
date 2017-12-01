@@ -1,12 +1,12 @@
 # dnaPipeTE 1.3 - README
 
-dnaPipeTE (for De-Novo Assembly & Annotation Pipeline for Transposable Elements), is a pipeline tool designed to find, quantify and get annotation of Transposable Elements in small samples of NGS datasets.
+dnaPipeTE (for **d**e-**n**ovo **a**ssembly & annotation **Pipe**line for **T**ransposable **E**lements), is a pipeline designed to find, quantify and annotate Transposable Elements in small samples of NGS datasets.
 It is very usefull to quantify the proportion of TEs in newly sequenced genomes since it do not requier genome assembly and works on small datasets.
 
 
-dnaPipeTE is developped by Clément Goubert, Laurent Modolo and the TREEP team of the LBBE: http://lbbe.univ-lyon1.fr/-Equipe-Elements-transposables-.html?lang=en
+- dnaPipeTE is developped by Clément Goubert, Laurent Modolo and the TREEP team of the LBBE: http://lbbe.univ-lyon1.fr/-Equipe-Elements-transposables-.html?lang=en
 
-You can find the original publication in GBE here: https://academic.oup.com/gbe/article/7/4/1192/533768
+- You can find the original publication in GBE here: https://academic.oup.com/gbe/article/7/4/1192/533768
 
 
 
