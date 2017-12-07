@@ -27,6 +27,11 @@ It is very useful to quantify the proportion of TEs in newly sequenced genomes s
 
 ***********************
 
+******Changelog v1.3.1********
+07.Dec.2017
+
+- Fixed missing class column for some Academ families causing errors with landscape graphs (thanls @rotifergirl for reporting!)
+
 ******Changelog v1.3********
 01.Dec.2017
 
