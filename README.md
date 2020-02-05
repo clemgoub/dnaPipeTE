@@ -1,5 +1,15 @@
 # dnaPipeTE 1.3 - README
 
+********************************************************************************************************************
+/!\ REPEAT MASKER LIBRARY NOTICE / REPBASE SUBSCRIPTIONS NEEDED
+/!\ The RepeatMasker Libraries required for the annotation module of dnaPipeTE are now accessible only on a paid
+/!\ subscription basis. If you have a local installation of RepeatMasker, you can re-use the libraries (copy the
+/!\ `<your_path>/RepeatMasker/Libraries` folder to the `your_path/<>dnaPipeTE/bin/RepeatMasker` folder. Please
+/!\ contact me if you have any trouble installing RM libraries. We are working on a workaround, hopefully releasing
+/!\ an update soon. Thanks for your support and using dnaPipeTE! -- Clément.
+********************************************************************************************************************
+
+
 dnaPipeTE (for **d**e-**n**ovo **a**ssembly & annotation **Pipe**line for **T**ransposable **E**lements), is a pipeline designed to find, annotate and quantify Transposable Elements in small samples of NGS datasets.
 It is very useful to quantify the proportion of TEs in newly sequenced genomes since it **does not require genome assembly** and works on **small datasets (< 1X per run)**.
 
