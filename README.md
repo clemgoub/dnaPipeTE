@@ -307,7 +307,7 @@ The outfolder is divided into the following parts:
 |File|Description|
 |---|---|
 |	"Trinity.fasta" | this file contains the dnaPipeTE contigs, this is the last assembly performed with Trinity |
-|		"reads\_per\_component\_and\_annotation" | table with the count of reads and bp aligned per dnaPipeTE contigs (from blastn 1), as well as its best RepeatMasker annotation. Col1: counts (#reads); Col2: aligned bases; Col3 dnaPipeTE contig name; col4 RepeatMakser annotation; col5 proportion of the dnaPipeTE contig that received the RM hit |
+|		"reads\_per\_component\_and\_annotation" | table with the count of reads and bp aligned per dnaPipeTE contigs (from blastn 1), as well as its best RepeatMasker annotation. Col1: counts (#reads); Col2: aligned bases; Col3 dnaPipeTE contig name; col4 Repeat Masker hit length (bp); col5 RepeatMakser annotation; col6 RM classificaion; col7 hit length / dnaPipeTE contig length |
 |		"pieChart.pdf/png" | graph with the relative proportion of the main repeat classes, informs about the estimated proportion of repeats in the genome (from blastn 2 and 3) |
 |"Bases\_per\_component.pdf/png" | graph with the number of base-pairs aligned on each dnaPipeTE contig (from blast 1), ordered by genome proportion of the dnaPipeTE contig.|
 |		"landscapes.pdf" | TEs landscape graphs (TE age distribution). Plot the blastn divergence distribution between reads and the contigs on which they map. |
