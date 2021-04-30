@@ -1,4 +1,4 @@
-# dnaPipeTE 1.3 - README [![status](https://img.shields.io/badge/status:-v1.3-green)]() [![status: support](https://img.shields.io/badge/support:-yes-green)]()
+# dnaPipeTE [![status](https://img.shields.io/badge/status:-v1.3-green)]() [![status: support](https://img.shields.io/badge/support:-yes-green)]()
 
 ********************************************************************************************************************
 
