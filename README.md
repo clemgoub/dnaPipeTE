@@ -1,4 +1,4 @@
-# dnaPipeTE [![status](https://img.shields.io/badge/status:-v1.3-docker-edition-orange)]() [![status: support](https://img.shields.io/badge/support:-no-red)]()
+# dnaPipeTE: docker edition [![status](https://img.shields.io/badge/status:-v1.3.docker-orange)]() [![status: support](https://img.shields.io/badge/support:-no-red)]()
 
 ********************************************************************************************************************
 This branch is a modified version of [dnaPipeTE v1.3](https://github.com/clemgoub/dnaPipeTE/tree/master) to fit a dedicated docker container (currently under development)
