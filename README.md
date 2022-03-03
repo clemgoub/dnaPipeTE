@@ -1,5 +1,7 @@
-# dnaPipeTE [![status](https://img.shields.io/badge/status:-v1.3-green)]() [![status: support](https://img.shields.io/badge/support:-yes-green)]()
+# dnaPipeTE [![status](https://img.shields.io/badge/status:-v1.3.1-green)]() [![status: support](https://img.shields.io/badge/support:-yes-orange)]()
 
+********************************************************************************************************************
+❄️ THIS BRANCH HAS BEEN FROZEN ON 03/03/2022 - PLEASE USE THE [CONTAINER VERSION OF dnaPipeTE 1.3](https://github.com/clemgoub/dnaPipeTE/tree/master) ❄️
 ********************************************************************************************************************
 
 **[ /!\ REPEAT MASKER LIBRARY NOTICE / REPBASE SUBSCRIPTIONS NEEDED /!\ ]**
