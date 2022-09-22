@@ -7,7 +7,7 @@ It is very useful to quantify the proportion of TEs in newly sequenced genomes s
 - dnaPipeTE was created in 2015 by **[Clément Goubert](@clemgoub)** and **[Laurent Modolo](@l-modolo)** at the [LBBE](http://lbbe.univ-lyon1.fr/), with the latter contributions of **Romain Lannes (@rLannes)**, **@pauram** and 
 **T. Mason Linscott**. Thanks a lot!
 
-- The container version has be made possible thanks to **Stéphane Delmotte** of the LBBE.
+- The container version has been made possible thanks to **Stéphane Delmotte** of the LBBE.
 - You can read the [original publication in GBE](https://academic.oup.com/gbe/article/7/4/1192/533768)
 
 The current version of dnaPipeTE is **v.1.3.1 "container"** and is now available through Docker/Singularity. The non-container version of dnaPipeTE 1.3.1 is available [here](https://github.com/clemgoub/dnaPipeTE/tree/vers1.3).
