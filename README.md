@@ -4,7 +4,9 @@
 dnaPipeTE (for **d**e-**n**ovo **a**ssembly & annotation **Pipe**line for **T**ransposable **E**lements), is a pipeline designed to find, classify and quantify Transposable Elements and other repeats in low coverage (< 1X) NGS datasets.
 It is very useful to quantify the proportion of TEs in newly sequenced genomes since it **does not require genome assembly** and works directly on **raw short-reads.**
 
-- dnaPipeTE was created in 2015 by **[Clément Goubert](@clemgoub)** and **[Laurent Modolo](@l-modolo)** at the [LBBE](http://lbbe.univ-lyon1.fr/), with the latter contributions of **[Romain Lannes](@rLannes)** and **@pauram**. 
+- dnaPipeTE was created in 2015 by **[Clément Goubert](@clemgoub)** and **[Laurent Modolo](@l-modolo)** at the [LBBE](http://lbbe.univ-lyon1.fr/), with the latter contributions of **Romain Lannes (@rLannes)**, **@pauram** and 
+**T. Mason Linscott**. Thanks a lot!
+
 - The container version has be made possible thanks to **Stéphane Delmotte** of the LBBE.
 - You can read the [original publication in GBE](https://academic.oup.com/gbe/article/7/4/1192/533768)
 
