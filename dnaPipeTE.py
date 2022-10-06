@@ -57,7 +57,7 @@ print( "                                       | |                              
 print( "                                       |_|                                       ")
 print( "                                                                                 ")
 print( "     De Novo Anssembly and Annotation PIPEline for Transposable Elements         ")
-print( "                              v.1.3.1_07.dec.2017                                      ")
+print( "                      v.1.4c \"container\" 06.Oct.2022                           ")
 print( "                                                                                 ")
 print( "                                                                                                                                                                       ")
 print( "                                                               ")
