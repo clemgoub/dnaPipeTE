@@ -206,7 +206,8 @@ The output folder is divided into the following parts:
 
 ## Changelog
 
-**Changelog v1.4c**
+**Changelog v1.4c** 
+Oct.2022
 
 - Update RepeatMasker to v.4.1.3
 - Update R from 3.3.3 to 4.2.1
@@ -214,7 +215,8 @@ The output folder is divided into the following parts:
 - Adds `dnaPT_utils` to the container
 
 ***********************
-**Changelog v1.3.1c**
+**Changelog v1.3.1c** 
+March.2021
 
 - First container version
 - `dnaPipeTE.py`
