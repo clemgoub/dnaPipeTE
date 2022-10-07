@@ -1,20 +1,21 @@
 ![logo](./dna_Pipe_TE_stickers.png)
-# dnaPipeTE [![status](https://img.shields.io/badge/status:-v1.3.1c-green)]() [![status: support](https://img.shields.io/badge/support:-yes-green)]() [![DOI](https://img.shields.io/badge/DOI:-doi.org/10.1093/gbe/evv050-blue)](https://doi.org/10.1093/gbe/evv050)
+# dnaPipeTE [![status](https://img.shields.io/badge/status:-v1.4c-green)]() [![status: support](https://img.shields.io/badge/support:-yes-green)]() [![DOI](https://img.shields.io/badge/DOI:-doi.org/10.1093/gbe/evv050-blue)](https://doi.org/10.1093/gbe/evv050)
 
 dnaPipeTE (for **d**e-**n**ovo **a**ssembly & annotation **Pipe**line for **T**ransposable **E**lements), is a pipeline designed to find, classify and quantify Transposable Elements and other repeats in low coverage (< 1X) NGS datasets.
 It is very useful to quantify the proportion of TEs in newly sequenced genomes since it **does not require genome assembly** and works directly on **raw short-reads.**
 
-- dnaPipeTE was created in 2015 by **[Clément Goubert](@clemgoub)** and **[Laurent Modolo](@l-modolo)** at the [LBBE](http://lbbe.univ-lyon1.fr/), with the latter contributions of **Romain Lannes (@rLannes)**, **@pauram** and 
+- :family: dnaPipeTE was created in 2015 by **[Clément Goubert](@clemgoub)** and **[Laurent Modolo](@l-modolo)** at the [LBBE](http://lbbe.univ-lyon1.fr/), with the latter contributions of **Romain Lannes (@rLannes)**, **@pauram** and 
 **T. Mason Linscott**. Thanks a lot!
+- :package: The container version has been made possible thanks to **Stéphane Delmotte** of the LBBE.
+	- The current version of dnaPipeTE is **v.1.4c "container"** and is available through Docker/Singularity (see [Installation](#installation)). Changelogs can be found [here](#changelog).<br>
+	- **From now on, only the container versions of dnaPipeTE will have support**. Thank you for your understanding!
+	- The last non-container version of dnaPipeTE 1.3.1 is available [here](https://github.com/clemgoub/dnaPipeTE/tree/vers1.3).
+- :page_facing_up: You can read the [original publication in GBE](https://academic.oup.com/gbe/article/7/4/1192/533768)
+- :bar_chart: A companion repository [dnaPT_utils](https://github.com/clemgoub/dnaPT_utils) provides useful scripts for post-processing and to create customizable figures. It requires a UNIX environment with `bash`, `R` and `cd-hit`. It is not required for execution of dnaPipeTE. 
+	> dnaPT_utils has been added to the latest distribution (v1.4c).
 
-- The container version has been made possible thanks to **Stéphane Delmotte** of the LBBE.
-- You can read the [original publication in GBE](https://academic.oup.com/gbe/article/7/4/1192/533768)
-
-The current version of dnaPipeTE is **v.1.3.1 "container"** and is now available through Docker/Singularity. The non-container version of dnaPipeTE 1.3.1 is available [here](https://github.com/clemgoub/dnaPipeTE/tree/vers1.3).
-
-A companion repository [dnaPT_utils](https://github.com/clemgoub/dnaPT_utils) provides useful scripts for post-processing and to create customizable figures. It requires a UNIX environment with `bash`, `R` and `cd-hit`. It is not required for execution of dnaPipeTE.
-
-If you encounter some issues with dnaPipeTE, you can [request assistance here](https://github.com/clemgoub/dnaPipeTE/issues)!
+- :stethoscope: If you encounter some issues with dnaPipeTE, you can [request assistance here](https://github.com/clemgoub/dnaPipeTE/issues)!
+- :teacher: An introductory tutorial to dnaPipeTE is available on the [TE-hub](https://tehub.org/en/tutorials/docs/dnaPipeTE)
 
 ![pipeline](./pipeline_outputs.png)
 
@@ -210,6 +211,23 @@ The output folder is divided into the following parts:
 
 - Integration in a Docker container, compatible with Singularity
 - New companion repository to plot graphs and more: [dnaPT_utils](https://github.com/clemgoub/dnaPT_utils)
+
+
+***********************
+******Changelog v1.4c*********
+
+- Update RepeatMasker to v.4.1.3
+- Update R from 3.3.3 to 4.2.1
+- Fix issues #12, #55 and #73 (thanks to T. Mason Linscott)
+- Adds `dnaPT_utils` to the container
+
+***********************
+******Changelog v1.3.1c********
+
+- First container version
+- `dnaPipeTE.py`
+	- The docker-specific config.ini has to be used.
+	- blast2: the database (annotated dnaPipeTE contigs) is not merged with Repbase anymore for this blast, as Repbase in not freely accessible anymore. This was in case low-copy TE were missed but present in Repbase, they could be saved. However there is virtually no influence on the results.
 
 ***********************
 ******Changelog v1.3.1********
