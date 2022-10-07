@@ -8,7 +8,7 @@ It is very useful to quantify the proportion of TEs in newly sequenced genomes s
 **T. Mason Linscott**. Thanks a lot!
 - :package: The container version has been made possible thanks to **Stéphane Delmotte** of the LBBE.
 	- The current version of dnaPipeTE is **v.1.4c "container"** and is available through Docker/Singularity (see [Installation](#installation)). Changelogs can be found [here](#changelog).<br>
-	- **From now on, only the container versions of dnaPipeTE will have support**. Thank you for your understanding!
+	- **From now on, only the container versions of dnaPipeTE will have support**. Thank you for your understanding! Container versions are stored on the [Docker Hub](https://hub.docker.com/repository/docker/clemgoub/dnapipete/general).
 	- The last non-container version of dnaPipeTE 1.3.1 is available [here](https://github.com/clemgoub/dnaPipeTE/tree/vers1.3).
 - :page_facing_up: You can read the [original publication in GBE](https://academic.oup.com/gbe/article/7/4/1192/533768)
 - :bar_chart: A companion repository [dnaPT_utils](https://github.com/clemgoub/dnaPT_utils) provides useful scripts for post-processing and to create customizable figures. It requires a UNIX environment with `bash`, `R` and `cd-hit`. It is not required for execution of dnaPipeTE. 
@@ -85,7 +85,6 @@ sudo docker run -it -v ~/Project:/mnt clemgoub/dnapipete:latest
 Once in the container, run:
 
 ```shell
-cd /opt/dnaPipeTE
 python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib ../RepeatMasker/Libraries/RepeatMasker.lib -genome_size 170000000 -genome_coverage 0.1 -sample_number 2 -RM_t 0.2 -cpu 2
 ```
 
@@ -98,7 +97,6 @@ singularity shell --bind ~Project:/mnt ~/dnaPipeTE/dnapipete.img
 Once in the container, run:
 
 ```shell
-cd /opt/dnaPipeTE
 python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib ../RepeatMasker/Libraries/RepeatMasker.lib -genome_size 170000000 -genome_coverage 0.1 -sample_number 2 -RM_t 0.2 -cpu 2
 ```
 
@@ -108,7 +106,6 @@ We create a file `dnaPT_cmd.sh` that will contain the dnaPipeTE command:
 
 ```shell
 #! /bin/bash 
-cd /opt/dnaPipeTE 
 python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib ../RepeatMasker/Libraries/RepeatMasker.lib -genome_size 170000000 -genome_coverage 0.1 -sample_number 2 -RM_t 0.2 -cpu 2 
 ```
 > the shebang (`#! bin/bash`) is required to tell the container which program we want to execute our script
