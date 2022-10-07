@@ -206,14 +206,6 @@ The output folder is divided into the following parts:
 
 ## Changelog
 
-******Changelog v1.3.1c "container" ********
-03.March.2022
-
-- Integration in a Docker container, compatible with Singularity
-- New companion repository to plot graphs and more: [dnaPT_utils](https://github.com/clemgoub/dnaPT_utils)
-
-
-***********************
 ******Changelog v1.4c*********
 
 - Update RepeatMasker to v.4.1.3
