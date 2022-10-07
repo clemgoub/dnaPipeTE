@@ -206,7 +206,7 @@ The output folder is divided into the following parts:
 
 ## Changelog
 
-******Changelog v1.4c*********
+**Changelog v1.4c**
 
 - Update RepeatMasker to v.4.1.3
 - Update R from 3.3.3 to 4.2.1
@@ -214,7 +214,7 @@ The output folder is divided into the following parts:
 - Adds `dnaPT_utils` to the container
 
 ***********************
-******Changelog v1.3.1c********
+**Changelog v1.3.1c**
 
 - First container version
 - `dnaPipeTE.py`
@@ -222,14 +222,13 @@ The output folder is divided into the following parts:
 	- blast2: the database (annotated dnaPipeTE contigs) is not merged with Repbase anymore for this blast, as Repbase in not freely accessible anymore. This was in case low-copy TE were missed but present in Repbase, they could be saved. However there is virtually no influence on the results.
 
 ***********************
-******Changelog v1.3.1********
+**Changelog v1.3.1**
 07.Dec.2017
 
 - Fixed missing class column for some Academ families causing errors with landscape graphs (thanks @rotifergirl for reporting!)
 
 ***********************
-
-******Changelog v1.3********
+**Changelog v1.3**
 01.Dec.2017
 
 - Updated Trinity with latest version (v2.5.1)
@@ -243,8 +242,7 @@ The output folder is divided into the following parts:
 *You can download previous version on the github repository, clicking on "branch" menu and selecting the desired version*
 
 ***********************
-
-******Changelog v1.2********
+**Changelog v1.2**
 
 - Estimation of repeat content is now performed on the ratio of aligned bases (bp) on repeat contig over the total number of base sampled, instead of the number of reads mapping / total of read sampled; this produces a better estimate of the repeat content and reduces potential overestimations. In addition, it allows more accurate estimates if the size of reads used as input is variable. ![changes-1.1_1.2]
 - If different part of one same read match different repeats contigs (e.g. in case adjacent TEs or TE in TE), all bases are retained instead only the one of the best hit.
