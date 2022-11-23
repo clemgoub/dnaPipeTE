@@ -153,7 +153,7 @@ The output folder is divided into the following parts:
 |File|Description|
 |---|---|
 | "Trinity.fasta" | this file contains the dnaPipeTE contigs, this is the last assembly performed with Trinity |
-| "reads\_per\_component\_and\_annotation" | table with the count of reads and bp aligned per dnaPipeTE contigs (from blastn 1), as well as its best RepeatMasker annotation. Col1: counts (#reads); Col2: aligned bases; Col3 dnaPipeTE contig name; col4 Repeat Masker hit length (bp); col5 RepeatMakser annotation; col6 RM classification; col7 hit length / dnaPipeTE contig length |
+| "reads\_per\_component\_and\_annotation" | table with the count of reads and bp aligned per dnaPipeTE contigs (from blastn 1), as well as its best RepeatMasker annotation. <ul><li>1: counts (#reads)</li><li>2: aligned bases</li><li>3 dnaPipeTE contig name</li><li>4 Repeat Masker hit length (bp)</li><li>5 RepeatMakser annotation</li><li>6 RM classification</li><li>7 hit length / dnaPipeTE contig length</li></ul> |
 
 **less important files you may like:**
 
@@ -175,6 +175,7 @@ The output folder is divided into the following parts:
 |File|Description|
 |---|---|
 | "one_RM_hit_per_Trinity_contigs"| sorted RepeatMasker output containing the best hit on the repeat library for each of the dnaPipeTE contigs (Trinity.fasta)|
+| | <ul><li>1: dnaPipeTE contig name</li><li>2: hit length on dnaPipeTE contig</li><li>3: proportion of dnaPipeTE contig covered by hit</li><li>4: hit name</li><li>5: hit classification</li><li>6: hit target length</li><li>7: hit coordinates on target</li><li>8: proportion of target covered by the hit </li></ul> |
 
 **less important files you may like:**
 
