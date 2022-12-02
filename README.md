@@ -1,5 +1,5 @@
 ![logo](./dna_Pipe_TE_stickers.png)
-# dnaPipeTE [![status](https://img.shields.io/badge/status:-v1.4c-green)]() [![status: support](https://img.shields.io/badge/support:-yes-green)]() [![DOI](https://img.shields.io/badge/DOI:-doi.org/10.1093/gbe/evv050-blue)](https://doi.org/10.1093/gbe/evv050)
+# dnaPipeTE [![status](https://img.shields.io/badge/status:-v1.4c-green)]() [![status: support](https://img.shields.io/badge/support:-yes-green)]() [![DOI](https://img.shields.io/badge/DOI:-doi.org/10.1093/gbe/evv050-blue)](https://doi.org/10.1093/gbe/evv050) [![DOI](https://img.shields.io/badge/DOI:-doi.org/10.1007/978--1--0716--2883--6_2-blue)](https://link.springer.com/protocol/10.1007/978-1-0716-2883-6_2)
 
 dnaPipeTE (for **d**e-**n**ovo **a**ssembly & annotation **Pipe**line for **T**ransposable **E**lements), is a pipeline designed to find, classify and quantify Transposable Elements and other repeats in low coverage (< 1X) NGS datasets.
 It is very useful to quantify the proportion of TEs in newly sequenced genomes since it **does not require genome assembly** and works directly on **raw short-reads.**
@@ -16,6 +16,7 @@ It is very useful to quantify the proportion of TEs in newly sequenced genomes s
 
 - :stethoscope: If you encounter some issues with dnaPipeTE, you can [request assistance here](https://github.com/clemgoub/dnaPipeTE/issues)!
 - :teacher: An introductory tutorial to dnaPipeTE is available on the [TE-hub](https://tehub.org/en/tutorials/docs/dnaPipeTE)
+- :teacher: An advanced tutorial is published in the [book](https://link.springer.com/book/10.1007/978-1-0716-2883-6) *"Transposable Elements, Methods and Protocols (2022)"*: [dnaPipeTE chapter](https://link.springer.com/protocol/10.1007/978-1-0716-2883-6_2)
 
 ![pipeline](./pipeline_outputs.png)
 
