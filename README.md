@@ -106,25 +106,24 @@ python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib .
 
 We create a file `dnaPT_cmd.sh` that will contain the dnaPipeTE command:
 
-- For **Docker**:
+#### Docker:
 ```shell
 #! /bin/bash 
 python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib ../RepeatMasker/Libraries/RepeatMasker.lib -genome_size 170000000 -genome_coverage 0.1 -sample_number 2 -RM_t 0.2 -cpu 2 
 ```
+and then
 
-- For **Singularity**
+```shell
+sudo docker run -v ~Project:/mnt clemgoub/dnapipete:latest ./mnt/dnaPT_comd.sh
+```
+
+#### Singularity
 ```shell
 #! /bin/bash 
 cd /opt/dnaPipeTE # <<<--- This line is very important to run the program with singularity!
 python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib ../RepeatMasker/Libraries/RepeatMasker.lib -genome_size 170000000 -genome_coverage 0.1 -sample_number 2 -RM_t 0.2 -cpu 2 
 ```
-
-#### Docker
-
-```shell
-sudo docker run -v ~Project:/mnt clemgoub/dnapipete:latest ./mnt/dnaPT_comd.sh
-```
-#### Singularity
+and then
 
 ```shell
 singularity exec --bind ~Project:/mnt ~/dnaPipeTE/dnapipete.img /mnt/dnaPipeTE_cmd.sh
