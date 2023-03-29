@@ -98,6 +98,7 @@ singularity shell --bind ~Project:/mnt ~/dnaPipeTE/dnapipete.img
 Once in the container, run:
 
 ```shell
+cd /opt/dnaPipeTE # <<<--- This line is very important to run the program with singularity!
 python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib ../RepeatMasker/Libraries/RepeatMasker.lib -genome_size 170000000 -genome_coverage 0.1 -sample_number 2 -RM_t 0.2 -cpu 2
 ```
 
@@ -105,11 +106,18 @@ python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib .
 
 We create a file `dnaPT_cmd.sh` that will contain the dnaPipeTE command:
 
+- For **Docker**:
 ```shell
 #! /bin/bash 
 python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib ../RepeatMasker/Libraries/RepeatMasker.lib -genome_size 170000000 -genome_coverage 0.1 -sample_number 2 -RM_t 0.2 -cpu 2 
 ```
-> the shebang (`#! bin/bash`) is required to tell the container which program we want to execute our script
+
+- For **Singularity**
+```shell
+#! /bin/bash 
+cd /opt/dnaPipeTE # <<<--- This line is very important to run the program with singularity!
+python3 dnaPipeTE.py -input /mnt/reads_input.fastq -output /mnt/output -RM_lib ../RepeatMasker/Libraries/RepeatMasker.lib -genome_size 170000000 -genome_coverage 0.1 -sample_number 2 -RM_t 0.2 -cpu 2 
+```
 
 #### Docker
 
